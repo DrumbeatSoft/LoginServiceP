@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="http_exception_network">Network Is Not Available, Please Check The Network</string>
+    <string name="http_exception_url">Url Format Error</string>
+    <string name="http_exception_host">Didn\'t  Find The Server Specified By Url</string>
+    <string name="http_exception_connect_timeout">Connection server Timeout</string>
+    <string name="http_exception_write">Failed To Send Data</string>
+    <string name="http_exception_read_timeout">Read Data Timeout</string>
+    <string name="http_exception_parse_error">Parsing Data Exception</string>
+    <string name="http_exception_unknow_error">Unknown Exception Occurred</string>
+    <string name="http_exception_download_error">Server Exception</string>
+
+</resources>

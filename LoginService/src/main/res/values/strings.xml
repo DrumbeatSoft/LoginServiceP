@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">LoginService</string>
+    <string name="dblogin_close">关闭</string>
+
+    <string name="dblogin_login">登录</string>
+    <string name="dblogin_login_success">登录成功</string>
+    <string name="dblogin_login_fail">登录失败</string>
+
+    <string name="dblogin_cancel_login">取消登录</string>
+    <string name="dblogin_cancel_login_success">已取消</string>
+    <string name="dblogin_cancel_login_fail">取消失败</string>
+
+    <string name="dblogin_pc_login_confirm">电脑确认登录</string>
+</resources>
