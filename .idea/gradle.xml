@@ -8,9 +8,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/DrumbeatSDK" />
             <option value="$PROJECT_DIR$/LoginService" />
-            <option value="$PROJECT_DIR$/QBar" />
             <option value="$PROJECT_DIR$/app" />
           </set>
         </option>

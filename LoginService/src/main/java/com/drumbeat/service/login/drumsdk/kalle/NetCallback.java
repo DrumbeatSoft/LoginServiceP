@@ -1,4 +1,4 @@
-package com.drumbeat.sdk.kalle;
+package com.drumbeat.service.login.drumsdk.kalle;
 
 /**
  * Created by ZuoHailong on 2019/12/3.

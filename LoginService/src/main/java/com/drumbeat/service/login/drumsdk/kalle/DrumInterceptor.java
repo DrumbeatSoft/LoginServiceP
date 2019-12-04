@@ -1,4 +1,4 @@
-package com.drumbeat.sdk.kalle;
+package com.drumbeat.service.login.drumsdk.kalle;
 
 import com.blankj.utilcode.util.LogUtils;
 import com.yanzhenjie.kalle.Request;

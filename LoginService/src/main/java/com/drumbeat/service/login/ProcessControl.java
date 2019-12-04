@@ -8,8 +8,6 @@ import androidx.annotation.NonNull;
 
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.SPUtils;
-import com.drumbeat.sdk.helper.HttpHelper;
-import com.drumbeat.sdk.kalle.NetCallback;
 import com.drumbeat.sdk.qbar.CodeType;
 import com.drumbeat.sdk.qbar.OnScanListener;
 import com.drumbeat.sdk.qbar.QBarHelper;
@@ -17,6 +15,8 @@ import com.drumbeat.sdk.qbar.ScanResult;
 import com.drumbeat.service.login.bean.BaseBean;
 import com.drumbeat.service.login.bean.LoginResultBean;
 import com.drumbeat.service.login.config.ServiceConfig;
+import com.drumbeat.service.login.drumsdk.helper.HttpHelper;
+import com.drumbeat.service.login.drumsdk.kalle.NetCallback;
 import com.drumbeat.service.login.ui.ConfirmActivity;
 
 import java.util.HashMap;

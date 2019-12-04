@@ -2,7 +2,7 @@ package com.drumbeat.service.login.config;
 
 import android.text.TextUtils;
 
-import com.drumbeat.sdk.DrumbeatSDK;
+import com.drumbeat.service.login.drumsdk.DrumbeatSDK;
 
 import static com.drumbeat.service.login.constant.APIInterface.BASE_URL;
 

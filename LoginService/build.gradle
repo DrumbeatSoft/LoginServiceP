@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 10
-        versionName "0.1"
+        versionCode 11
+        versionName "0.1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
@@ -30,9 +30,6 @@ android {
 }
 
 dependencies {
-    implementation project(':DrumbeatSDK')
-    implementation project(':QBar')
-
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -40,4 +37,12 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    // Kalle
+    implementation 'com.yanzhenjie:okalle:0.1.7'
+    // AndroidUtilCode
+    implementation 'com.blankj:utilcodex:1.26.0'
+    // fastjson
+    implementation 'com.alibaba:fastjson:1.1.71.android'
+    implementation 'com.github.ZuoHailong:QBar:0.0.2'
 }

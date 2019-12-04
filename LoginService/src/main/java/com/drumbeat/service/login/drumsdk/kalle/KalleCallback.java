@@ -1,7 +1,7 @@
-package com.drumbeat.sdk.kalle;
+package com.drumbeat.service.login.drumsdk.kalle;
 
 import com.blankj.utilcode.util.StringUtils;
-import com.drumbeat.sdk.R;
+import com.drumbeat.service.login.R;
 import com.yanzhenjie.kalle.exception.ConnectException;
 import com.yanzhenjie.kalle.exception.ConnectTimeoutError;
 import com.yanzhenjie.kalle.exception.HostError;

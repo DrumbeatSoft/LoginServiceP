@@ -1,2 +1,2 @@
-include ':app', ':LoginService', ':DrumbeatSDK', ':QBar'
+include ':app', ':LoginService'
 rootProject.name='LoginServiceP'

@@ -1,6 +1,6 @@
-package com.drumbeat.sdk;
+package com.drumbeat.service.login.drumsdk;
 
-import com.drumbeat.sdk.helper.HttpHelper;
+import com.drumbeat.service.login.drumsdk.helper.HttpHelper;
 
 /**
  * Created by ZuoHailong on 2019/12/2.
