@@ -1,4 +1,4 @@
-package com.drumbeat.service.login;
+package com.drumbeat.service.login.constant;
 
 /**
  * 中台接口

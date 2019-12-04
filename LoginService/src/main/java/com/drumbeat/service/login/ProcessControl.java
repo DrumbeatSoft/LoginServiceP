@@ -16,25 +16,27 @@ import com.drumbeat.sdk.qbar.QBarHelper;
 import com.drumbeat.sdk.qbar.ScanResult;
 import com.drumbeat.service.login.bean.BaseBean;
 import com.drumbeat.service.login.bean.LoginResultBean;
+import com.drumbeat.service.login.config.ServiceConfig;
 import com.drumbeat.service.login.ui.ConfirmActivity;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.drumbeat.service.login.APIInterface.BASE_URL;
-import static com.drumbeat.service.login.APIInterface.CANCEL_LOGIN;
-import static com.drumbeat.service.login.APIInterface.CONFIRM_LOGIN;
-import static com.drumbeat.service.login.APIInterface.LOGIN_URL;
-import static com.drumbeat.service.login.APIInterface.SCAN_CODE;
-import static com.drumbeat.service.login.DBLoginSPUtil.SP_USER_ID;
-import static com.drumbeat.service.login.ResultCode.CANCEL_LOGIN_QRCODE;
-import static com.drumbeat.service.login.ResultCode.ERROR_LOGIN_ACCOUNT;
-import static com.drumbeat.service.login.ResultCode.ERROR_NULL_ACCOUNT;
-import static com.drumbeat.service.login.ResultCode.ERROR_NULL_APPID;
-import static com.drumbeat.service.login.ResultCode.ERROR_NULL_PASSWORD;
-import static com.drumbeat.service.login.ResultCode.ERROR_QRCODE_LOGIN;
-import static com.drumbeat.service.login.ResultCode.ERROR_QRCODE_SCAN;
-import static com.drumbeat.service.login.ResultCode.ERROR_QRCODE_VERIFY;
+import static com.drumbeat.service.login.constant.APIInterface.BASE_URL;
+import static com.drumbeat.service.login.constant.APIInterface.CANCEL_LOGIN;
+import static com.drumbeat.service.login.constant.APIInterface.CONFIRM_LOGIN;
+import static com.drumbeat.service.login.constant.APIInterface.LOGIN_URL;
+import static com.drumbeat.service.login.constant.APIInterface.SCAN_CODE;
+import static com.drumbeat.service.login.constant.ResultCode.CANCEL_LOGIN_QRCODE;
+import static com.drumbeat.service.login.constant.ResultCode.ERROR_LOGIN_ACCOUNT;
+import static com.drumbeat.service.login.constant.ResultCode.ERROR_NULL_ACCOUNT;
+import static com.drumbeat.service.login.constant.ResultCode.ERROR_NULL_APPID;
+import static com.drumbeat.service.login.constant.ResultCode.ERROR_NULL_PASSWORD;
+import static com.drumbeat.service.login.constant.ResultCode.ERROR_QRCODE_LOGIN;
+import static com.drumbeat.service.login.constant.ResultCode.ERROR_QRCODE_SCAN;
+import static com.drumbeat.service.login.constant.ResultCode.ERROR_QRCODE_VERIFY;
+import static com.drumbeat.service.login.constant.Constant.SP_TOKEN;
+import static com.drumbeat.service.login.constant.Constant.SP_USER_ID;
 
 /**
  * Created by ZuoHailong on 2019/10/17.
@@ -45,7 +47,7 @@ public class ProcessControl {
      * 账号密码登录
      */
     static void login(@NonNull String account, @NonNull String password, ResultCallback<LoginResultBean> callback) {
-        ServiceConfig serviceConfig = LoginServiceHelper.getConfig();
+        ServiceConfig serviceConfig = LoginService.getConfig();
 
         if (TextUtils.isEmpty(serviceConfig.getAppId())) {
             callback.onFail(ERROR_NULL_APPID);
@@ -92,7 +94,7 @@ public class ProcessControl {
                     callback.onFail(ERROR_LOGIN_ACCOUNT);
                     return;
                 }
-                SPUtils.getInstance().put("token", loginResultBean.getToken());
+                SPUtils.getInstance().put(SP_TOKEN, loginResultBean.getToken());
                 callback.onSuccess(loginResultBean);
             }
 
@@ -118,7 +120,7 @@ public class ProcessControl {
                                 callback.onFail(ERROR_QRCODE_SCAN);
                         } else {
                             // 扫码得到二维码数据，下一步验证二维码数据，进行登录
-                            DBLoginSPUtil.newInstance(activity).put(SP_USER_ID, scanResult.getContent());
+                            SPUtils.getInstance().put(SP_USER_ID, scanResult.getContent());
                             verifyQRCode(activity, callback);
                         }
                     }
@@ -136,9 +138,9 @@ public class ProcessControl {
      */
     private static void verifyQRCode(final Activity activity, ResultCallback callback) {
         Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", SPUtils.getInstance().getString("token"));
+        headers.put("Authorization", SPUtils.getInstance().getString(SP_TOKEN));
         Map<String, String> map = new HashMap<>();
-        map.put("id", DBLoginSPUtil.newInstance(activity).getString(SP_USER_ID));
+        map.put("id", SPUtils.getInstance().getString(SP_USER_ID));
         HttpHelper.get(BASE_URL + SCAN_CODE, headers, map, new NetCallback() {
             @Override
             public void onSuccess(String succeed) {
@@ -172,11 +174,11 @@ public class ProcessControl {
     /**
      * 扫码后确认登录
      */
-    public static void login(final Activity activity, ResultCallback callback) {
+    public static void login(ResultCallback callback) {
         Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", SPUtils.getInstance().getString("token"));
+        headers.put("Authorization", SPUtils.getInstance().getString(SP_TOKEN));
         Map<String, String> params = new HashMap<>();
-        params.put("id", DBLoginSPUtil.newInstance(activity).getString(SP_USER_ID));
+        params.put("id", SPUtils.getInstance().getString(SP_USER_ID));
         HttpHelper.get(BASE_URL + CONFIRM_LOGIN, headers, params, new NetCallback() {
             @Override
             public void onSuccess(String succeed) {
@@ -209,11 +211,11 @@ public class ProcessControl {
     /**
      * 取消登录
      */
-    public static void cancelLogin(final Activity activity, ResultCallback callback) {
+    public static void cancelLogin(ResultCallback callback) {
         Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", SPUtils.getInstance().getString("token"));
+        headers.put("Authorization", SPUtils.getInstance().getString(SP_TOKEN));
         Map<String, String> map = new HashMap<>();
-        map.put("id", DBLoginSPUtil.newInstance(activity).getString(SP_USER_ID));
+        map.put("id", SPUtils.getInstance().getString(SP_USER_ID));
         HttpHelper.get(BASE_URL + CANCEL_LOGIN, headers, map, new NetCallback() {
             @Override
             public void onSuccess(String succeed) {

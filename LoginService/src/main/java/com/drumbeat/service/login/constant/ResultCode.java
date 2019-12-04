@@ -1,4 +1,4 @@
-package com.drumbeat.service.login;
+package com.drumbeat.service.login.constant;
 
 /**
  * Created by ZuoHailong on 2019/10/16.

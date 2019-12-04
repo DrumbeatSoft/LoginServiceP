@@ -9,19 +9,13 @@ import android.widget.EditText;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
-import com.drumbeat.service.login.LoginServiceHelper;
+import com.drumbeat.service.login.LoginService;
 import com.drumbeat.service.login.ResultCallback;
-import com.drumbeat.service.login.ResultCode;
-import com.drumbeat.service.login.ServiceConfig;
+import com.drumbeat.service.login.constant.ResultCode;
+import com.drumbeat.service.login.config.ServiceConfig;
 import com.drumbeat.service.login.bean.LoginResultBean;
-import com.yanzhenjie.kalle.JsonBody;
-import com.yanzhenjie.kalle.Kalle;
-import com.yanzhenjie.kalle.StringBody;
-import com.yanzhenjie.kalle.simple.SimpleCallback;
-import com.yanzhenjie.kalle.simple.SimpleResponse;
 
 /**
  * Created by ZuoHailong on 2019/12/3.
@@ -68,12 +62,12 @@ public class LoginActivity extends AppCompatActivity {
                 SPUtils.getInstance().put("account", etAccount.getEditableText().toString().trim());
                 SPUtils.getInstance().put("pwd", etPwd.getEditableText().toString().trim());
 
-                LoginServiceHelper.setConfig(ServiceConfig.newBuilder()
+                LoginService.setConfig(ServiceConfig.newBuilder()
                         .setAppId("0")
                         .setTenant(tenant)
                         .setBaseUrl("http://192.168.20.233:30060/")
                         .build());
-                LoginServiceHelper.login(account, pwd, new ResultCallback<LoginResultBean>() {
+                LoginService.login(account, pwd, new ResultCallback<LoginResultBean>() {
                     @Override
                     public void onSuccess(LoginResultBean succeed) {
                         ToastUtils.showShort("登录成功，现在可以扫码登录了");
@@ -87,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
             }
         });
-        btnScan.setOnClickListener(view -> LoginServiceHelper.scan(LoginActivity.this, new ResultCallback() {
+        btnScan.setOnClickListener(view -> LoginService.scan(LoginActivity.this, new ResultCallback() {
             @Override
             public void onSuccess(Object succeed) {
 

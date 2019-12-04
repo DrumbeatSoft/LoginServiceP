@@ -1,9 +1,10 @@
-package com.drumbeat.service.login;
+package com.drumbeat.service.login.config;
 
-import android.content.Context;
 import android.text.TextUtils;
 
-import com.drumbeat.sdk.helper.HttpHelper;
+import com.drumbeat.sdk.DrumbeatSDK;
+
+import static com.drumbeat.service.login.constant.APIInterface.BASE_URL;
 
 /**
  * Created by ZuoHailong on 2019/12/3.
@@ -33,7 +34,8 @@ public final class ServiceConfig {
     }
 
     public String getBaseUrl() {
-        return baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
+        String base_url = TextUtils.isEmpty(baseUrl) ? BASE_URL : baseUrl;
+        return base_url.endsWith("/") ? base_url : base_url + "/";
     }
 
     public final static class Builder {
@@ -81,7 +83,7 @@ public final class ServiceConfig {
          * @return ServiceConfig实例
          */
         public ServiceConfig build() {
-//            HttpHelper.init();
+            DrumbeatSDK.newInstance().init();
             return new ServiceConfig(this);
         }
     }

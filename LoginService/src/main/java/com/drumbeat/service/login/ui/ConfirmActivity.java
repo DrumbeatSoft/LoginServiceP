@@ -4,20 +4,16 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.drumbeat.service.login.ProcessControl;
 import com.drumbeat.service.login.R;
 import com.drumbeat.service.login.ResultCallback;
-import com.drumbeat.service.login.ResultCode;
+import com.drumbeat.service.login.constant.ResultCode;
 
 public class ConfirmActivity extends Activity implements View.OnClickListener {
 
@@ -42,7 +38,7 @@ public class ConfirmActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         int viewId = view.getId();
         if (viewId == R.id.tvLogin) {
-            ProcessControl.login(this, new ResultCallback() {
+            ProcessControl.login(new ResultCallback() {
                 @Override
                 public void onSuccess(Object succeed) {
                     ToastUtils.showShort(getString(R.string.dblogin_login_success));
@@ -55,7 +51,7 @@ public class ConfirmActivity extends Activity implements View.OnClickListener {
                 }
             });
         } else if (viewId == R.id.tvCancel) {
-            ProcessControl.cancelLogin(this, new ResultCallback() {
+            ProcessControl.cancelLogin(new ResultCallback() {
                 @Override
                 public void onSuccess(Object succeed) {
                     ToastUtils.showShort(getString(R.string.dblogin_cancel_login_success));

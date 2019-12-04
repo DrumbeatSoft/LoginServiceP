@@ -1,7 +1,5 @@
 package com.drumbeat.sdk;
 
-import android.content.Context;
-
 import com.drumbeat.sdk.helper.HttpHelper;
 
 /**
