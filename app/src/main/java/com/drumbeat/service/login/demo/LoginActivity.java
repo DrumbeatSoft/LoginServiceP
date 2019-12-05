@@ -37,9 +37,12 @@ public class LoginActivity extends AppCompatActivity {
         etPwd = findViewById(R.id.etPwd);
         btnLogin = findViewById(R.id.btnLogin);
         btnScan = findViewById(R.id.btnScan);
-        etTenant.setText(SPUtils.getInstance().getString("tenant"));
-        etAccount.setText(SPUtils.getInstance().getString("account"));
-        etPwd.setText(SPUtils.getInstance().getString("pwd"));
+        String tenant = SPUtils.getInstance().getString("tenant");
+        String account = SPUtils.getInstance().getString("account");
+        String pwd = SPUtils.getInstance().getString("pwd");
+        etTenant.setText(TextUtils.isEmpty(tenant) ? "zt" : tenant);
+        etAccount.setText(TextUtils.isEmpty(account) ? "岳真真" : account);
+        etPwd.setText(TextUtils.isEmpty(pwd) ? "MM2019" : pwd);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                 SPUtils.getInstance().put("pwd", etPwd.getEditableText().toString().trim());
 
                 LoginService.setConfig(ServiceConfig.newBuilder()
-                        .setAppId("0")
+                        .setAppId("121535713400328192")
                         .setTenant(tenant)
                         .setBaseUrl("http://192.168.20.233:30060/")
                         .build());

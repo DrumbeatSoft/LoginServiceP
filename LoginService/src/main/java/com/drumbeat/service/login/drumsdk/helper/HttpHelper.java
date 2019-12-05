@@ -10,7 +10,6 @@ import com.drumbeat.service.login.drumsdk.kalle.NetCallback;
 import com.yanzhenjie.kalle.JsonBody;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.KalleConfig;
-import com.yanzhenjie.kalle.OkHttpConnectFactory;
 import com.yanzhenjie.kalle.Params;
 import com.yanzhenjie.kalle.connect.BroadcastNetwork;
 import com.yanzhenjie.kalle.cookie.DBCookieStore;
@@ -34,7 +33,7 @@ public class HttpHelper {
      */
     public static void init() {
         Kalle.setConfig(KalleConfig.newBuilder()
-                .connectFactory(OkHttpConnectFactory.newBuilder().build())
+//                .connectFactory(OkHttpConnectFactory.newBuilder().build())
                 .connectionTimeout(3, TimeUnit.MINUTES)
                 .readTimeout(3, TimeUnit.MINUTES)
                 .cookieStore(DBCookieStore.newBuilder(Utils.getApp()).build())
