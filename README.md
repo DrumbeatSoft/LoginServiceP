@@ -14,7 +14,7 @@ implementation 'com.github.ZuoHailong:LoginServiceP:0.1.1'
 
 <br>
 
-### 初始化配置
+### 1、初始化配置
 ```java
 
 LoginService.setConfig(ServiceConfig.newBuilder()
@@ -27,11 +27,11 @@ LoginService.setConfig(ServiceConfig.newBuilder()
 
 * appId：【必须】应用标识，公司各应用有各自的appId
 * tenant：租户标识
-* baseUrl：要访问的中台服务器的baseUrl，形如："http://192.168.1.1:8080/"
+* baseUrl：要访问的中台服务器的baseUrl，形如："http://192.168.20.233:30060/" （测试时用此url）
 
 <br>
 
-### 调用中台登录接口
+### 2、调用中台登录接口
 ```java
 
 LoginService.login(String account, String password, ResultCallback<LoginResultBean> callback);
@@ -61,7 +61,7 @@ public class LoginResultBean {
 ```
 <br>
 
-### 拉起扫码登录页面（用于支持Web端管理系统的扫码登陆）
+### 3、拉起扫码登录页面（用于支持Web端管理系统的扫码登陆）
 ```java
 
 LoginService.scan(Activity activity, ResultCallback callback);
