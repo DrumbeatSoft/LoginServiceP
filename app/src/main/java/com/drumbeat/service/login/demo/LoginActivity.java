@@ -70,6 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                         .setTenant(tenant)
                         .setBaseUrl("http://192.168.20.233:30060/")
                         .build());
+
                 LoginService.login(account, pwd, new ResultCallback<LoginResultBean>() {
                     @Override
                     public void onSuccess(LoginResultBean succeed) {
@@ -79,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onFail(ResultCode resultCode) {
-
+                        ToastUtils.showShort("登录失败：" + resultCode.name());
                     }
                 });
             }
@@ -87,12 +88,12 @@ public class LoginActivity extends AppCompatActivity {
         btnScan.setOnClickListener(view -> LoginService.scan(LoginActivity.this, new ResultCallback() {
             @Override
             public void onSuccess(Object succeed) {
-
+                ToastUtils.showShort("扫码登录成功");
             }
 
             @Override
             public void onFail(ResultCode resultCode) {
-
+                ToastUtils.showShort("扫码登录失败：" + resultCode.name());
             }
         }));
     }

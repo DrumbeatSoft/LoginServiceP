@@ -2,6 +2,7 @@ package com.drumbeat.service.login;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import com.drumbeat.sdk.qbar.ScanResult;
 import com.drumbeat.service.login.bean.BaseBean;
 import com.drumbeat.service.login.bean.LoginResultBean;
 import com.drumbeat.service.login.config.ServiceConfig;
+import com.drumbeat.service.login.constant.ResultCode;
 import com.drumbeat.service.login.drumsdk.helper.HttpHelper;
 import com.drumbeat.service.login.drumsdk.kalle.NetCallback;
 import com.drumbeat.service.login.ui.ConfirmActivity;
@@ -28,6 +30,7 @@ import static com.drumbeat.service.login.constant.APIInterface.CONFIRM_LOGIN;
 import static com.drumbeat.service.login.constant.APIInterface.LOGIN_URL;
 import static com.drumbeat.service.login.constant.APIInterface.SCAN_CODE;
 import static com.drumbeat.service.login.constant.ResultCode.CANCEL_LOGIN_QRCODE;
+import static com.drumbeat.service.login.constant.ResultCode.ERROR_CANCEL_LOGIN_QRCODE;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_LOGIN_ACCOUNT;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_NULL_ACCOUNT;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_NULL_APPID;
@@ -43,6 +46,8 @@ import static com.drumbeat.service.login.constant.Constant.SP_USER_ID;
  */
 public class ProcessControl {
 
+    private static Messenger mMessenger;
+
     /**
      * 账号密码登录
      */
@@ -50,15 +55,15 @@ public class ProcessControl {
         ServiceConfig serviceConfig = LoginService.getConfig();
 
         if (TextUtils.isEmpty(serviceConfig.getAppId())) {
-            callback.onFail(ERROR_NULL_APPID);
+            onFailCallback(callback, ERROR_NULL_APPID);
             return;
         }
         if (TextUtils.isEmpty(account)) {
-            callback.onFail(ERROR_NULL_ACCOUNT);
+            onFailCallback(callback, ERROR_NULL_ACCOUNT);
             return;
         }
         if (TextUtils.isEmpty(password)) {
-            callback.onFail(ERROR_NULL_PASSWORD);
+            onFailCallback(callback, ERROR_NULL_PASSWORD);
             return;
         }
         JSONObject jsonObject = new JSONObject();
@@ -81,26 +86,26 @@ public class ProcessControl {
             @Override
             public void onSuccess(String succeed) {
                 if (TextUtils.isEmpty(succeed)) {
-                    callback.onFail(ERROR_LOGIN_ACCOUNT);
+                    onFailCallback(callback, ERROR_LOGIN_ACCOUNT);
                     return;
                 }
                 BaseBean baseBean = JSONObject.parseObject(succeed, BaseBean.class);
                 if (baseBean == null || TextUtils.isEmpty(baseBean.getEntity())) {
-                    callback.onFail(ERROR_LOGIN_ACCOUNT);
+                    onFailCallback(callback, ERROR_LOGIN_ACCOUNT);
                     return;
                 }
                 LoginResultBean loginResultBean = JSONObject.parseObject(baseBean.getEntity(), LoginResultBean.class);
                 if (loginResultBean == null || TextUtils.isEmpty(loginResultBean.getToken())) {
-                    callback.onFail(ERROR_LOGIN_ACCOUNT);
+                    onFailCallback(callback, ERROR_LOGIN_ACCOUNT);
                     return;
                 }
                 SPUtils.getInstance().put(SP_TOKEN, loginResultBean.getToken());
-                callback.onSuccess(loginResultBean);
+                onSuccessCallback(callback, loginResultBean);
             }
 
             @Override
-            public void onFailed(String failed) {
-                callback.onFail(ERROR_LOGIN_ACCOUNT);
+            public void onFail(String failed) {
+                onFailCallback(callback, ERROR_LOGIN_ACCOUNT);
             }
         });
     }
@@ -116,8 +121,7 @@ public class ProcessControl {
                     @Override
                     public void onSuccess(ScanResult scanResult) {
                         if (scanResult == null || TextUtils.isEmpty(scanResult.getContent())) {
-                            if (callback != null)
-                                callback.onFail(ERROR_QRCODE_SCAN);
+                            onFailCallback(callback, ERROR_QRCODE_SCAN);
                         } else {
                             // 扫码得到二维码数据，下一步验证二维码数据，进行登录
                             SPUtils.getInstance().put(SP_USER_ID, scanResult.getContent());
@@ -127,8 +131,7 @@ public class ProcessControl {
 
                     @Override
                     public void onFail() {
-                        if (callback != null)
-                            callback.onFail(ERROR_QRCODE_SCAN);
+                        onFailCallback(callback, ERROR_QRCODE_SCAN);
                     }
                 });
     }
@@ -145,28 +148,38 @@ public class ProcessControl {
             @Override
             public void onSuccess(String succeed) {
                 if (TextUtils.isEmpty(succeed)) {
-                    callback.onFail(ERROR_QRCODE_VERIFY);
+                    onFailCallback(callback, ERROR_QRCODE_VERIFY);
                     return;
                 }
                 BaseBean baseBean = JSONObject.parseObject(succeed, BaseBean.class);
                 if (baseBean == null) {
-                    callback.onFail(ERROR_QRCODE_VERIFY);
+                    onFailCallback(callback, ERROR_QRCODE_VERIFY);
                     return;
                 }
                 JSONObject jsonObject = JSONObject.parseObject(baseBean.getEntity());
                 if (jsonObject == null || !jsonObject.getBoolean("Success")) {
-                    callback.onFail(ERROR_QRCODE_VERIFY);
+                    onFailCallback(callback, ERROR_QRCODE_VERIFY);
                     return;
                 }
-                // 扫码成功，下一步登录确认
+                /*
+                 * 扫码成功，下一步登录确认
+                 * */
+                // 扫码的回调消息
+                mMessenger = new Messenger(activity, (Messenger.Message message) -> {
+                    if (message.getResultCode() == ResultCode.SUCCEES) {
+                        onSuccessCallback(callback, message.getData());
+                    } else {
+                        onFailCallback(callback, message.getResultCode());
+                    }
+                    mMessenger.unRegister();
+                });
+                mMessenger.register();
                 activity.startActivity(new Intent(activity, ConfirmActivity.class));
             }
 
             @Override
-            public void onFailed(String failed) {
-                if (callback != null)
-                    callback.onFail(ERROR_QRCODE_VERIFY);
-
+            public void onFail(String failed) {
+                onFailCallback(callback, ERROR_QRCODE_VERIFY);
             }
         });
     }
@@ -174,7 +187,7 @@ public class ProcessControl {
     /**
      * 扫码后确认登录
      */
-    public static void login(ResultCallback callback) {
+    public static void login(Activity activity, ResultCallback callback) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", SPUtils.getInstance().getString(SP_TOKEN));
         Map<String, String> params = new HashMap<>();
@@ -183,27 +196,26 @@ public class ProcessControl {
             @Override
             public void onSuccess(String succeed) {
                 if (TextUtils.isEmpty(succeed)) {
-                    callback.onFail(ERROR_QRCODE_LOGIN);
+                    onFailCallback(callback, ERROR_QRCODE_LOGIN);
                     return;
                 }
                 BaseBean baseBean = JSONObject.parseObject(succeed, BaseBean.class);
                 if (baseBean == null) {
-                    callback.onFail(ERROR_QRCODE_LOGIN);
+                    onFailCallback(callback, ERROR_QRCODE_LOGIN);
                     return;
                 }
                 JSONObject jsonObject = JSONObject.parseObject(baseBean.getEntity());
                 if (jsonObject == null || !jsonObject.getBoolean("Success")) {
-                    callback.onFail(ERROR_QRCODE_LOGIN);
+                    onFailCallback(callback, ERROR_QRCODE_LOGIN);
                     return;
                 }
-                callback.onSuccess(succeed);
+                onSuccessCallback(callback, succeed);
+                activity.finish();
             }
 
             @Override
-            public void onFailed(String failed) {
-                if (callback != null)
-                    callback.onFail(ERROR_QRCODE_LOGIN);
-
+            public void onFail(String failed) {
+                onFailCallback(callback, ERROR_QRCODE_LOGIN);
             }
         });
     }
@@ -211,7 +223,7 @@ public class ProcessControl {
     /**
      * 取消登录
      */
-    public static void cancelLogin(ResultCallback callback) {
+    public static void cancelLogin(Activity activity, ResultCallback callback) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", SPUtils.getInstance().getString(SP_TOKEN));
         Map<String, String> map = new HashMap<>();
@@ -220,29 +232,40 @@ public class ProcessControl {
             @Override
             public void onSuccess(String succeed) {
                 if (TextUtils.isEmpty(succeed)) {
-                    callback.onFail(CANCEL_LOGIN_QRCODE);
+                    onFailCallback(callback, ERROR_CANCEL_LOGIN_QRCODE);
                     return;
                 }
                 BaseBean baseBean = JSONObject.parseObject(succeed, BaseBean.class);
                 if (baseBean == null) {
-                    callback.onFail(CANCEL_LOGIN_QRCODE);
+                    onFailCallback(callback, ERROR_CANCEL_LOGIN_QRCODE);
                     return;
                 }
                 JSONObject jsonObject = JSONObject.parseObject(baseBean.getEntity());
                 if (jsonObject == null || !jsonObject.getBoolean("Success")) {
-                    callback.onFail(CANCEL_LOGIN_QRCODE);
+                    onFailCallback(callback, ERROR_CANCEL_LOGIN_QRCODE);
                     return;
                 }
-                callback.onSuccess(succeed);
+                // 用户手动取消扫码登录，走失败回调
+                onFailCallback(callback, CANCEL_LOGIN_QRCODE);
+                activity.finish();
             }
 
             @Override
-            public void onFailed(String failed) {
-                if (callback != null)
-                    callback.onFail(CANCEL_LOGIN_QRCODE);
-
+            public void onFail(String failed) {
+                onFailCallback(callback, ERROR_CANCEL_LOGIN_QRCODE);
             }
         });
     }
 
+    private static void onSuccessCallback(ResultCallback callback, Object succeed) {
+        if (callback != null) {
+            callback.onSuccess(succeed);
+        }
+    }
+
+    private static void onFailCallback(ResultCallback callback, ResultCode resultCode) {
+        if (callback != null) {
+            callback.onFail(resultCode);
+        }
+    }
 }

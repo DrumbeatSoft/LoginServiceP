@@ -1,9 +1,15 @@
 package com.drumbeat.service.login.constant;
 
+import java.io.Serializable;
+
 /**
  * Created by ZuoHailong on 2019/10/16.
  */
-public enum ResultCode {
+public enum ResultCode implements Serializable {
+    /**
+     * 成功
+     */
+    SUCCEES,
     /**
      * 账号密码登录失败
      */
@@ -21,9 +27,13 @@ public enum ResultCode {
      */
     ERROR_QRCODE_LOGIN,
     /**
-     * 取消扫码登录
+     * 用户取消扫码登录
      */
     CANCEL_LOGIN_QRCODE,
+    /**
+     * 取消扫码登录操作失败
+     */
+    ERROR_CANCEL_LOGIN_QRCODE,
 
 
     /********************************************************** 入参验证 ********************************************************/

@@ -6,5 +6,5 @@ package com.drumbeat.service.login.drumsdk.kalle;
 public interface NetCallback {
     void onSuccess(String succeed);
 
-    void onFailed(String failed);
+    void onFail(String failed);
 }

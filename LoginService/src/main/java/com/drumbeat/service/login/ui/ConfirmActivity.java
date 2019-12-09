@@ -10,6 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.blankj.utilcode.util.BarUtils;
 import com.blankj.utilcode.util.ToastUtils;
+import com.drumbeat.service.login.Messenger;
 import com.drumbeat.service.login.ProcessControl;
 import com.drumbeat.service.login.R;
 import com.drumbeat.service.login.ResultCallback;
@@ -38,33 +39,36 @@ public class ConfirmActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         int viewId = view.getId();
         if (viewId == R.id.tvLogin) {
-            ProcessControl.login(new ResultCallback() {
+            ProcessControl.login(this, new ResultCallback() {
                 @Override
                 public void onSuccess(Object succeed) {
-                    ToastUtils.showShort(getString(R.string.dblogin_login_success));
+                    Messenger.send(ConfirmActivity.this, new Messenger.Message().setResultCode(ResultCode.SUCCEES).setData((String) succeed));
                     finish();
                 }
 
                 @Override
                 public void onFail(ResultCode resultCode) {
-                    ToastUtils.showShort(getString(R.string.dblogin_login_fail));
+                    Messenger.send(ConfirmActivity.this, new Messenger.Message().setResultCode(resultCode));
+                    finish();
                 }
             });
         } else if (viewId == R.id.tvCancel) {
-            ProcessControl.cancelLogin(new ResultCallback() {
+            ProcessControl.cancelLogin(this, new ResultCallback() {
                 @Override
                 public void onSuccess(Object succeed) {
-                    ToastUtils.showShort(getString(R.string.dblogin_cancel_login_success));
+                    Messenger.send(ConfirmActivity.this, new Messenger.Message().setResultCode(ResultCode.SUCCEES).setData((String) succeed));
                     finish();
                 }
 
                 @Override
                 public void onFail(ResultCode resultCode) {
-                    ToastUtils.showShort(getString(R.string.dblogin_cancel_login_fail));
+                    Messenger.send(ConfirmActivity.this, new Messenger.Message().setResultCode(resultCode));
+                    finish();
                 }
             });
         } else if (viewId == R.id.tvClose) {
             finish();
         }
     }
+
 }

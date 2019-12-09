@@ -25,7 +25,7 @@ android {
 
 dependencies {
     implementation project(':LoginService')
-//    implementation 'com.github.ZuoHailong:LoginServiceP:0.1.1'
+//    implementation 'com.github.ZuoHailong:LoginServiceP:0.1.3'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
