@@ -8,7 +8,7 @@
 ### 引入
 ```java
 
-implementation 'com.github.ZuoHailong:LoginServiceP:0.1.1'
+implementation 'com.github.ZuoHailong:LoginServiceP:0.1.2'
 
 ```
 
