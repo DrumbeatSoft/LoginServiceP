@@ -1,8 +1,10 @@
-package com.drumbeat.sdk.qbar;
+package com.drumbeat.service.login.qbar;
 
 import android.app.Activity;
 import android.graphics.Color;
 import android.text.TextUtils;
+
+import com.drumbeat.service.login.R;
 
 import cn.bertsir.zbar.QrConfig;
 import cn.bertsir.zbar.QrManager;
@@ -60,7 +62,7 @@ public class QBarHelper {
 
         QrManager.getInstance().init(qrConfig).startScan(activity, result -> {
             if (result != null) {
-                com.drumbeat.sdk.qbar.ScanResult scanResult = new com.drumbeat.sdk.qbar.ScanResult();
+                ScanResult scanResult = new ScanResult();
                 scanResult.setType(result.getType() == 1 ? CodeType.QR_CODE : CodeType.BAR_CODE).setContent(result.getContent());
                 listener.onSuccess(scanResult);
             } else {

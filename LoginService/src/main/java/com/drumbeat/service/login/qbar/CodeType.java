@@ -1,4 +1,4 @@
-package com.drumbeat.sdk.qbar;
+package com.drumbeat.service.login.qbar;
 
 /**
  * 图形码类型枚举类：二维码 / 条形码

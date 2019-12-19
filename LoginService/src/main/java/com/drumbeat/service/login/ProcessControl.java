@@ -2,23 +2,22 @@ package com.drumbeat.service.login;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.SPUtils;
-import com.drumbeat.sdk.qbar.CodeType;
-import com.drumbeat.sdk.qbar.OnScanListener;
-import com.drumbeat.sdk.qbar.QBarHelper;
-import com.drumbeat.sdk.qbar.ScanResult;
 import com.drumbeat.service.login.bean.BaseBean;
 import com.drumbeat.service.login.bean.LoginResultBean;
 import com.drumbeat.service.login.config.ServiceConfig;
 import com.drumbeat.service.login.constant.ResultCode;
 import com.drumbeat.service.login.drumsdk.helper.HttpHelper;
 import com.drumbeat.service.login.drumsdk.kalle.NetCallback;
+import com.drumbeat.service.login.qbar.CodeType;
+import com.drumbeat.service.login.qbar.OnScanListener;
+import com.drumbeat.service.login.qbar.QBarHelper;
+import com.drumbeat.service.login.qbar.ScanResult;
 import com.drumbeat.service.login.ui.ConfirmActivity;
 
 import java.util.HashMap;
@@ -29,6 +28,8 @@ import static com.drumbeat.service.login.constant.APIInterface.CANCEL_LOGIN;
 import static com.drumbeat.service.login.constant.APIInterface.CONFIRM_LOGIN;
 import static com.drumbeat.service.login.constant.APIInterface.LOGIN_URL;
 import static com.drumbeat.service.login.constant.APIInterface.SCAN_CODE;
+import static com.drumbeat.service.login.constant.Constant.SP_TOKEN;
+import static com.drumbeat.service.login.constant.Constant.SP_USER_ID;
 import static com.drumbeat.service.login.constant.ResultCode.CANCEL_LOGIN_QRCODE;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_CANCEL_LOGIN_QRCODE;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_LOGIN_ACCOUNT;
@@ -38,8 +39,6 @@ import static com.drumbeat.service.login.constant.ResultCode.ERROR_NULL_PASSWORD
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_QRCODE_LOGIN;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_QRCODE_SCAN;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_QRCODE_VERIFY;
-import static com.drumbeat.service.login.constant.Constant.SP_TOKEN;
-import static com.drumbeat.service.login.constant.Constant.SP_USER_ID;
 
 /**
  * Created by ZuoHailong on 2019/10/17.

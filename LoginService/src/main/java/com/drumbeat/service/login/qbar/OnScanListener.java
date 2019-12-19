@@ -1,4 +1,4 @@
-package com.drumbeat.sdk.qbar;
+package com.drumbeat.service.login.qbar;
 
 /**
  * 扫描监听
