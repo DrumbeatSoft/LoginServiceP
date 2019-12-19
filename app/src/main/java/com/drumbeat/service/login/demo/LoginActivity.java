@@ -40,62 +40,60 @@ public class LoginActivity extends AppCompatActivity {
         String tenant = SPUtils.getInstance().getString("tenant");
         String account = SPUtils.getInstance().getString("account");
         String pwd = SPUtils.getInstance().getString("pwd");
-        etTenant.setText(TextUtils.isEmpty(tenant) ? "zt" : tenant);
+        etTenant.setText(TextUtils.isEmpty(tenant) ? "Auth" : tenant);
         etAccount.setText(TextUtils.isEmpty(account) ? "岳真真" : account);
         etPwd.setText(TextUtils.isEmpty(pwd) ? "MM2019" : pwd);
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String tenant = etTenant.getEditableText().toString().trim();
-                if (TextUtils.isEmpty(tenant)) {
-                    ToastUtils.showShort("请输入租户");
-                    return;
-                }
-                String account = etAccount.getEditableText().toString().trim();
-                if (TextUtils.isEmpty(account)) {
-                    ToastUtils.showShort("请输入账号");
-                    return;
-                }
-                String pwd = etPwd.getEditableText().toString().trim();
-                if (TextUtils.isEmpty(pwd)) {
-                    ToastUtils.showShort("请输入密码");
-                    return;
-                }
-                SPUtils.getInstance().put("tenant", etTenant.getEditableText().toString().trim());
-                SPUtils.getInstance().put("account", etAccount.getEditableText().toString().trim());
-                SPUtils.getInstance().put("pwd", etPwd.getEditableText().toString().trim());
+        btnLogin.setOnClickListener(view -> {
+            String tenant1 = etTenant.getEditableText().toString().trim();
+            if (TextUtils.isEmpty(tenant1)) {
+                ToastUtils.showShort("请输入租户");
+                return;
+            }
+            String account1 = etAccount.getEditableText().toString().trim();
+            if (TextUtils.isEmpty(account1)) {
+                ToastUtils.showShort("请输入账号");
+                return;
+            }
+            String pwd1 = etPwd.getEditableText().toString().trim();
+            if (TextUtils.isEmpty(pwd1)) {
+                ToastUtils.showShort("请输入密码");
+                return;
+            }
+            SPUtils.getInstance().put("tenant", etTenant.getEditableText().toString().trim());
+            SPUtils.getInstance().put("account", etAccount.getEditableText().toString().trim());
+            SPUtils.getInstance().put("pwd", etPwd.getEditableText().toString().trim());
 
-                LoginService.setConfig(ServiceConfig.newBuilder()
-                        .setAppId("121535713400328192")
-                        .setTenant(tenant)
-                        .setBaseUrl("http://192.168.20.233:30060/")
-                        .build());
+            LoginService.setConfig(ServiceConfig.newBuilder()
+                    .setAppId("125438260305469440")
+                    .setTenant(tenant1)
+                    .setBaseUrl("http://192.168.20.233:30060/")
+                    .build());
 
-                LoginService.login(account, pwd, new ResultCallback<LoginResultBean>() {
+            LoginService.login(account1, pwd1, new ResultCallback<LoginResultBean>() {
+                @Override
+                public void onSuccess(LoginResultBean succeed) {
+                    ToastUtils.showShort("登录成功，现在可以扫码登录了");
+                    btnScan.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onFail(ResultCode resultCode) {
+                    ToastUtils.showShort("登录失败：" + resultCode.name());
+                }
+            });
+        });
+        btnScan.setOnClickListener(view ->
+                LoginService.scan(LoginActivity.this, new ResultCallback() {
                     @Override
-                    public void onSuccess(LoginResultBean succeed) {
-                        ToastUtils.showShort("登录成功，现在可以扫码登录了");
-                        btnScan.setVisibility(View.VISIBLE);
+                    public void onSuccess(Object succeed) {
+                        ToastUtils.showShort("扫码登录成功");
                     }
 
                     @Override
                     public void onFail(ResultCode resultCode) {
-                        ToastUtils.showShort("登录失败：" + resultCode.name());
+                        ToastUtils.showShort("扫码登录失败：" + resultCode.name());
                     }
-                });
-            }
-        });
-        btnScan.setOnClickListener(view -> LoginService.scan(LoginActivity.this, new ResultCallback() {
-            @Override
-            public void onSuccess(Object succeed) {
-                ToastUtils.showShort("扫码登录成功");
-            }
-
-            @Override
-            public void onFail(ResultCode resultCode) {
-                ToastUtils.showShort("扫码登录失败：" + resultCode.name());
-            }
-        }));
+                }));
     }
 
 }
