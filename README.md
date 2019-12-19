@@ -8,7 +8,7 @@
 ### 引入
 ```java
 
-implementation 'com.github.ZuoHailong:LoginServiceP:0.1.3'
+implementation 'com.github.ZuoHailong:LoginServiceP:0.1.4'
 
 ```
 
@@ -65,6 +65,14 @@ public class LoginResultBean {
 ```java
 
 LoginService.scan(Activity activity, ResultCallback callback);
+
+```
+<br>
+
+### 4、Ghost APP 获取中台token
+```java
+
+LoginService.getCentralizerToken();
 
 ```
 <br>
