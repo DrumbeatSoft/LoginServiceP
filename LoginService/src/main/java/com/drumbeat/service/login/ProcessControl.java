@@ -215,7 +215,12 @@ public class ProcessControl {
                     onFailCallback(callback, ERROR_GET_USER_INFO);
                     return;
                 }
-                UserInfoBean userInfoBean = JSONObject.parseObject(succeed, UserInfoBean.class);
+                BaseBean baseBean = JSONObject.parseObject(succeed, BaseBean.class);
+                if (baseBean == null || TextUtils.isEmpty(baseBean.getEntity())) {
+                    onFailCallback(callback, ERROR_GET_USER_INFO);
+                    return;
+                }
+                UserInfoBean userInfoBean = JSONObject.parseObject(baseBean.getEntity(), UserInfoBean.class);
                 if (userInfoBean == null || userInfoBean.getResult() == null) {
                     onFailCallback(callback, ERROR_GET_USER_INFO);
                     return;
