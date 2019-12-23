@@ -37,6 +37,13 @@
             android:layout_margin="20dp"
             android:text="登录" />
 
+        <Button
+            android:id="@+id/btnModify"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="20dp"
+            android:text="修改密码" />
+
     </LinearLayout>
 
     <Button

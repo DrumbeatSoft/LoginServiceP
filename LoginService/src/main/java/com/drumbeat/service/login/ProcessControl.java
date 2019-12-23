@@ -3,6 +3,7 @@ package com.drumbeat.service.login;
 import android.app.Activity;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 
@@ -10,6 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.SPUtils;
 import com.drumbeat.service.login.bean.BaseBean;
 import com.drumbeat.service.login.bean.LoginResultBean;
+import com.drumbeat.service.login.bean.ResultBean;
 import com.drumbeat.service.login.config.ServiceConfig;
 import com.drumbeat.service.login.constant.ResultCode;
 import com.drumbeat.service.login.drumsdk.helper.HttpHelper;
@@ -27,12 +29,14 @@ import static com.drumbeat.service.login.constant.APIInterface.BASE_URL;
 import static com.drumbeat.service.login.constant.APIInterface.CANCEL_LOGIN;
 import static com.drumbeat.service.login.constant.APIInterface.CONFIRM_LOGIN;
 import static com.drumbeat.service.login.constant.APIInterface.LOGIN_URL;
+import static com.drumbeat.service.login.constant.APIInterface.MODIFY_PASSWORD;
 import static com.drumbeat.service.login.constant.APIInterface.SCAN_CODE;
 import static com.drumbeat.service.login.constant.Constant.SP_TOKEN;
 import static com.drumbeat.service.login.constant.Constant.SP_USER_ID;
 import static com.drumbeat.service.login.constant.ResultCode.CANCEL_LOGIN_QRCODE;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_CANCEL_LOGIN_QRCODE;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_LOGIN_ACCOUNT;
+import static com.drumbeat.service.login.constant.ResultCode.ERROR_MODIFY_PASSWORD;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_NULL_ACCOUNT;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_NULL_APPID;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_NULL_PASSWORD;
@@ -105,6 +109,79 @@ public class ProcessControl {
             @Override
             public void onFail(String failed) {
                 onFailCallback(callback, ERROR_LOGIN_ACCOUNT);
+            }
+        });
+    }
+
+    /**
+     * 修改密码
+     */
+    static void modifyPwd(@NonNull String oldPwd, @NonNull String newPwd, @NonNull String centralizerToken, ResultCallback<ResultBean> callback) {
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", centralizerToken);
+
+        String[] split = centralizerToken.split("\\.");
+        String base64 = split[1];
+        String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
+        JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
+        String id = userJSONObject.getString("AccountId");
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("OldPassword", oldPwd);
+        jsonObject.put("Password", newPwd);
+        jsonObject.put("Id", id);
+
+        JSONObject object = new JSONObject();
+        object.put("input", jsonObject);
+
+        ServiceConfig serviceConfig = LoginService.getConfig();
+        HttpHelper.post(serviceConfig.getBaseUrl() + MODIFY_PASSWORD, headers, object, new NetCallback() {
+            @Override
+            public void onSuccess(String succeed) {
+                if (TextUtils.isEmpty(succeed)) {
+                    onFailCallback(callback, ERROR_MODIFY_PASSWORD);
+                    return;
+                }
+                BaseBean baseBean = JSONObject.parseObject(succeed, BaseBean.class);
+                if (baseBean == null || TextUtils.isEmpty(baseBean.getEntity())) {
+                    onFailCallback(callback, ERROR_MODIFY_PASSWORD);
+                    return;
+                }
+                ResultBean resultBean = JSONObject.parseObject(baseBean.getEntity(), ResultBean.class);
+                if (resultBean == null) {
+                    onFailCallback(callback, ERROR_MODIFY_PASSWORD);
+                    return;
+                }
+                switch (resultBean.getCode()) {
+                    case 1:
+                        callback.onSuccess(resultBean);
+                        break;
+                    /*case 0:
+                        callback.onFail("修改失败");
+                        break;
+                    case 2:
+                        callback.onFail("旧密码错误");
+                        break;
+                    case 3:
+                        callback.onFail("账户不存在");
+                        break;
+                    case 4:
+                        callback.onFail("账户或密码错误");
+                        break;
+                    case 10:
+                        callback.onFail("登录状态错误");
+                        break;*/
+                    default:
+//                        callback.onFail("修改失败");
+                        onFailCallback(callback, ERROR_MODIFY_PASSWORD);
+                        break;
+                }
+            }
+
+            @Override
+            public void onFail(String failed) {
+                onFailCallback(callback, ERROR_MODIFY_PASSWORD);
             }
         });
     }

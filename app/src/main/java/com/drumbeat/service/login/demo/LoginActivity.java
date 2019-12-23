@@ -13,6 +13,8 @@ import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.drumbeat.service.login.LoginService;
 import com.drumbeat.service.login.ResultCallback;
+import com.drumbeat.service.login.bean.ResultBean;
+import com.drumbeat.service.login.constant.Constant;
 import com.drumbeat.service.login.constant.ResultCode;
 import com.drumbeat.service.login.config.ServiceConfig;
 import com.drumbeat.service.login.bean.LoginResultBean;
@@ -26,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText etAccount;
     EditText etPwd;
     Button btnLogin;
+    Button btnModify;
     Button btnScan;
 
     @Override
@@ -36,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         etAccount = findViewById(R.id.etAccount);
         etPwd = findViewById(R.id.etPwd);
         btnLogin = findViewById(R.id.btnLogin);
+        btnModify = findViewById(R.id.btnModify);
         btnScan = findViewById(R.id.btnScan);
         String tenant = SPUtils.getInstance().getString("tenant");
         String account = SPUtils.getInstance().getString("account");
@@ -94,6 +98,23 @@ public class LoginActivity extends AppCompatActivity {
                         ToastUtils.showShort("扫码登录失败：" + resultCode.name());
                     }
                 }));
+
+        btnModify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoginService.modifyPassword("MM2019", "MM2020", SPUtils.getInstance().getString(Constant.SP_TOKEN), new ResultCallback<ResultBean>() {
+                    @Override
+                    public void onSuccess(ResultBean succeed) {
+                        ToastUtils.showShort("密码修改成功，改为了 MM2020");
+                    }
+
+                    @Override
+                    public void onFail(ResultCode resultCode) {
+                        ToastUtils.showShort("修改失败");
+                    }
+                });
+            }
+        });
     }
 
 }

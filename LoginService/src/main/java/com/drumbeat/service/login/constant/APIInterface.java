@@ -27,4 +27,9 @@ public interface APIInterface {
      * 取消扫码登录
      */
     String CANCEL_LOGIN = "gateway/api/account/cancelscancodelogin";
+
+    /**
+     * 修改密码
+     */
+    String MODIFY_PASSWORD = "gateway/api/account/modifypassword";
 }
