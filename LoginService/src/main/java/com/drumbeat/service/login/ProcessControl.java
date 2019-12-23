@@ -12,6 +12,7 @@ import com.blankj.utilcode.util.SPUtils;
 import com.drumbeat.service.login.bean.BaseBean;
 import com.drumbeat.service.login.bean.LoginResultBean;
 import com.drumbeat.service.login.bean.ResultBean;
+import com.drumbeat.service.login.bean.UserInfoBean;
 import com.drumbeat.service.login.config.ServiceConfig;
 import com.drumbeat.service.login.constant.ResultCode;
 import com.drumbeat.service.login.drumsdk.helper.HttpHelper;
@@ -28,6 +29,7 @@ import java.util.Map;
 import static com.drumbeat.service.login.constant.APIInterface.BASE_URL;
 import static com.drumbeat.service.login.constant.APIInterface.CANCEL_LOGIN;
 import static com.drumbeat.service.login.constant.APIInterface.CONFIRM_LOGIN;
+import static com.drumbeat.service.login.constant.APIInterface.GET_USER_INFO;
 import static com.drumbeat.service.login.constant.APIInterface.LOGIN_URL;
 import static com.drumbeat.service.login.constant.APIInterface.MODIFY_PASSWORD;
 import static com.drumbeat.service.login.constant.APIInterface.SCAN_CODE;
@@ -35,6 +37,7 @@ import static com.drumbeat.service.login.constant.Constant.SP_TOKEN;
 import static com.drumbeat.service.login.constant.Constant.SP_USER_ID;
 import static com.drumbeat.service.login.constant.ResultCode.CANCEL_LOGIN_QRCODE;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_CANCEL_LOGIN_QRCODE;
+import static com.drumbeat.service.login.constant.ResultCode.ERROR_GET_USER_INFO;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_LOGIN_ACCOUNT;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_MODIFY_PASSWORD;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_NULL_ACCOUNT;
@@ -177,6 +180,47 @@ public class ProcessControl {
                         onFailCallback(callback, ERROR_MODIFY_PASSWORD);
                         break;
                 }
+            }
+
+            @Override
+            public void onFail(String failed) {
+                onFailCallback(callback, ERROR_MODIFY_PASSWORD);
+            }
+        });
+    }
+
+
+    /**
+     * 修改密码
+     */
+    static void getUserInfo(@NonNull String centralizerToken, ResultCallback<UserInfoBean.ResultBean> callback) {
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", centralizerToken);
+
+        String[] split = centralizerToken.split("\\.");
+        String base64 = split[1];
+        String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
+        JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
+        String accountId = userJSONObject.getString("AccountId");
+
+        Map<String, String> map = new HashMap<>();
+        map.put("accountId", accountId);
+
+        ServiceConfig serviceConfig = LoginService.getConfig();
+        HttpHelper.get(serviceConfig.getBaseUrl() + GET_USER_INFO, headers, map, new NetCallback() {
+            @Override
+            public void onSuccess(String succeed) {
+                if (TextUtils.isEmpty(succeed)) {
+                    onFailCallback(callback, ERROR_GET_USER_INFO);
+                    return;
+                }
+                UserInfoBean userInfoBean = JSONObject.parseObject(succeed, UserInfoBean.class);
+                if (userInfoBean == null || userInfoBean.getResult() == null) {
+                    onFailCallback(callback, ERROR_GET_USER_INFO);
+                    return;
+                }
+                callback.onSuccess(userInfoBean.getResult());
             }
 
             @Override

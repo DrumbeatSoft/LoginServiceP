@@ -32,4 +32,9 @@ public interface APIInterface {
      * 修改密码
      */
     String MODIFY_PASSWORD = "gateway/api/account/modifypassword";
+
+    /**
+     * 查询用户信息
+     */
+    String GET_USER_INFO = "gateway/api/account/getbyid";
 }

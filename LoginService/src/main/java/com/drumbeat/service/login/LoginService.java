@@ -11,6 +11,7 @@ import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.AppUtils;
 import com.drumbeat.service.login.bean.LoginResultBean;
 import com.drumbeat.service.login.bean.ResultBean;
+import com.drumbeat.service.login.bean.UserInfoBean;
 import com.drumbeat.service.login.config.ServiceConfig;
 
 /**
@@ -48,6 +49,13 @@ public class LoginService {
      */
     public static void modifyPassword(String oldPwd, String newPwd, String centralizerToken, ResultCallback<ResultBean> callback) {
         ProcessControl.modifyPwd(oldPwd, newPwd, centralizerToken, callback);
+    }
+
+    /**
+     * 修改密码
+     */
+    public static void getUserInfo(String centralizerToken, ResultCallback<UserInfoBean.ResultBean> callback) {
+        ProcessControl.getUserInfo(centralizerToken, callback);
     }
 
     /**
