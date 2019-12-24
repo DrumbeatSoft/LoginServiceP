@@ -33,7 +33,7 @@ public class LoginService {
 
     static ServiceConfig getConfig() {
         // 保证sConfig不是null
-        setConfig(null);
+        setConfig(sConfig);
         return sConfig;
     }
 
