@@ -8,7 +8,7 @@
 ### 引入
 ```java
 
-implementation 'com.github.ZuoHailong:LoginServiceP:0.1.6'
+implementation 'com.github.ZuoHailong:LoginServiceP:0.2.0'
 
 ```
 
@@ -17,7 +17,7 @@ implementation 'com.github.ZuoHailong:LoginServiceP:0.1.6'
 ### 1、初始化配置
 ```java
 
-LoginService.setConfig(ServiceConfig.newBuilder()
+void LoginService.setConfig(ServiceConfig.newBuilder()
                         .setAppId(String appId)
                         .setTenant(String tenant)
                         .setBaseUrl(String baseUrl)
@@ -34,7 +34,7 @@ LoginService.setConfig(ServiceConfig.newBuilder()
 ### 2、调用中台登录接口
 ```java
 
-LoginService.login(String account, String password, ResultCallback<LoginResultBean> callback);
+void LoginService.login(String account, String password, ResultCallback<LoginResultBean> callback);
 
 ```
 * account：中台统一后的账户
@@ -64,7 +64,7 @@ public class LoginResultBean {
 ### 3、拉起扫码登录页面（用于支持Web端管理系统的扫码登陆）
 ```java
 
-LoginService.scan(Activity activity, ResultCallback callback);
+void LoginService.scan(Activity activity, ResultCallback callback);
 
 ```
 <br>
@@ -72,11 +72,26 @@ LoginService.scan(Activity activity, ResultCallback callback);
 ### 4、Ghost APP 获取中台token
 ```java
 
-LoginService.getCentralizerToken();
+String LoginService.getCentralizerToken();
 
 ```
 <br>
 
+### 5、修改密码
+```java
+
+void LoginService.modifyPassword(String oldPwd, String newPwd, String centralizerToken, ResultCallback<ResultBean> callback);
+
+```
+<br>
+
+### 6、获取用户信息
+```java
+
+void getUserInfo(String centralizerToken, ResultCallback<UserInfoBean.ResultBean> callback);
+
+```
+<br>
 ### 错误码枚举类
 ##### ResultCallback 回调函数回调 onFail(ResultCode resultCode) 函数时会返回错误码
 <br>
@@ -84,6 +99,10 @@ LoginService.getCentralizerToken();
 ```java
 
 public enum ResultCode {
+    /**
+     * 成功
+     */
+    SUCCEES,
     /**
      * 账号密码登录失败
      */
@@ -101,12 +120,26 @@ public enum ResultCode {
      */
     ERROR_QRCODE_LOGIN,
     /**
-     * 取消扫码登录
+     * 用户取消扫码登录
      */
     CANCEL_LOGIN_QRCODE,
+    /**
+     * 取消扫码登录操作失败
+     */
+    ERROR_CANCEL_LOGIN_QRCODE,
+
+    /**
+     * 修改密码失败
+     */
+    ERROR_MODIFY_PASSWORD,
+    /**
+     * 获取用户信息失败
+     */
+    ERROR_GET_USER_INFO,
 
 
-     /**
+    /********************************************************** 入参验证 ********************************************************/
+    /**
      * appId is null
      */
     ERROR_NULL_APPID,
