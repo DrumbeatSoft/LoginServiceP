@@ -8,7 +8,7 @@
 ### 引入
 ```java
 
-implementation 'com.github.ZuoHailong:LoginServiceP:0.2.0'
+implementation 'com.github.ZuoHailong:LoginServiceP:0.2.1'
 
 ```
 
@@ -73,6 +73,8 @@ void LoginService.scan(Activity activity, ResultCallback callback);
 ```java
 
 String LoginService.getCentralizerToken();
+
+String LoginService.getCentralizerToken(Context context);
 
 ```
 <br>
