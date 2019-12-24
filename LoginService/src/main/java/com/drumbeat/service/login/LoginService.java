@@ -69,6 +69,17 @@ public class LoginService {
      * 获取centralizerToken（中台appToken），供ghostAPP使用，独立APP调用此方法无法获取到centralizerToken
      */
     public static String getCentralizerToken() {
+        return getCentralizerToken(ActivityUtils.getTopActivity());
+
+    }
+
+    /**
+     * 获取centralizerToken（中台appToken），供ghostAPP使用，独立APP调用此方法无法获取到centralizerToken
+     */
+    public static String getCentralizerToken(Context context) {
+        if (context == null) {
+            return null;
+        }
 
         String centralizerToken = null;
 
@@ -77,7 +88,7 @@ public class LoginService {
         String column_token = "token";
         String currentApplicationId = AppUtils.getAppPackageName();
 
-        Cursor appCursor = ActivityUtils.getTopActivity().getContentResolver().query(uri, new String[]{"_id", column_appliaction_id, column_token}, null, null, null);
+        Cursor appCursor = context.getContentResolver().query(uri, new String[]{"_id", column_appliaction_id, column_token}, null, null, null);
         while (appCursor.moveToNext()) {
             int anInt = appCursor.getInt(0);
             String applicationId = appCursor.getString(1);
