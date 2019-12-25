@@ -8,7 +8,7 @@
 ### 引入
 ```java
 
-implementation 'com.github.ZuoHailong:LoginServiceP:0.2.1'
+implementation 'com.github.ZuoHailong:LoginServiceP:0.2.2'
 
 ```
 
@@ -35,6 +35,9 @@ void LoginService.setConfig(ServiceConfig.newBuilder()
 ```java
 
 void LoginService.login(String account, String password, ResultCallback<LoginResultBean> callback);
+
+// ServiceConfig 可选，一次性参数
+void LoginService.login(ServiceConfig serviceConfig, String account, String password, ResultCallback<LoginResultBean> callback);
 
 ```
 * account：中台统一后的账户
