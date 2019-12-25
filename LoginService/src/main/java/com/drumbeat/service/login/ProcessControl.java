@@ -58,7 +58,15 @@ public class ProcessControl {
      * 账号密码登录
      */
     static void login(@NonNull String account, @NonNull String password, ResultCallback<LoginResultBean> callback) {
-        ServiceConfig serviceConfig = LoginService.getConfig();
+        login(LoginService.newInstance().getConfig(), account, password, callback);
+    }
+
+    /**
+     * 账号密码登录
+     */
+    static void login(ServiceConfig serviceConfig, @NonNull String account, @NonNull String password, ResultCallback<LoginResultBean> callback) {
+
+        serviceConfig = serviceConfig == null ? LoginService.newInstance().getConfig() : serviceConfig;
 
         if (TextUtils.isEmpty(serviceConfig.getAppId())) {
             onFailCallback(callback, ERROR_NULL_APPID);
@@ -138,7 +146,7 @@ public class ProcessControl {
         JSONObject object = new JSONObject();
         object.put("input", jsonObject);
 
-        ServiceConfig serviceConfig = LoginService.getConfig();
+        ServiceConfig serviceConfig = LoginService.newInstance().getConfig();
         HttpHelper.post(serviceConfig.getBaseUrl() + MODIFY_PASSWORD, headers, object, new NetCallback() {
             @Override
             public void onSuccess(String succeed) {
@@ -207,7 +215,7 @@ public class ProcessControl {
         Map<String, String> map = new HashMap<>();
         map.put("accountId", accountId);
 
-        ServiceConfig serviceConfig = LoginService.getConfig();
+        ServiceConfig serviceConfig = LoginService.newInstance().getConfig();
         HttpHelper.get(serviceConfig.getBaseUrl() + GET_USER_INFO, headers, map, new NetCallback() {
             @Override
             public void onSuccess(String succeed) {

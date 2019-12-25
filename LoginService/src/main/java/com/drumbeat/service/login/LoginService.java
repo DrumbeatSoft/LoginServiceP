@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.AppUtils;
 import com.drumbeat.service.login.bean.LoginResultBean;
@@ -19,42 +21,62 @@ import com.drumbeat.service.login.config.ServiceConfig;
  */
 public class LoginService {
 
-    private static ServiceConfig sConfig;
+    private static LoginService instance;
 
-    public static void setConfig(ServiceConfig config) {
-        if (sConfig == null) {
+    private LoginService() {
+    }
+
+    public static LoginService newInstance() {
+        if (instance == null) {
             synchronized (ServiceConfig.class) {
-                if (sConfig == null) {
-                    sConfig = config == null ? ServiceConfig.newBuilder().build() : config;
+                if (instance == null) {
+                    instance = new LoginService();
                 }
             }
         }
+        return instance;
     }
 
-    static ServiceConfig getConfig() {
-        // 保证sConfig不是null
-        setConfig(sConfig);
+    private ServiceConfig sConfig;
+
+    public void setConfig(ServiceConfig config) {
+        this.sConfig = config;
+    }
+
+    public ServiceConfig getConfig() {
         return sConfig;
     }
 
     /**
      * 登录中台
      */
-    public static void login(String account, String password, ResultCallback<LoginResultBean> callback) {
+    public static void login(@NonNull String account, @NonNull String password, @NonNull ResultCallback<LoginResultBean> callback) {
+        ProcessControl.login(account, password, callback);
+    }
+
+    /**
+     * 登录中台
+     *
+     * @param serviceConfig 可选参数，一次性使用
+     * @param account
+     * @param password
+     * @param callback
+     */
+    public static void login(ServiceConfig serviceConfig, @NonNull String account, @NonNull String password, ResultCallback<LoginResultBean> callback) {
         ProcessControl.login(account, password, callback);
     }
 
     /**
      * 修改密码
      */
-    public static void modifyPassword(String oldPwd, String newPwd, String centralizerToken, ResultCallback<ResultBean> callback) {
+    public static void modifyPassword(@NonNull String oldPwd, @NonNull String newPwd, @NonNull String centralizerToken, ResultCallback<ResultBean> callback) {
         ProcessControl.modifyPwd(oldPwd, newPwd, centralizerToken, callback);
     }
 
     /**
-     * 修改密码
+     * 查询用户信息
      */
-    public static void getUserInfo(String centralizerToken, ResultCallback<UserInfoBean.ResultBean> callback) {
+    public static void getUserInfo(@NonNull String centralizerToken, ResultCallback<UserInfoBean.ResultBean> callback) {
         ProcessControl.getUserInfo(centralizerToken, callback);
     }
 
