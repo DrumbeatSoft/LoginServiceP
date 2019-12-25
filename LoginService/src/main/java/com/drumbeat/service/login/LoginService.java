@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.AppUtils;
 import com.drumbeat.service.login.bean.LoginResultBean;
@@ -59,14 +61,14 @@ public class LoginService {
     /**
      * 修改密码
      */
-    public static void modifyPassword(String oldPwd, String newPwd, String centralizerToken, ResultCallback<ResultBean> callback) {
+    public static void modifyPassword(@NonNull String oldPwd, @NonNull String newPwd, @NonNull String centralizerToken, ResultCallback<ResultBean> callback) {
         ProcessControl.modifyPwd(oldPwd, newPwd, centralizerToken, callback);
     }
 
     /**
-     * 修改密码
+     * 查询用户信息
      */
-    public static void getUserInfo(String centralizerToken, ResultCallback<UserInfoBean.ResultBean> callback) {
+    public static void getUserInfo(@NonNull String centralizerToken, ResultCallback<UserInfoBean.ResultBean> callback) {
         ProcessControl.getUserInfo(centralizerToken, callback);
     }
 
