@@ -33,7 +33,7 @@ public class LoginService {
 
     static ServiceConfig getConfig() {
         // 保证sConfig不是null
-        setConfig(sConfig);
+        setConfig(null);
         return sConfig;
     }
 
@@ -41,7 +41,19 @@ public class LoginService {
      * 登录中台
      */
     public static void login(String account, String password, ResultCallback<LoginResultBean> callback) {
-        ProcessControl.login(account, password, callback);
+        login(LoginService.getConfig(), account, password, callback);
+    }
+
+    /**
+     * 登录中台
+     *
+     * @param serviceConfig 可选，一次性参数
+     * @param account
+     * @param password
+     * @param callback
+     */
+    public static void login(ServiceConfig serviceConfig, String account, String password, ResultCallback<LoginResultBean> callback) {
+        ProcessControl.login(serviceConfig, account, password, callback);
     }
 
     /**
