@@ -21,49 +21,41 @@ import com.drumbeat.service.login.config.ServiceConfig;
  */
 public class LoginService {
 
-    private static LoginService instance;
+    private static ServiceConfig sConfig;
 
-    private LoginService() {
-    }
-
-    public static LoginService newInstance() {
-        if (instance == null) {
+    public static void setConfig(ServiceConfig config) {
+        if (sConfig == null) {
             synchronized (ServiceConfig.class) {
-                if (instance == null) {
-                    instance = new LoginService();
+                if (sConfig == null) {
+                    sConfig = config == null ? ServiceConfig.newBuilder().build() : config;
                 }
             }
         }
-        return instance;
     }
 
-    private ServiceConfig sConfig;
-
-    public void setConfig(ServiceConfig config) {
-        this.sConfig = config;
-    }
-
-    public ServiceConfig getConfig() {
+    static ServiceConfig getConfig() {
+        // 保证sConfig不是null
+        setConfig(null);
         return sConfig;
     }
 
     /**
      * 登录中台
      */
-    public static void login(@NonNull String account, @NonNull String password, @NonNull ResultCallback<LoginResultBean> callback) {
-        ProcessControl.login(account, password, callback);
+    public static void login(String account, String password, ResultCallback<LoginResultBean> callback) {
+        login(LoginService.getConfig(), account, password, callback);
     }
 
     /**
      * 登录中台
      *
-     * @param serviceConfig 可选参数，一次性使用
+     * @param serviceConfig 可选，一次性参数
      * @param account
      * @param password
      * @param callback
      */
-    public static void login(ServiceConfig serviceConfig, @NonNull String account, @NonNull String password, ResultCallback<LoginResultBean> callback) {
-        ProcessControl.login(account, password, callback);
+    public static void login(ServiceConfig serviceConfig, String account, String password, ResultCallback<LoginResultBean> callback) {
+        ProcessControl.login(serviceConfig, account, password, callback);
     }
 
     /**

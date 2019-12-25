@@ -57,16 +57,8 @@ public class ProcessControl {
     /**
      * 账号密码登录
      */
-    static void login(@NonNull String account, @NonNull String password, ResultCallback<LoginResultBean> callback) {
-        login(LoginService.newInstance().getConfig(), account, password, callback);
-    }
-
-    /**
-     * 账号密码登录
-     */
     static void login(ServiceConfig serviceConfig, @NonNull String account, @NonNull String password, ResultCallback<LoginResultBean> callback) {
-
-        serviceConfig = serviceConfig == null ? LoginService.newInstance().getConfig() : serviceConfig;
+        serviceConfig = serviceConfig == null ? LoginService.getConfig() : serviceConfig;
 
         if (TextUtils.isEmpty(serviceConfig.getAppId())) {
             onFailCallback(callback, ERROR_NULL_APPID);
