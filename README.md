@@ -3,40 +3,48 @@
 
 鼓点·中台·登录Service
 
-<br>
-
 ### 引入
-```java
+```
 
-implementation 'com.github.ZuoHailong:LoginServiceP:0.2.1'
+implementation 'com.github.ZuoHailong:LoginServiceP:0.2.4'
 
 ```
 
-<br>
-
 ### 1、初始化配置
-```java
+
+要放在Application的onCreate()中。
+
+```
 
 void LoginService.setConfig(ServiceConfig.newBuilder()
                         .setAppId(String appId)
                         .setTenant(String tenant)
                         .setBaseUrl(String baseUrl)
                         .build());
-                        
 ```
-
-* appId：【必须】应用标识，公司各应用有各自的appId
-* tenant：租户标识
+* appId：应用标识，公司各应用有各自的appId
+* tenant：租户标识，河南OPPO用“Auth”
 * baseUrl：要访问的中台服务器的baseUrl，形如："http://192.168.20.233:30060/" （测试时用此url）
 
-<br>
-
 ### 2、调用中台登录接口
-```java
-
+```
+/**
+     * 登录中台
+     *
+     * @param account
+     * @param password
+     * @param callback
+     */
 void LoginService.login(String account, String password, ResultCallback<LoginResultBean> callback);
 
-// ServiceConfig 可选，一次性参数
+    /**
+     * 登录中台
+     *
+     * @param serviceConfig 可选，一次性参数
+     * @param account
+     * @param password
+     * @param callback
+     */
 void LoginService.login(ServiceConfig serviceConfig, String account, String password, ResultCallback<LoginResultBean> callback);
 
 ```
@@ -45,7 +53,7 @@ void LoginService.login(ServiceConfig serviceConfig, String account, String pass
 * callback：回调接口
 * LoginResultBean：登录成功得到的实体类数据，形如：
 
-```java
+```
 
 public class LoginResultBean {
     private int Result;
@@ -62,46 +70,43 @@ public class LoginResultBean {
 }
 
 ```
-<br>
 
 ### 3、拉起扫码登录页面（用于支持Web端管理系统的扫码登陆）
-```java
+```
 
 void LoginService.scan(Activity activity, ResultCallback callback);
 
 ```
-<br>
 
 ### 4、Ghost APP 获取中台token
-```java
+插件APP中使用
+```
 
 String LoginService.getCentralizerToken();
 
 String LoginService.getCentralizerToken(Context context);
 
 ```
-<br>
 
 ### 5、修改密码
-```java
+```
 
 void LoginService.modifyPassword(String oldPwd, String newPwd, String centralizerToken, ResultCallback<ResultBean> callback);
 
 ```
-<br>
 
 ### 6、获取用户信息
-```java
+```
 
 void getUserInfo(String centralizerToken, ResultCallback<UserInfoBean.ResultBean> callback);
 
 ```
-<br>
-### 错误码枚举类
-##### ResultCallback 回调函数回调 onFail(ResultCode resultCode) 函数时会返回错误码
-<br>
 
-```java
+### 错误码枚举类
+
+##### ResultCallback 回调函数回调 onFail(ResultCode resultCode) 函数时会返回错误码
+
+```
 
 public enum ResultCode {
     /**
@@ -143,7 +148,7 @@ public enum ResultCode {
     ERROR_GET_USER_INFO,
 
 
-    /********************************************************** 入参验证 ********************************************************/
+    /**************************************** 入参验证 ****************************************/
     /**
      * appId is null
      */

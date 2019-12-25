@@ -41,6 +41,10 @@ public class LoginService {
 
     /**
      * 登录中台
+     *
+     * @param account
+     * @param password
+     * @param callback
      */
     public static void login(String account, String password, ResultCallback<LoginResultBean> callback) {
         login(LoginService.getConfig(), account, password, callback);
