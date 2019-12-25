@@ -138,7 +138,7 @@ public class ProcessControl {
         JSONObject object = new JSONObject();
         object.put("input", jsonObject);
 
-        ServiceConfig serviceConfig = LoginService.newInstance().getConfig();
+        ServiceConfig serviceConfig = LoginService.getConfig();
         HttpHelper.post(serviceConfig.getBaseUrl() + MODIFY_PASSWORD, headers, object, new NetCallback() {
             @Override
             public void onSuccess(String succeed) {
@@ -207,7 +207,7 @@ public class ProcessControl {
         Map<String, String> map = new HashMap<>();
         map.put("accountId", accountId);
 
-        ServiceConfig serviceConfig = LoginService.newInstance().getConfig();
+        ServiceConfig serviceConfig = LoginService.getConfig();
         HttpHelper.get(serviceConfig.getBaseUrl() + GET_USER_INFO, headers, map, new NetCallback() {
             @Override
             public void onSuccess(String succeed) {

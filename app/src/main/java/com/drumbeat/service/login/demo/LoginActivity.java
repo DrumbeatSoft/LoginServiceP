@@ -67,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
             SPUtils.getInstance().put("account", etAccount.getEditableText().toString().trim());
             SPUtils.getInstance().put("pwd", etPwd.getEditableText().toString().trim());
 
-            LoginService.newInstance().setConfig(ServiceConfig.newBuilder()
+            LoginService.setConfig(ServiceConfig.newBuilder()
                     .setAppId("125438260305469440")
                     .setTenant(tenant1)
                     .setBaseUrl("http://192.168.20.233:30060/")
