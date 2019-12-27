@@ -6,7 +6,7 @@
 ### 引入
 ```
 
-implementation 'com.github.ZuoHailong:LoginServiceP:0.2.4'
+implementation 'com.github.ZuoHailong:LoginServiceP:0.2.5'
 
 ```
 
