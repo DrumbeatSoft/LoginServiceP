@@ -59,10 +59,10 @@ public class UserInfoBean {
         private String MobilePhone;
         private String Email;
         private String IdCard;
-        private long ModifyAccountId;
+        private String ModifyAccountId;
         private String ModifyAccountName;
         private String ModifyDate;
-        private int CreateAccountId;
+        private String CreateAccountId;
         private String CreateAccountName;
         private String CreateDate;
         private String Id;
@@ -107,14 +107,6 @@ public class UserInfoBean {
             this.IdCard = IdCard;
         }
 
-        public long getModifyAccountId() {
-            return ModifyAccountId;
-        }
-
-        public void setModifyAccountId(long ModifyAccountId) {
-            this.ModifyAccountId = ModifyAccountId;
-        }
-
         public String getModifyAccountName() {
             return ModifyAccountName;
         }
@@ -131,12 +123,22 @@ public class UserInfoBean {
             this.ModifyDate = ModifyDate;
         }
 
-        public int getCreateAccountId() {
+        public String getModifyAccountId() {
+            return ModifyAccountId;
+        }
+
+        public ResultBean setModifyAccountId(String modifyAccountId) {
+            ModifyAccountId = modifyAccountId;
+            return this;
+        }
+
+        public String getCreateAccountId() {
             return CreateAccountId;
         }
 
-        public void setCreateAccountId(int CreateAccountId) {
-            this.CreateAccountId = CreateAccountId;
+        public ResultBean setCreateAccountId(String createAccountId) {
+            CreateAccountId = createAccountId;
+            return this;
         }
 
         public String getCreateAccountName() {
