@@ -1,13 +1,17 @@
 package com.drumbeat.service.login;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
 
 import com.alibaba.fastjson.JSONObject;
+import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.SPUtils;
 import com.drumbeat.service.login.bean.BaseBean;
 import com.drumbeat.service.login.bean.LoginResultBean;
@@ -46,6 +50,7 @@ import static com.drumbeat.service.login.constant.ResultCode.ERROR_NULL_PASSWORD
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_QRCODE_LOGIN;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_QRCODE_SCAN;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_QRCODE_VERIFY;
+import static com.drumbeat.service.login.constant.ResultCode.ERROR_TOKEN_INVALID;
 
 /**
  * Created by ZuoHailong on 2019/10/17.
@@ -53,6 +58,37 @@ import static com.drumbeat.service.login.constant.ResultCode.ERROR_QRCODE_VERIFY
 public class ProcessControl {
 
     private static Messenger mMessenger;
+
+    /**
+     * 从 ContentProvider 中获取 centralizerToken
+     *
+     * @param context
+     * @return
+     */
+    static String getTokenFromCP(Context context) {
+        if (context == null) {
+            return null;
+        }
+        String centralizerToken = null;
+
+        Uri uri = Uri.parse("content://com.drumbeat.appmanager.app.provider/app");
+        String column_appliaction_id = "applicationId";
+        String column_token = "token";
+        // 当前运行的应用：宿主APP/插件APP
+        String currentApplicationId = AppUtils.getAppPackageName();
+
+        Cursor appCursor = context.getContentResolver().query(uri, new String[]{"_id", column_appliaction_id, column_token}, null, null, null);
+        while (appCursor.moveToNext()) {
+            int anInt = appCursor.getInt(0);
+            String applicationId = appCursor.getString(1);
+            String token = appCursor.getString(2);
+            if (!TextUtils.isEmpty(applicationId) && applicationId.equals(currentApplicationId)) {
+                centralizerToken = token;
+                break;
+            }
+        }
+        return centralizerToken;
+    }
 
     /**
      * 账号密码登录
@@ -147,7 +183,16 @@ public class ProcessControl {
                     return;
                 }
                 BaseBean baseBean = JSONObject.parseObject(succeed, BaseBean.class);
-                if (baseBean == null || TextUtils.isEmpty(baseBean.getEntity())) {
+                if (baseBean == null) {
+                    onFailCallback(callback, ERROR_MODIFY_PASSWORD);
+                    return;
+                }
+                // token失效
+                if (baseBean.getStatusCode() == 401) {
+                    onFailCallback(callback, ERROR_TOKEN_INVALID);
+                    return;
+                }
+                if (TextUtils.isEmpty(baseBean.getEntity())) {
                     onFailCallback(callback, ERROR_MODIFY_PASSWORD);
                     return;
                 }
@@ -189,7 +234,6 @@ public class ProcessControl {
         });
     }
 
-
     /**
      * 修改密码
      */
@@ -216,7 +260,16 @@ public class ProcessControl {
                     return;
                 }
                 BaseBean baseBean = JSONObject.parseObject(succeed, BaseBean.class);
-                if (baseBean == null || TextUtils.isEmpty(baseBean.getEntity())) {
+                if (baseBean == null) {
+                    onFailCallback(callback, ERROR_GET_USER_INFO);
+                    return;
+                }
+                // token失效
+                if (baseBean.getStatusCode() == 401) {
+                    onFailCallback(callback, ERROR_TOKEN_INVALID);
+                    return;
+                }
+                if (TextUtils.isEmpty(baseBean.getEntity())) {
                     onFailCallback(callback, ERROR_GET_USER_INFO);
                     return;
                 }
@@ -281,6 +334,15 @@ public class ProcessControl {
                     onFailCallback(callback, ERROR_QRCODE_VERIFY);
                     return;
                 }
+                // token失效
+                if (baseBean.getStatusCode() == 401) {
+                    onFailCallback(callback, ERROR_TOKEN_INVALID);
+                    return;
+                }
+                if (TextUtils.isEmpty(baseBean.getEntity())) {
+                    onFailCallback(callback, ERROR_QRCODE_VERIFY);
+                    return;
+                }
                 JSONObject jsonObject = JSONObject.parseObject(baseBean.getEntity());
                 if (jsonObject == null || !jsonObject.getBoolean("Success")) {
                     onFailCallback(callback, ERROR_QRCODE_VERIFY);
@@ -329,6 +391,15 @@ public class ProcessControl {
                     onFailCallback(callback, ERROR_QRCODE_LOGIN);
                     return;
                 }
+                // token失效
+                if (baseBean.getStatusCode() == 401) {
+                    onFailCallback(callback, ERROR_TOKEN_INVALID);
+                    return;
+                }
+                if (TextUtils.isEmpty(baseBean.getEntity())) {
+                    onFailCallback(callback, ERROR_QRCODE_LOGIN);
+                    return;
+                }
                 JSONObject jsonObject = JSONObject.parseObject(baseBean.getEntity());
                 if (jsonObject == null || !jsonObject.getBoolean("Success")) {
                     onFailCallback(callback, ERROR_QRCODE_LOGIN);
@@ -362,6 +433,15 @@ public class ProcessControl {
                 }
                 BaseBean baseBean = JSONObject.parseObject(succeed, BaseBean.class);
                 if (baseBean == null) {
+                    onFailCallback(callback, ERROR_CANCEL_LOGIN_QRCODE);
+                    return;
+                }
+                // token失效
+                if (baseBean.getStatusCode() == 401) {
+                    onFailCallback(callback, ERROR_TOKEN_INVALID);
+                    return;
+                }
+                if (TextUtils.isEmpty(baseBean.getEntity())) {
                     onFailCallback(callback, ERROR_CANCEL_LOGIN_QRCODE);
                     return;
                 }

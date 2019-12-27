@@ -43,6 +43,10 @@ public enum ResultCode implements Serializable {
      * 获取用户信息失败
      */
     ERROR_GET_USER_INFO,
+    /**
+     * token失效
+     */
+    ERROR_TOKEN_INVALID,
 
 
     /********************************************************** 入参验证 ********************************************************/
