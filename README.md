@@ -5,7 +5,7 @@
 
 [![](https://jitpack.io/v/ZuoHailong/LoginServiceP.svg)](https://jitpack.io/#ZuoHailong/LoginServiceP)
 [![api](https://img.shields.io/badge/API-19+-brightgreen.svg)](https://android-arsenal.com/api?level=19)
-[![csdn](https://img.shields.io/badge/CSDN-ZuoHailong-green.svg)](https://blog.csdn.net/hailong0529)
+[![csdn](https://img.shields.io/badge/CSDN-ZuoHailong-brightred.svg)](https://blog.csdn.net/hailong0529)
 
 ### 引入
 ```
