@@ -3,10 +3,12 @@
 
 鼓点·中台·登录Service
 
+[![](https://jitpack.io/v/ZuoHailong/LoginServiceP.svg)](https://jitpack.io/#ZuoHailong/LoginServiceP)
+
 ### 引入
 ```
 
-implementation 'com.github.ZuoHailong:LoginServiceP:0.2.5'
+implementation 'com.github.ZuoHailong:LoginServiceP:latest.release'
 
 ```
 
