@@ -43,11 +43,17 @@ public class LoginService {
      * @param callback
      */
     public static void login(String account, String password, ResultCallback<LoginResultBean> callback) {
-        login(LoginService.getConfig(), account, password, callback);
+        String centralizerToken = getCentralizerToken();
+        // 已有token，直接返回，不再登录
+        if (!TextUtils.isEmpty(centralizerToken)) {
+            callback.onSuccess(new LoginResultBean().setToken(centralizerToken));
+            return;
+        }
+        ProcessControl.login(LoginService.getConfig(), account, password, callback);
     }
 
     /**
-     * 登录中台
+     * 登录中台，供宿主APP使用
      *
      * @param serviceConfig 可选，一次性参数
      * @param account
@@ -55,12 +61,6 @@ public class LoginService {
      * @param callback
      */
     public static void login(ServiceConfig serviceConfig, String account, String password, ResultCallback<LoginResultBean> callback) {
-        String centralizerToken = getCentralizerToken();
-        // 已有token，直接返回，不再登录
-        if (!TextUtils.isEmpty(centralizerToken)) {
-            callback.onSuccess(new LoginResultBean().setToken(centralizerToken));
-            return;
-        }
         ProcessControl.login(serviceConfig, account, password, callback);
     }
 
