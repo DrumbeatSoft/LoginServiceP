@@ -78,6 +78,9 @@ public class ProcessControl {
         String currentApplicationId = AppUtils.getAppPackageName();
 
         Cursor appCursor = context.getContentResolver().query(uri, new String[]{"_id", column_appliaction_id, column_token}, null, null, null);
+        if (appCursor == null) {
+            return null;
+        }
         while (appCursor.moveToNext()) {
             int anInt = appCursor.getInt(0);
             String applicationId = appCursor.getString(1);
