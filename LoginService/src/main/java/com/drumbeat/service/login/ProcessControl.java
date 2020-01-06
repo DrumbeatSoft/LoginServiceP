@@ -112,7 +112,7 @@ public class ProcessControl {
             return;
         }
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("TenantCode", serviceConfig.getTenant());
+        jsonObject.put("TenantCode", LoginService.getTenant());
         jsonObject.put("DeviceId", "");
         jsonObject.put("TenantId", 0);
         jsonObject.put("AppId", serviceConfig.getAppId());
@@ -238,7 +238,7 @@ public class ProcessControl {
     }
 
     /**
-     * 修改密码
+     * 查询用户信息
      */
     static void getUserInfo(@NonNull String centralizerToken, ResultCallback<UserInfoBean.ResultBean> callback) {
 

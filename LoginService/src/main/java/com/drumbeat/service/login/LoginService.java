@@ -2,21 +2,27 @@ package com.drumbeat.service.login;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
+import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.ActivityUtils;
+import com.blankj.utilcode.util.SPUtils;
+import com.blankj.utilcode.util.Utils;
 import com.drumbeat.service.login.bean.LoginResultBean;
 import com.drumbeat.service.login.bean.ResultBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
 import com.drumbeat.service.login.config.ServiceConfig;
+import com.drumbeat.service.login.utils.SharedPreferencesUtil;
 
 /**
  * Created by ZuoHailong on 2019/10/17.
  */
 public class LoginService {
 
+    private static final String SP_TENANT = "sp_tenant";
     private static ServiceConfig sConfig;
 
     public static void setConfig(ServiceConfig config) {
@@ -33,6 +39,19 @@ public class LoginService {
         // 保证sConfig不是null
         setConfig(null);
         return sConfig;
+    }
+
+    /**
+     * 设置租户
+     *
+     * @param tenant 租户
+     */
+    public static void setTenant(String tenant) {
+        SharedPreferencesUtil.getInstance(Utils.getApp()).put(SP_TENANT, tenant);
+    }
+
+    public static String getTenant() {
+        return SharedPreferencesUtil.getInstance(Utils.getApp()).getString(SP_TENANT);
     }
 
     /**

@@ -16,21 +16,15 @@ public final class ServiceConfig {
     }
 
     private final String appId;
-    private final String tenant;
     private final String baseUrl;
 
     private ServiceConfig(Builder builder) {
         this.appId = builder.appId;
-        this.tenant = builder.tenant;
         this.baseUrl = builder.baseUrl;
     }
 
     public String getAppId() {
         return appId;
-    }
-
-    public String getTenant() {
-        return TextUtils.isEmpty(tenant) ? "zt" : tenant;
     }
 
     public String getBaseUrl() {
@@ -41,7 +35,6 @@ public final class ServiceConfig {
     public final static class Builder {
 
         private String appId;
-        private String tenant;
         private String baseUrl;
 
         private Builder() {
@@ -54,16 +47,6 @@ public final class ServiceConfig {
          */
         public Builder setAppId(String appId) {
             this.appId = appId;
-            return this;
-        }
-
-        /**
-         * 设置租户
-         *
-         * @param tenant 租户
-         */
-        public Builder setTenant(String tenant) {
-            this.tenant = tenant;
             return this;
         }
 

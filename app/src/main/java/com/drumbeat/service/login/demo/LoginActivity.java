@@ -69,9 +69,9 @@ public class LoginActivity extends AppCompatActivity {
 
             LoginService.setConfig(ServiceConfig.newBuilder()
                     .setAppId("125438260305469440")
-                    .setTenant(tenant1)
                     .setBaseUrl("http://192.168.20.233:30060/")
                     .build());
+            LoginService.setTenant(etTenant.getEditableText().toString().trim());
 
             LoginService.login(account1, pwd1, new ResultCallback<LoginResultBean>() {
                 @Override
