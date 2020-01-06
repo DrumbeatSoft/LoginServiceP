@@ -25,7 +25,6 @@ LoginService.setConfig(ServiceConfig.newBuilder()
                         .build());
 ```
 * appId：应用标识，公司各应用有各自的appId
-* tenant：租户标识，河南OPPO用“Auth”
 * baseUrl：要访问的中台服务器的baseUrl，形如："http://192.168.20.233:30060/" （测试时用此url）
 
 ### 设置租户
