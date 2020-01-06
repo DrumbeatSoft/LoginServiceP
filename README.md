@@ -19,8 +19,7 @@ implementation 'com.github.ZuoHailong:LoginServiceP:latest.release'
 要放在Application的onCreate()中。
 
 ```
-
-void LoginService.setConfig(ServiceConfig.newBuilder()
+LoginService.setConfig(ServiceConfig.newBuilder()
                         .setAppId(String appId)
                         .setBaseUrl(String baseUrl)
                         .build());
@@ -31,12 +30,7 @@ void LoginService.setConfig(ServiceConfig.newBuilder()
 
 ### 设置租户
 ```
-    /**
-     * 设置租户
-     *
-     * @param tenant 租户
-     */
-     LoginService.setTenant(String tenant);
+LoginService.setTenant(String tenant);
 ```
 
 ### 调用中台登录接口
