@@ -79,7 +79,10 @@ public class LoginActivity extends AppCompatActivity {
             LoginService.getTenantList(etAccount.getEditableText().toString().trim(), new ResultCallback<List<TenantBean.ResultBean>>() {
                 @Override
                 public void onSuccess(List<TenantBean.ResultBean> succeed) {
-                    ToastUtils.showLong("租户数量：" + (succeed == null ? 0 : succeed.size()));
+                    if (succeed != null && succeed.size() > 0) {
+                        LoginService.setTenantId(succeed.get(0).getTenantId());
+                        login(account1, pwd1);
+                    }
                 }
 
                 @Override
@@ -88,18 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
 
-            /*LoginService.login(account1, pwd1, new ResultCallback<LoginResultBean>() {
-                @Override
-                public void onSuccess(LoginResultBean succeed) {
-                    ToastUtils.showShort("登录成功，现在可以扫码登录了");
-                    btnScan.setVisibility(View.VISIBLE);
-                }
 
-                @Override
-                public void onFail(ResultCode resultCode) {
-                    ToastUtils.showShort("登录失败：" + resultCode.name());
-                }
-            });*/
         });
         btnScan.setOnClickListener(view ->
                 LoginService.scan(LoginActivity.this, new ResultCallback() {
@@ -128,6 +120,21 @@ public class LoginActivity extends AppCompatActivity {
                         ToastUtils.showShort("修改失败");
                     }
                 });
+            }
+        });
+    }
+
+    private void login(String account1, String pwd1) {
+        LoginService.login(account1, pwd1, new ResultCallback<LoginResultBean>() {
+            @Override
+            public void onSuccess(LoginResultBean succeed) {
+                ToastUtils.showShort("登录成功，现在可以扫码登录了");
+                btnScan.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onFail(ResultCode resultCode) {
+                ToastUtils.showShort("登录失败：" + resultCode.name());
             }
         });
     }

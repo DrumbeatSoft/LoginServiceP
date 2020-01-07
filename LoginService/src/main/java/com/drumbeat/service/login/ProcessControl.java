@@ -151,9 +151,9 @@ public class ProcessControl {
             return;
         }
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("TenantCode", LoginService.getTenantId());
+//        jsonObject.put("TenantCode", LoginService.getTenantId());
         jsonObject.put("DeviceId", "");
-        jsonObject.put("TenantId", 0);
+        jsonObject.put("TenantId", LoginService.getTenantId());
         jsonObject.put("AppId", serviceConfig.getAppId());
         jsonObject.put("Device", 20);//20 android
         jsonObject.put("TokenType", 0);
