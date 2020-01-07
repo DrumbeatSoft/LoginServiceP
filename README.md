@@ -10,7 +10,7 @@
 ### 引入
 ```
 
-implementation 'com.github.ZuoHailong:LoginServiceP:0.3.0'
+implementation 'com.github.ZuoHailong:LoginServiceP:0.3.1'
 
 ```
 
