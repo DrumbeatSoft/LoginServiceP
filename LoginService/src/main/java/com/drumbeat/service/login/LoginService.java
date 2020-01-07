@@ -2,27 +2,27 @@ package com.drumbeat.service.login;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
-import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.ActivityUtils;
-import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.Utils;
 import com.drumbeat.service.login.bean.LoginResultBean;
 import com.drumbeat.service.login.bean.ResultBean;
+import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
 import com.drumbeat.service.login.config.ServiceConfig;
 import com.drumbeat.service.login.utils.SharedPreferencesUtil;
+
+import java.util.List;
 
 /**
  * Created by ZuoHailong on 2019/10/17.
  */
 public class LoginService {
 
-    private static final String SP_TENANT = "sp_tenant";
+    private static final String SP_TENANT_ID = "sp_tenant_id";
     private static ServiceConfig sConfig;
 
     public static void setConfig(ServiceConfig config) {
@@ -42,16 +42,31 @@ public class LoginService {
     }
 
     /**
-     * 设置租户
+     * 设置租户ID
      *
-     * @param tenant 租户
+     * @param tenantId 租户ID
      */
-    public static void setTenant(String tenant) {
-        SharedPreferencesUtil.getInstance(Utils.getApp()).put(SP_TENANT, tenant);
+    public static void setTenantId(String tenantId) {
+        SharedPreferencesUtil.getInstance(Utils.getApp()).put(SP_TENANT_ID, tenantId);
     }
 
-    public static String getTenant() {
-        return SharedPreferencesUtil.getInstance(Utils.getApp()).getString(SP_TENANT);
+    /**
+     * 获取已设置的租户ID
+     *
+     * @return
+     */
+    public static String getTenantId() {
+        return SharedPreferencesUtil.getInstance(Utils.getApp()).getString(SP_TENANT_ID);
+    }
+
+    /**
+     * 查询账户所在的租户集合
+     *
+     * @param account  手机号/账号/邮箱号/身份证号
+     * @param callback
+     */
+    public static void getTenantList(String account, ResultCallback<List<TenantBean.ResultBean>> callback) {
+        ProcessControl.getTenantList(account, callback);
     }
 
     /**

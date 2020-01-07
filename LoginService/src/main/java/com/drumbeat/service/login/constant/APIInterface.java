@@ -10,6 +10,10 @@ public interface APIInterface {
      */
     String BASE_URL = "http://192.168.20.233:30060/";
     /**
+     * 查询租户列表
+     */
+    String GET_TENANT_URL = "gateway/api/accounttenantrelation/querybyinfo";
+    /**
      * 账号密码登录
      */
     String LOGIN_URL = "gateway/api/oauth2/token";

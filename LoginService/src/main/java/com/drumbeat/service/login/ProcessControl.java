@@ -16,6 +16,7 @@ import com.blankj.utilcode.util.SPUtils;
 import com.drumbeat.service.login.bean.BaseBean;
 import com.drumbeat.service.login.bean.LoginResultBean;
 import com.drumbeat.service.login.bean.ResultBean;
+import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
 import com.drumbeat.service.login.config.ServiceConfig;
 import com.drumbeat.service.login.constant.ResultCode;
@@ -28,11 +29,13 @@ import com.drumbeat.service.login.qbar.ScanResult;
 import com.drumbeat.service.login.ui.ConfirmActivity;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.drumbeat.service.login.constant.APIInterface.BASE_URL;
 import static com.drumbeat.service.login.constant.APIInterface.CANCEL_LOGIN;
 import static com.drumbeat.service.login.constant.APIInterface.CONFIRM_LOGIN;
+import static com.drumbeat.service.login.constant.APIInterface.GET_TENANT_URL;
 import static com.drumbeat.service.login.constant.APIInterface.GET_USER_INFO;
 import static com.drumbeat.service.login.constant.APIInterface.LOGIN_URL;
 import static com.drumbeat.service.login.constant.APIInterface.MODIFY_PASSWORD;
@@ -41,6 +44,7 @@ import static com.drumbeat.service.login.constant.Constant.SP_TOKEN;
 import static com.drumbeat.service.login.constant.Constant.SP_USER_ID;
 import static com.drumbeat.service.login.constant.ResultCode.CANCEL_LOGIN_QRCODE;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_CANCEL_LOGIN_QRCODE;
+import static com.drumbeat.service.login.constant.ResultCode.ERROR_GET_TENANT;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_GET_USER_INFO;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_LOGIN_ACCOUNT;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_MODIFY_PASSWORD;
@@ -96,6 +100,41 @@ public class ProcessControl {
     /**
      * 账号密码登录
      */
+    static void getTenantList(String account, ResultCallback<List<TenantBean.ResultBean>> callback) {
+        Map<String, String> params = new HashMap<>();
+        params.put("info", account);
+
+        ServiceConfig serviceConfig = LoginService.getConfig();
+        HttpHelper.get(serviceConfig.getBaseUrl() + GET_TENANT_URL, null, params, new NetCallback() {
+            @Override
+            public void onSuccess(String succeed) {
+                if (TextUtils.isEmpty(succeed)) {
+                    onFailCallback(callback, ERROR_GET_TENANT);
+                    return;
+                }
+                BaseBean baseBean = JSONObject.parseObject(succeed, BaseBean.class);
+                if (baseBean == null || TextUtils.isEmpty(baseBean.getEntity())) {
+                    onFailCallback(callback, ERROR_GET_TENANT);
+                    return;
+                }
+                TenantBean tenantBean = JSONObject.parseObject(baseBean.getEntity(), TenantBean.class);
+                if (tenantBean == null) {
+                    onFailCallback(callback, ERROR_GET_TENANT);
+                    return;
+                }
+                onSuccessCallback(callback, tenantBean.getResult());
+            }
+
+            @Override
+            public void onFail(String failed) {
+                failed.length();
+            }
+        });
+    }
+
+    /**
+     * 账号密码登录
+     */
     static void login(ServiceConfig serviceConfig, @NonNull String account, @NonNull String password, ResultCallback<LoginResultBean> callback) {
         serviceConfig = serviceConfig == null ? LoginService.getConfig() : serviceConfig;
 
@@ -112,7 +151,7 @@ public class ProcessControl {
             return;
         }
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("TenantCode", LoginService.getTenant());
+        jsonObject.put("TenantCode", LoginService.getTenantId());
         jsonObject.put("DeviceId", "");
         jsonObject.put("TenantId", 0);
         jsonObject.put("AppId", serviceConfig.getAppId());

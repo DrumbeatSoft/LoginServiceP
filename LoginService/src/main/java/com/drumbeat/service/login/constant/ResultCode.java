@@ -11,6 +11,10 @@ public enum ResultCode implements Serializable {
      */
     SUCCEES,
     /**
+     * 查询租户失败
+     */
+    ERROR_GET_TENANT,
+    /**
      * 账号密码登录失败
      */
     ERROR_LOGIN_ACCOUNT,
