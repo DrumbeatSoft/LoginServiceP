@@ -10,7 +10,7 @@
 ### 引入
 ```
 
-implementation 'com.github.ZuoHailong:LoginServiceP:0.2.9'
+implementation 'com.github.ZuoHailong:LoginServiceP:0.3.0'
 
 ```
 
@@ -27,9 +27,14 @@ LoginService.setConfig(ServiceConfig.newBuilder()
 * appId：应用标识，公司各应用有各自的appId
 * baseUrl：要访问的中台服务器的baseUrl，形如："http://192.168.20.233:30060/" （测试时用此url）
 
+### 查询租户
+```
+LoginService.getTenantList(String account, ResultCallback<List<TenantBean.ResultBean>> callback);
+```
+
 ### 设置租户
 ```
-LoginService.setTenant(String tenant);
+LoginService.setTenantId(String tenantId);
 ```
 
 ### 调用中台登录接口
