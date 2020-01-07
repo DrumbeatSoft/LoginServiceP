@@ -101,10 +101,12 @@ public class ProcessControl {
      * 账号密码登录
      */
     static void getTenantList(String account, ResultCallback<List<TenantBean.ResultBean>> callback) {
+        ServiceConfig serviceConfig = LoginService.getConfig();
+
         Map<String, String> params = new HashMap<>();
         params.put("info", account);
+        params.put("appId", serviceConfig.getAppId());
 
-        ServiceConfig serviceConfig = LoginService.getConfig();
         HttpHelper.get(serviceConfig.getBaseUrl() + GET_TENANT_URL, null, params, new NetCallback() {
             @Override
             public void onSuccess(String succeed) {

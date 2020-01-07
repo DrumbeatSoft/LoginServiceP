@@ -71,8 +71,10 @@ public class LoginActivity extends AppCompatActivity {
             SPUtils.getInstance().put("pwd", etPwd.getEditableText().toString().trim());
 
             LoginService.setConfig(ServiceConfig.newBuilder()
-                    .setAppId("125438260305469440")
-                    .setBaseUrl("http://192.168.20.233:30060/")
+//                    .setAppId("125438260305469440")//供应链
+                    .setAppId("121535395308507136")//广告费
+//                    .setBaseUrl("http://192.168.20.233:30060/")
+                    .setBaseUrl("http://api.drumbeatsoft.com/")
                     .build());
             LoginService.setTenantId(etTenant.getEditableText().toString().trim());
 
