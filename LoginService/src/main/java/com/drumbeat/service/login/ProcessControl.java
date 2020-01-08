@@ -20,20 +20,21 @@ import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
 import com.drumbeat.service.login.config.ServiceConfig;
 import com.drumbeat.service.login.constant.ResultCode;
-import com.drumbeat.service.login.drumsdk.helper.HttpHelper;
-import com.drumbeat.service.login.drumsdk.kalle.NetCallback;
 import com.drumbeat.service.login.qbar.CodeType;
 import com.drumbeat.service.login.qbar.OnScanListener;
 import com.drumbeat.service.login.qbar.QBarHelper;
 import com.drumbeat.service.login.qbar.ScanResult;
 import com.drumbeat.service.login.ui.ConfirmActivity;
+import com.hailong.zbase.helper.HttpHelper;
+import com.hailong.zbase.http.HttpFail;
+import com.hailong.zbase.http.callback.HttpCallback;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.drumbeat.service.login.constant.APIInterface.BASE_URL;
 import static com.drumbeat.service.login.constant.APIInterface.CANCEL_LOGIN;
+import static com.drumbeat.service.login.constant.APIInterface.CHECK_PASSWORD_EXPIRE;
 import static com.drumbeat.service.login.constant.APIInterface.CONFIRM_LOGIN;
 import static com.drumbeat.service.login.constant.APIInterface.GET_TENANT_URL;
 import static com.drumbeat.service.login.constant.APIInterface.GET_USER_INFO;
@@ -44,6 +45,7 @@ import static com.drumbeat.service.login.constant.Constant.SP_TOKEN;
 import static com.drumbeat.service.login.constant.Constant.SP_USER_ID;
 import static com.drumbeat.service.login.constant.ResultCode.CANCEL_LOGIN_QRCODE;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_CANCEL_LOGIN_QRCODE;
+import static com.drumbeat.service.login.constant.ResultCode.ERROR_CHECK_PASSWORD_EXPIRE;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_GET_TENANT;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_GET_USER_INFO;
 import static com.drumbeat.service.login.constant.ResultCode.ERROR_LOGIN_ACCOUNT;
@@ -98,7 +100,7 @@ public class ProcessControl {
     }
 
     /**
-     * 账号密码登录
+     * 查询租户
      */
     static void getTenantList(String account, ResultCallback<List<TenantBean.ResultBean>> callback) {
         ServiceConfig serviceConfig = LoginService.getConfig();
@@ -107,14 +109,14 @@ public class ProcessControl {
         params.put("info", account);
         params.put("appId", serviceConfig.getAppId());
 
-        HttpHelper.get(serviceConfig.getBaseUrl() + GET_TENANT_URL, null, params, new NetCallback() {
+        HttpHelper.get(serviceConfig.getBaseUrl() + GET_TENANT_URL, params, new HttpCallback<String>() {
             @Override
-            public void onSuccess(String succeed) {
-                if (TextUtils.isEmpty(succeed)) {
+            public void onSuccess(String success) {
+                if (TextUtils.isEmpty(success)) {
                     onFailCallback(callback, ERROR_GET_TENANT);
                     return;
                 }
-                BaseBean baseBean = JSONObject.parseObject(succeed, BaseBean.class);
+                BaseBean baseBean = JSONObject.parseObject(success, BaseBean.class);
                 if (baseBean == null || TextUtils.isEmpty(baseBean.getEntity())) {
                     onFailCallback(callback, ERROR_GET_TENANT);
                     return;
@@ -128,8 +130,8 @@ public class ProcessControl {
             }
 
             @Override
-            public void onFail(String failed) {
-                failed.length();
+            public void onFail(HttpFail fail) {
+                onFailCallback(callback, ERROR_GET_TENANT);
             }
         });
     }
@@ -168,14 +170,14 @@ public class ProcessControl {
         JSONObject object = new JSONObject();
         object.put("input", jsonObject);
 
-        HttpHelper.post(serviceConfig.getBaseUrl() + LOGIN_URL, null, object, new NetCallback() {
+        HttpHelper.post(serviceConfig.getBaseUrl() + LOGIN_URL, object, new HttpCallback<String>() {
             @Override
-            public void onSuccess(String succeed) {
-                if (TextUtils.isEmpty(succeed)) {
+            public void onSuccess(String success) {
+                if (TextUtils.isEmpty(success)) {
                     onFailCallback(callback, ERROR_LOGIN_ACCOUNT);
                     return;
                 }
-                BaseBean baseBean = JSONObject.parseObject(succeed, BaseBean.class);
+                BaseBean baseBean = JSONObject.parseObject(success, BaseBean.class);
                 if (baseBean == null || TextUtils.isEmpty(baseBean.getEntity())) {
                     onFailCallback(callback, ERROR_LOGIN_ACCOUNT);
                     return;
@@ -190,8 +192,54 @@ public class ProcessControl {
             }
 
             @Override
-            public void onFail(String failed) {
+            public void onFail(HttpFail fail) {
                 onFailCallback(callback, ERROR_LOGIN_ACCOUNT);
+            }
+        });
+
+    }
+
+    /**
+     * 检查账户密码是否过期，是否必须强制修改
+     *
+     * @param callback
+     */
+    public static void checkPasswordExpire(@NonNull String centralizerToken, ResultCallback<Boolean> callback) {
+//        Map<String, String> params = new HashMap<>();
+//        params.put("accountId", account);
+
+        String[] split = centralizerToken.split("\\.");
+        String base64 = split[1];
+        String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
+        JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
+        String id = userJSONObject.getString("AccountId");
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("accountId", id);
+
+        ServiceConfig serviceConfig = LoginService.getConfig();
+
+        HttpHelper.addHeader("Authorization", centralizerToken);
+
+        HttpHelper.post(serviceConfig.getBaseUrl() + CHECK_PASSWORD_EXPIRE, jsonObject, new HttpCallback<String>() {
+            @Override
+            public void onSuccess(String success) {
+                if (TextUtils.isEmpty(success)) {
+                    onFailCallback(callback, ERROR_CHECK_PASSWORD_EXPIRE);
+                    return;
+                }
+                BaseBean baseBean = JSONObject.parseObject(success, BaseBean.class);
+                if (baseBean == null || TextUtils.isEmpty(baseBean.getEntity())) {
+                    onFailCallback(callback, ERROR_CHECK_PASSWORD_EXPIRE);
+                    return;
+                }
+                ResultBean resultBean = JSONObject.parseObject(baseBean.getEntity(), ResultBean.class);
+                onSuccessCallback(callback, resultBean.isResult());
+            }
+
+            @Override
+            public void onFail(HttpFail fail) {
+                onFailCallback(callback, ERROR_CHECK_PASSWORD_EXPIRE);
             }
         });
     }
@@ -200,9 +248,6 @@ public class ProcessControl {
      * 修改密码
      */
     static void modifyPwd(@NonNull String oldPwd, @NonNull String newPwd, @NonNull String centralizerToken, ResultCallback<ResultBean> callback) {
-
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", centralizerToken);
 
         String[] split = centralizerToken.split("\\.");
         String base64 = split[1];
@@ -219,14 +264,17 @@ public class ProcessControl {
         object.put("input", jsonObject);
 
         ServiceConfig serviceConfig = LoginService.getConfig();
-        HttpHelper.post(serviceConfig.getBaseUrl() + MODIFY_PASSWORD, headers, object, new NetCallback() {
+
+        HttpHelper.addHeader("Authorization", centralizerToken);
+
+        HttpHelper.post(serviceConfig.getBaseUrl() + MODIFY_PASSWORD, object, new HttpCallback<String>() {
             @Override
-            public void onSuccess(String succeed) {
-                if (TextUtils.isEmpty(succeed)) {
+            public void onSuccess(String success) {
+                if (TextUtils.isEmpty(success)) {
                     onFailCallback(callback, ERROR_MODIFY_PASSWORD);
                     return;
                 }
-                BaseBean baseBean = JSONObject.parseObject(succeed, BaseBean.class);
+                BaseBean baseBean = JSONObject.parseObject(success, BaseBean.class);
                 if (baseBean == null) {
                     onFailCallback(callback, ERROR_MODIFY_PASSWORD);
                     return;
@@ -272,19 +320,17 @@ public class ProcessControl {
             }
 
             @Override
-            public void onFail(String failed) {
+            public void onFail(HttpFail fail) {
                 onFailCallback(callback, ERROR_MODIFY_PASSWORD);
             }
         });
+
     }
 
     /**
      * 查询用户信息
      */
     static void getUserInfo(@NonNull String centralizerToken, ResultCallback<UserInfoBean.ResultBean> callback) {
-
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", centralizerToken);
 
         String[] split = centralizerToken.split("\\.");
         String base64 = split[1];
@@ -296,14 +342,17 @@ public class ProcessControl {
         map.put("accountId", accountId);
 
         ServiceConfig serviceConfig = LoginService.getConfig();
-        HttpHelper.get(serviceConfig.getBaseUrl() + GET_USER_INFO, headers, map, new NetCallback() {
+
+        HttpHelper.addHeader("Authorization", centralizerToken);
+
+        HttpHelper.get(serviceConfig.getBaseUrl() + GET_USER_INFO, map, new HttpCallback<String>() {
             @Override
-            public void onSuccess(String succeed) {
-                if (TextUtils.isEmpty(succeed)) {
+            public void onSuccess(String success) {
+                if (TextUtils.isEmpty(success)) {
                     onFailCallback(callback, ERROR_GET_USER_INFO);
                     return;
                 }
-                BaseBean baseBean = JSONObject.parseObject(succeed, BaseBean.class);
+                BaseBean baseBean = JSONObject.parseObject(success, BaseBean.class);
                 if (baseBean == null) {
                     onFailCallback(callback, ERROR_GET_USER_INFO);
                     return;
@@ -326,7 +375,7 @@ public class ProcessControl {
             }
 
             @Override
-            public void onFail(String failed) {
+            public void onFail(HttpFail fail) {
                 onFailCallback(callback, ERROR_MODIFY_PASSWORD);
             }
         });
@@ -362,18 +411,22 @@ public class ProcessControl {
      * 使用二维码扫出来的数据，访问server，获取待登录的用户信息
      */
     private static void verifyQRCode(final Activity activity, ResultCallback callback) {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", SPUtils.getInstance().getString(SP_TOKEN));
+
         Map<String, String> map = new HashMap<>();
         map.put("id", SPUtils.getInstance().getString(SP_USER_ID));
-        HttpHelper.get(BASE_URL + SCAN_CODE, headers, map, new NetCallback() {
+
+        ServiceConfig serviceConfig = LoginService.getConfig();
+
+        HttpHelper.addHeader("Authorization", SPUtils.getInstance().getString(SP_TOKEN));
+
+        HttpHelper.get(serviceConfig.getBaseUrl() + SCAN_CODE, map, new HttpCallback<String>() {
             @Override
-            public void onSuccess(String succeed) {
-                if (TextUtils.isEmpty(succeed)) {
+            public void onSuccess(String success) {
+                if (TextUtils.isEmpty(success)) {
                     onFailCallback(callback, ERROR_QRCODE_VERIFY);
                     return;
                 }
-                BaseBean baseBean = JSONObject.parseObject(succeed, BaseBean.class);
+                BaseBean baseBean = JSONObject.parseObject(success, BaseBean.class);
                 if (baseBean == null) {
                     onFailCallback(callback, ERROR_QRCODE_VERIFY);
                     return;
@@ -409,28 +462,31 @@ public class ProcessControl {
             }
 
             @Override
-            public void onFail(String failed) {
+            public void onFail(HttpFail fail) {
                 onFailCallback(callback, ERROR_QRCODE_VERIFY);
             }
         });
+
     }
 
     /**
      * 扫码后确认登录
      */
     public static void login(Activity activity, ResultCallback callback) {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", SPUtils.getInstance().getString(SP_TOKEN));
         Map<String, String> params = new HashMap<>();
         params.put("id", SPUtils.getInstance().getString(SP_USER_ID));
-        HttpHelper.get(BASE_URL + CONFIRM_LOGIN, headers, params, new NetCallback() {
+
+        HttpHelper.addHeader("Authorization", SPUtils.getInstance().getString(SP_TOKEN));
+
+        ServiceConfig serviceConfig = LoginService.getConfig();
+        HttpHelper.get(serviceConfig.getBaseUrl() + CONFIRM_LOGIN, params, new HttpCallback<String>() {
             @Override
-            public void onSuccess(String succeed) {
-                if (TextUtils.isEmpty(succeed)) {
+            public void onSuccess(String success) {
+                if (TextUtils.isEmpty(success)) {
                     onFailCallback(callback, ERROR_QRCODE_LOGIN);
                     return;
                 }
-                BaseBean baseBean = JSONObject.parseObject(succeed, BaseBean.class);
+                BaseBean baseBean = JSONObject.parseObject(success, BaseBean.class);
                 if (baseBean == null) {
                     onFailCallback(callback, ERROR_QRCODE_LOGIN);
                     return;
@@ -449,15 +505,16 @@ public class ProcessControl {
                     onFailCallback(callback, ERROR_QRCODE_LOGIN);
                     return;
                 }
-                onSuccessCallback(callback, succeed);
+                onSuccessCallback(callback, success);
                 activity.finish();
             }
 
             @Override
-            public void onFail(String failed) {
+            public void onFail(HttpFail fail) {
                 onFailCallback(callback, ERROR_QRCODE_LOGIN);
             }
         });
+
     }
 
     /**
@@ -468,14 +525,19 @@ public class ProcessControl {
         headers.put("Authorization", SPUtils.getInstance().getString(SP_TOKEN));
         Map<String, String> map = new HashMap<>();
         map.put("id", SPUtils.getInstance().getString(SP_USER_ID));
-        HttpHelper.get(BASE_URL + CANCEL_LOGIN, headers, map, new NetCallback() {
+
+        HttpHelper.addHeader("Authorization", SPUtils.getInstance().getString(SP_TOKEN));
+
+        ServiceConfig serviceConfig = LoginService.getConfig();
+
+        HttpHelper.get(serviceConfig.getBaseUrl() + CANCEL_LOGIN, map, new HttpCallback<String>() {
             @Override
-            public void onSuccess(String succeed) {
-                if (TextUtils.isEmpty(succeed)) {
+            public void onSuccess(String success) {
+                if (TextUtils.isEmpty(success)) {
                     onFailCallback(callback, ERROR_CANCEL_LOGIN_QRCODE);
                     return;
                 }
-                BaseBean baseBean = JSONObject.parseObject(succeed, BaseBean.class);
+                BaseBean baseBean = JSONObject.parseObject(success, BaseBean.class);
                 if (baseBean == null) {
                     onFailCallback(callback, ERROR_CANCEL_LOGIN_QRCODE);
                     return;
@@ -500,7 +562,7 @@ public class ProcessControl {
             }
 
             @Override
-            public void onFail(String failed) {
+            public void onFail(HttpFail fail) {
                 onFailCallback(callback, ERROR_CANCEL_LOGIN_QRCODE);
             }
         });

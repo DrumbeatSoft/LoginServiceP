@@ -98,6 +98,16 @@ public class LoginService {
         ProcessControl.login(serviceConfig, account, password, callback);
     }
 
+
+    /**
+     * 检查账户密码是否过期，是否必须强制修改
+     *
+     * @param callback
+     */
+    public static void checkPasswordExpire(@NonNull String centralizerToken, ResultCallback<Boolean> callback) {
+        ProcessControl.checkPasswordExpire(centralizerToken, callback);
+    }
+
     /**
      * 修改密码
      */

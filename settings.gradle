@@ -1,2 +1,2 @@
-include ':app', ':LoginService'
+include ':app', ':LoginService', ':ZBase-lib'
 rootProject.name='LoginServiceP'

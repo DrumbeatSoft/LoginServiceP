@@ -33,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     Button btnLogin;
     Button btnModify;
     Button btnScan;
+    Button btnCheckPwd;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin);
         btnModify = findViewById(R.id.btnModify);
         btnScan = findViewById(R.id.btnScan);
+        btnCheckPwd = findViewById(R.id.btnCheckPwd);
         String tenant = SPUtils.getInstance().getString("tenant");
         String account = SPUtils.getInstance().getString("account");
         String pwd = SPUtils.getInstance().getString("pwd");
@@ -72,18 +74,23 @@ public class LoginActivity extends AppCompatActivity {
 
             LoginService.setConfig(ServiceConfig.newBuilder()
 //                    .setAppId("125438260305469440")//供应链
-                    .setAppId("121535395308507136")//广告费
+//                    .setAppId("121535395308507136")//广告费
+                    .setAppId("125438260305469440")//认证平台
 //                    .setBaseUrl("http://192.168.20.233:30060/")
                     .setBaseUrl("http://api.drumbeatsoft.com/")
                     .build());
-            LoginService.setTenantId(etTenant.getEditableText().toString().trim());
 
             LoginService.getTenantList(etAccount.getEditableText().toString().trim(), new ResultCallback<List<TenantBean.ResultBean>>() {
                 @Override
                 public void onSuccess(List<TenantBean.ResultBean> succeed) {
                     if (succeed != null && succeed.size() > 0) {
-                        LoginService.setTenantId(succeed.get(0).getTenantId());
+//                        LoginService.setTenantId(succeed.get(0).getTenantId());
+                        // 河南OPPO
+                        LoginService.setTenantId("123480379607748607");// 正式
+//                        LoginService.setTenantId("100000000000000000");
                         login(account1, pwd1);
+                    } else {
+                        ToastUtils.showLong("未查询租户信息");
                     }
                 }
 
@@ -124,6 +131,23 @@ public class LoginActivity extends AppCompatActivity {
                 });
             }
         });
+
+        btnCheckPwd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoginService.checkPasswordExpire(SPUtils.getInstance().getString(Constant.SP_TOKEN), new ResultCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean succeed) {
+                        ToastUtils.showLong(succeed ? "需要重置密码" : "不需要重置密码");
+                    }
+
+                    @Override
+                    public void onFail(ResultCode resultCode) {
+                        ToastUtils.showLong("检查失败");
+                    }
+                });
+            }
+        });
     }
 
     private void login(String account1, String pwd1) {
@@ -132,6 +156,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(LoginResultBean succeed) {
                 ToastUtils.showShort("登录成功，现在可以扫码登录了");
                 btnScan.setVisibility(View.VISIBLE);
+
             }
 
             @Override

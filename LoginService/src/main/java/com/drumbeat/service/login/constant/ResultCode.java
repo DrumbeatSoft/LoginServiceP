@@ -40,6 +40,10 @@ public enum ResultCode implements Serializable {
     ERROR_CANCEL_LOGIN_QRCODE,
 
     /**
+     * 检查账户密码是否失效
+     */
+    ERROR_CHECK_PASSWORD_EXPIRE,
+    /**
      * 修改密码失败
      */
     ERROR_MODIFY_PASSWORD,

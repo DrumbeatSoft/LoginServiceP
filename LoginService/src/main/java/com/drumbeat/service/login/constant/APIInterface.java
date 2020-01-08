@@ -8,7 +8,8 @@ public interface APIInterface {
     /**
      * 基础URL
      */
-    String BASE_URL = "http://192.168.20.233:30060/";
+//    String BASE_URL = "http://192.168.20.233:30060/";
+//    String BASE_URL = "http://api.drumbeatsoft.com/";
     /**
      * 查询租户列表
      */
@@ -31,6 +32,11 @@ public interface APIInterface {
      * 取消扫码登录
      */
     String CANCEL_LOGIN = "gateway/api/account/cancelscancodelogin";
+
+    /**
+     * 检查账户密码是否失效
+     */
+    String CHECK_PASSWORD_EXPIRE = "api/account/checkpasswordexpire";
 
     /**
      * 修改密码
