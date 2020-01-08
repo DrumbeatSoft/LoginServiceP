@@ -25,9 +25,9 @@ import com.drumbeat.service.login.qbar.OnScanListener;
 import com.drumbeat.service.login.qbar.QBarHelper;
 import com.drumbeat.service.login.qbar.ScanResult;
 import com.drumbeat.service.login.ui.ConfirmActivity;
-import com.hailong.zbase.helper.HttpHelper;
-import com.hailong.zbase.http.HttpFail;
-import com.hailong.zbase.http.callback.HttpCallback;
+import com.drumbeat.service.login.zbase.helper.HttpHelper;
+import com.drumbeat.service.login.zbase.http.HttpFail;
+import com.drumbeat.service.login.zbase.http.callback.HttpCallback;
 
 import java.util.HashMap;
 import java.util.List;
