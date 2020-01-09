@@ -56,7 +56,6 @@ public enum ResultCode implements Serializable {
      */
     ERROR_CHECK_PASSWORD_EXPIRE,
 
-
     /********************************************************** 入参验证 ********************************************************/
     /**
      * appId is null
