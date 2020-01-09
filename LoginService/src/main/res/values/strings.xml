@@ -23,6 +23,49 @@
     <string name="http_exception_unknow_error">发生未知异常</string>
     <string name="http_exception_download_error">服务器异常</string>
 
+    <!--************************************************* 接口错误信息 *************************************************-->
+
+    <string name="dblogin_fail_unknow">未知异常</string>
+    <string name="dblogin_fail_unknow_with_code">未知异常，错误码是</string>
+    <string name="dblogin_fail_nodata">数据为空</string>
+    <!--json数据格式问题-->
+    <string name="dblogin_fail_json">数据格式不匹配</string>
+    <string name="dblogin_fail_scancode">扫描失败，请重新扫描</string>
+    <string name="dblogin_fail_scancode_cancel">取消扫码登录</string>
+
+    <!--扫描二维码，极端情况，等待扫描-->
+    <string name="dblogin_fail_0_scancode">扫描失败，请重新扫描</string>
+    <string name="dblogin_fail_2">旧密码错误</string>
+    <string name="dblogin_fail_3">账户不存在</string>
+    <string name="dblogin_fail_4">账户名或密码错误</string>
+    <string name="dblogin_fail_10_modifypwd">登录状态错误</string>
+    <string name="dblogin_fail_10_login">账户不存在或密码错误</string>
+    <string name="dblogin_fail_11">重试次数过多被限制</string>
+    <string name="dblogin_fail_12">账户禁用</string>
+    <string name="dblogin_fail_13">账户密码过期，强制修改密码</string>
+    <string name="dblogin_fail_14">账户绑定设备Id不一致</string>
+    <string name="dblogin_fail_15">账户绑定租户错误</string>
+    <string name="dblogin_fail_16">账户绑定APP错误</string>
+    <string name="dblogin_fail_17">租户信息错误</string>
+    <string name="dblogin_fail_18">租户绑定App错误</string>
+    <string name="dblogin_fail_20">APP禁用</string>
+    <string name="dblogin_fail_21">App安全码错误</string>
+    <string name="dblogin_fail_22">App访问Ip被限制</string>
+    <string name="dblogin_fail_23">App访问参数不正确</string>
+    <string name="dblogin_fail_30">应用设备传递错误</string>
+    <string name="dblogin_fail_80">解析认证结果错误</string>
+    <string name="dblogin_fail_81">调用认证服务出错</string>
+    <!--扫描二维码 scancode-->
+    <string name="dblogin_fail_200">已被授权登录，不可重复扫描</string>
+    <!--扫描二维码 scancode-->
+    <string name="dblogin_fail_201">已被扫描过，不可重复扫描</string>
+    <!--扫描二维码 scancode-->
+    <string name="dblogin_fail_400">已失效，请刷新二维码</string>
+    <!--扫描二维码 scancode-->
+    <string name="dblogin_fail_500">状态错误，请重新扫描</string>
+
+    <!--************************************************* 接口错误信息 *************************************************-->
+
     <!--qbar-->
     <string name="qbar_scan_qrcode">扫描二维码</string>
 </resources>

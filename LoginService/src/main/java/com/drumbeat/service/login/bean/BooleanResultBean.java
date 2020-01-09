@@ -3,7 +3,7 @@ package com.drumbeat.service.login.bean;
 /**
  * Created by ZuoHailong on 2019/12/23.
  */
-public class ResultBean {
+public class BooleanResultBean {
     private int Code;
     private boolean Success;
     private boolean Result;
@@ -12,25 +12,25 @@ public class ResultBean {
         return Code;
     }
 
-    public ResultBean setCode(int code) {
+    public BooleanResultBean setCode(int code) {
         Code = code;
         return this;
     }
 
-    public boolean isSuccess() {
+    public boolean getSuccess() {
         return Success;
     }
 
-    public ResultBean setSuccess(boolean success) {
+    public BooleanResultBean setSuccess(boolean success) {
         Success = success;
         return this;
     }
 
-    public boolean isResult() {
+    public boolean getResult() {
         return Result;
     }
 
-    public ResultBean setResult(boolean result) {
+    public BooleanResultBean setResult(boolean result) {
         Result = result;
         return this;
     }

@@ -15,10 +15,12 @@ import java.io.Serializable;
  */
 public class Messenger extends BroadcastReceiver {
 
+    public static final int CODE_SUCCESS = 100;
+    public static final int CODE_FAILURE = 101;
     private static final String ACTION = "com.drumbeat.service.login";
 
     public static void send(Context context) {
-        send(context, new Message().setResultCode(ResultCode.SUCCEES));
+        send(context, new Message().setCode(CODE_SUCCESS));
     }
 
     public static void send(Context context, Message message) {
@@ -56,15 +58,15 @@ public class Messenger extends BroadcastReceiver {
 
     public static class Message implements Serializable {
 
-        private ResultCode resultCode;
+        private int code;
         private String data;
 
-        public ResultCode getResultCode() {
-            return resultCode;
+        public int getCode() {
+            return code;
         }
 
-        public Message setResultCode(ResultCode resultCode) {
-            this.resultCode = resultCode;
+        public Message setCode(int code) {
+            this.code = code;
             return this;
         }
 

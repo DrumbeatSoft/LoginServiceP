@@ -67,7 +67,7 @@ public class HttpHelper {
 
                     @Override
                     protected void onFailed(String failed) {
-                        netCallback.onFail(failed);
+                        netCallback.onFailure(failed);
                     }
                 });
     }
@@ -104,7 +104,7 @@ public class HttpHelper {
 
                     @Override
                     protected void onFailed(String failed) {
-                        netCallback.onFail(failed);
+                        netCallback.onFailure(failed);
                     }
                 });
     }

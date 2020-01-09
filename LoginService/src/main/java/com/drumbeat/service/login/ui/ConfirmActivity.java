@@ -9,13 +9,17 @@ import android.widget.LinearLayout;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.blankj.utilcode.util.BarUtils;
-import com.blankj.utilcode.util.ToastUtils;
 import com.drumbeat.service.login.Messenger;
 import com.drumbeat.service.login.ProcessControl;
 import com.drumbeat.service.login.R;
-import com.drumbeat.service.login.ResultCallback;
+import com.drumbeat.service.login.callback.Callback;
+import com.drumbeat.service.login.callback.FailureBean;
 import com.drumbeat.service.login.constant.ResultCode;
 
+/**
+ * 扫描二维码后的确认登录页
+ * Created by ZuoHailong on 2020/1/9.
+ */
 public class ConfirmActivity extends Activity implements View.OnClickListener {
 
     @Override
@@ -39,30 +43,31 @@ public class ConfirmActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         int viewId = view.getId();
         if (viewId == R.id.tvLogin) {
-            ProcessControl.login(this, new ResultCallback() {
+            ProcessControl.login(this, new Callback() {
                 @Override
-                public void onSuccess(Object succeed) {
-                    Messenger.send(ConfirmActivity.this, new Messenger.Message().setResultCode(ResultCode.SUCCEES).setData((String) succeed));
+                public void onSuccess(Object success) {
+                    Messenger.send(ConfirmActivity.this, new Messenger.Message().setCode(Messenger.CODE_SUCCESS).setData((String) success));
                     finish();
                 }
 
                 @Override
-                public void onFail(ResultCode resultCode) {
-                    Messenger.send(ConfirmActivity.this, new Messenger.Message().setResultCode(resultCode));
+                public void onFailure(FailureBean failure) {
+                    Messenger.send(ConfirmActivity.this, new Messenger.Message().setCode(Messenger.CODE_FAILURE));
                     finish();
                 }
+
             });
         } else if (viewId == R.id.tvCancel) {
-            ProcessControl.cancelLogin(this, new ResultCallback() {
+            ProcessControl.cancelLogin(this, new Callback() {
                 @Override
-                public void onSuccess(Object succeed) {
-                    Messenger.send(ConfirmActivity.this, new Messenger.Message().setResultCode(ResultCode.SUCCEES).setData((String) succeed));
+                public void onSuccess(Object success) {
+                    Messenger.send(ConfirmActivity.this, new Messenger.Message().setCode(Messenger.CODE_SUCCESS).setData((String) success));
                     finish();
                 }
 
                 @Override
-                public void onFail(ResultCode resultCode) {
-                    Messenger.send(ConfirmActivity.this, new Messenger.Message().setResultCode(resultCode));
+                public void onFailure(FailureBean failure) {
+                    Messenger.send(ConfirmActivity.this, new Messenger.Message().setCode(Messenger.CODE_FAILURE));
                     finish();
                 }
             });

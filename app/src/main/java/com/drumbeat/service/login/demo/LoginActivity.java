@@ -12,8 +12,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.drumbeat.service.login.LoginService;
-import com.drumbeat.service.login.ResultCallback;
-import com.drumbeat.service.login.bean.ResultBean;
+import com.drumbeat.service.login.callback.Callback;
+import com.drumbeat.service.login.bean.BooleanResultBean;
 import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.constant.Constant;
 import com.drumbeat.service.login.constant.ResultCode;
@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                     .build());
             LoginService.setTenantId("123480379607748607");//河南OPPO
 
-            LoginService.getTenantList(etAccount.getEditableText().toString().trim(), new ResultCallback<List<TenantBean.ResultBean>>() {
+            LoginService.getTenantList(etAccount.getEditableText().toString().trim(), new Callback<List<TenantBean.ResultBean>>() {
                 @Override
                 public void onSuccess(List<TenantBean.ResultBean> succeed) {
                     if (succeed != null && succeed.size() > 0) {
@@ -89,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
 
         });
         btnScan.setOnClickListener(view ->
-                LoginService.scan(LoginActivity.this, new ResultCallback() {
+                LoginService.scan(LoginActivity.this, new Callback() {
                     @Override
                     public void onSuccess(Object succeed) {
                         ToastUtils.showShort("扫码登录成功");
@@ -104,9 +104,9 @@ public class LoginActivity extends AppCompatActivity {
         btnModify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginService.modifyPassword("MM2019", "MM2020", SPUtils.getInstance().getString(Constant.SP_TOKEN), new ResultCallback<ResultBean>() {
+                LoginService.modifyPassword("MM2019", "MM2020", SPUtils.getInstance().getString(Constant.SP_TOKEN), new Callback<BooleanResultBean>() {
                     @Override
-                    public void onSuccess(ResultBean succeed) {
+                    public void onSuccess(BooleanResultBean succeed) {
                         ToastUtils.showShort("密码修改成功，改为了 MM2020");
                     }
 
@@ -121,7 +121,7 @@ public class LoginActivity extends AppCompatActivity {
         btnCheckPwd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginService.checkPasswordExpire(SPUtils.getInstance().getString(Constant.SP_TOKEN), new ResultCallback<Boolean>() {
+                LoginService.checkPasswordExpire(SPUtils.getInstance().getString(Constant.SP_TOKEN), new Callback<Boolean>() {
                     @Override
                     public void onSuccess(Boolean succeed) {
                         ToastUtils.showLong(succeed ? "失效" : "未失效");
@@ -137,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login(String account1, String pwd1) {
-        LoginService.login(account1, pwd1, new ResultCallback<LoginResultBean>() {
+        LoginService.login(account1, pwd1, new Callback<LoginResultBean>() {
             @Override
             public void onSuccess(LoginResultBean succeed) {
                 ToastUtils.showShort("登录成功，现在可以扫码登录了");
