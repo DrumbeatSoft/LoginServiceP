@@ -51,6 +51,10 @@ public enum ResultCode implements Serializable {
      * token失效
      */
     ERROR_TOKEN_INVALID,
+    /**
+     * 查询密码是否失效失败
+     */
+    ERROR_CHECK_PASSWORD_EXPIRE,
 
 
     /********************************************************** 入参验证 ********************************************************/

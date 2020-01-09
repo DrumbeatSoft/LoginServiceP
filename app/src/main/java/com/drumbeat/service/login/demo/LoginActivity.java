@@ -27,35 +27,29 @@ import java.util.List;
  */
 public class LoginActivity extends AppCompatActivity {
 
-    EditText etTenant;
     EditText etAccount;
     EditText etPwd;
     Button btnLogin;
     Button btnModify;
     Button btnScan;
+    Button btnCheckPwd;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        etTenant = findViewById(R.id.etTenant);
         etAccount = findViewById(R.id.etAccount);
         etPwd = findViewById(R.id.etPwd);
         btnLogin = findViewById(R.id.btnLogin);
         btnModify = findViewById(R.id.btnModify);
         btnScan = findViewById(R.id.btnScan);
+        btnCheckPwd = findViewById(R.id.btnCheckPwd);
         String tenant = SPUtils.getInstance().getString("tenant");
         String account = SPUtils.getInstance().getString("account");
         String pwd = SPUtils.getInstance().getString("pwd");
-        etTenant.setText(TextUtils.isEmpty(tenant) ? "Auth" : tenant);
-        etAccount.setText(TextUtils.isEmpty(account) ? "岳真真" : account);
-        etPwd.setText(TextUtils.isEmpty(pwd) ? "MM2019" : pwd);
+        etAccount.setText(TextUtils.isEmpty(account) ? "GD020" : account);
+        etPwd.setText(TextUtils.isEmpty(pwd) ? "MM20200108" : pwd);
         btnLogin.setOnClickListener(view -> {
-            String tenant1 = etTenant.getEditableText().toString().trim();
-            if (TextUtils.isEmpty(tenant1)) {
-                ToastUtils.showShort("请输入租户");
-                return;
-            }
             String account1 = etAccount.getEditableText().toString().trim();
             if (TextUtils.isEmpty(account1)) {
                 ToastUtils.showShort("请输入账号");
@@ -66,15 +60,16 @@ public class LoginActivity extends AppCompatActivity {
                 ToastUtils.showShort("请输入密码");
                 return;
             }
-            SPUtils.getInstance().put("tenant", etTenant.getEditableText().toString().trim());
             SPUtils.getInstance().put("account", etAccount.getEditableText().toString().trim());
             SPUtils.getInstance().put("pwd", etPwd.getEditableText().toString().trim());
 
             LoginService.setConfig(ServiceConfig.newBuilder()
-                    .setAppId("125438260305469440")
-                    .setBaseUrl("http://192.168.20.233:30060/")
+//                    .setAppId("125438260305469440")//认证平台
+                    .setAppId("121535616969084928")//体验店
+//                    .setBaseUrl("http://192.168.20.233:30060/")
+                    .setBaseUrl("http://api.drumbeatsoft.com/")
                     .build());
-            LoginService.setTenantId(etTenant.getEditableText().toString().trim());
+            LoginService.setTenantId("123480379607748607");//河南OPPO
 
             LoginService.getTenantList(etAccount.getEditableText().toString().trim(), new ResultCallback<List<TenantBean.ResultBean>>() {
                 @Override
@@ -118,6 +113,23 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onFail(ResultCode resultCode) {
                         ToastUtils.showShort("修改失败");
+                    }
+                });
+            }
+        });
+
+        btnCheckPwd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoginService.checkPasswordExpire(SPUtils.getInstance().getString(Constant.SP_TOKEN), new ResultCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean succeed) {
+                        ToastUtils.showLong(succeed ? "失效" : "未失效");
+                    }
+
+                    @Override
+                    public void onFail(ResultCode resultCode) {
+                        ToastUtils.showLong("检查失败");
                     }
                 });
             }

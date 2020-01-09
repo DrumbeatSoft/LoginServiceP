@@ -41,4 +41,9 @@ public interface APIInterface {
      * 查询用户信息
      */
     String GET_USER_INFO = "gateway/api/account/getbyid";
+
+    /**
+     * 检查密码是否失效需要重置
+     */
+    String CHECK_PASSWORD_EXPIRE = "gateway/api/account/checkpasswordexpire";
 }
