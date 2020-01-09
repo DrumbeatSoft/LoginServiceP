@@ -10,7 +10,7 @@
 ### 引入
 ```
 
-implementation 'com.github.ZuoHailong:LoginServiceP:0.3.1'
+implementation 'com.github.ZuoHailong:LoginServiceP:0.3.7'
 
 ```
 
@@ -113,17 +113,28 @@ public class LoginResultBean {
 
 ```
 
+### 检查密码是否失效需要重置
+```
+
+     checkPasswordExpire(@NonNull String centralizerToken, ResultCallback<Boolean> callback);
+
+```
+
 ### 错误码枚举类
 
 ##### ResultCallback 回调函数回调 onFail(ResultCode resultCode) 函数时会返回错误码
 
 ```
 
-public enum ResultCode {
+public enum ResultCode implements Serializable {
     /**
      * 成功
      */
     SUCCEES,
+    /**
+     * 查询租户失败
+     */
+    ERROR_GET_TENANT,
     /**
      * 账号密码登录失败
      */
@@ -157,9 +168,17 @@ public enum ResultCode {
      * 获取用户信息失败
      */
     ERROR_GET_USER_INFO,
+    /**
+     * token失效
+     */
+    ERROR_TOKEN_INVALID,
+    /**
+     * 查询密码是否失效失败
+     */
+    ERROR_CHECK_PASSWORD_EXPIRE,
 
 
-    /**************************************** 入参验证 ****************************************/
+    /********************************************************** 入参验证 ********************************************************/
     /**
      * appId is null
      */
