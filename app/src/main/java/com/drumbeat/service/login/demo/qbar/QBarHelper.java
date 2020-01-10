@@ -1,10 +1,10 @@
-package com.drumbeat.service.login.qbar;
+package com.drumbeat.service.login.demo.qbar;
 
 import android.app.Activity;
 import android.graphics.Color;
 import android.text.TextUtils;
 
-import com.drumbeat.service.login.R;
+import com.drumbeat.service.login.demo.R;
 
 import cn.bertsir.zbar.QrConfig;
 import cn.bertsir.zbar.QrManager;

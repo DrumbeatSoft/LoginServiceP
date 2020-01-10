@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">LoginServiceP</string>
+
+    <string name="qbar_scan_qrcode">扫描二维码</string>
+    <string name="fail_scancode">扫描失败，请重新扫描</string>
 </resources>

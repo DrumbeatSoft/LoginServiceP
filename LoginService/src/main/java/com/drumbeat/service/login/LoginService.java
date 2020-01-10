@@ -12,10 +12,12 @@ import com.drumbeat.service.login.bean.LoginResultBean;
 import com.drumbeat.service.login.bean.BooleanResultBean;
 import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
-import com.drumbeat.service.login.callback.Callback;
+import com.drumbeat.service.login.callback.FailureBean;
 import com.drumbeat.service.login.config.ServiceConfig;
 import com.drumbeat.service.login.utils.SharedPreferencesUtil;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -86,6 +88,7 @@ public class LoginService {
         }
         ProcessControl.login(LoginService.getConfig(), account, password, callback);
     }
+
     /**
      * 检查账户密码是否过期，是否必须强制修改
      *
@@ -112,8 +115,8 @@ public class LoginService {
     /**
      * 扫码登录，目前用于web页的登录
      */
-    public static void scan(Activity activity, Callback callback) {
-        ProcessControl.scan(activity, callback);
+    public static void loginQrcode(final Activity activity, String userId, LoginService.Callback callback) {
+        ProcessControl.loginQrcode(activity, userId, callback);
     }
 
     /**
@@ -128,5 +131,22 @@ public class LoginService {
      */
     public static String getCentralizerToken(Context context) {
         return ProcessControl.getTokenFromCP(context);
+    }
+
+    public abstract static class Callback<T> {
+
+        /**
+         * 获取传入泛型的Type
+         *
+         * @return
+         */
+        public Type getSuccessType() {
+            Type superClass = getClass().getGenericSuperclass();
+            return ((ParameterizedType) superClass).getActualTypeArguments()[0];
+        }
+
+        public abstract void onSuccess(T success);
+
+        public abstract void onFailure(FailureBean failure);
     }
 }

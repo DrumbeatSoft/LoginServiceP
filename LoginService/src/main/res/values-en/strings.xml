@@ -1,14 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="http_exception_network">Network Is Not Available, Please Check The Network</string>
-    <string name="http_exception_url">Url Format Error</string>
-    <string name="http_exception_host">Didn\'t  Find The Server Specified By Url</string>
-    <string name="http_exception_connect_timeout">Connection server Timeout</string>
-    <string name="http_exception_write">Failed To Send Data</string>
-    <string name="http_exception_read_timeout">Read Data Timeout</string>
-    <string name="http_exception_parse_error">Parsing Data Exception</string>
-    <string name="http_exception_unknow_error">Unknown Exception Occurred</string>
-    <string name="http_exception_download_error">Server Exception</string>
+    <!--************************************************* 网络错误信息 Start *************************************************-->
+    <string name="dblogin_http_exception_network">Network Is Not Available, Please Check The Network</string>
+    <string name="dblogin_http_exception_url">Url Format Error</string>
+    <string name="dblogin_http_exception_host">Didn\'t  Find The Server Specified By Url</string>
+    <string name="dblogin_http_exception_connect_timeout">Connection Server Timeout</string>
+    <string name="dblogin_http_exception_connect_fail">Failed To Connection Server</string>
+    <string name="dblogin_http_exception_write">Failed To Send Data</string>
+    <string name="dblogin_http_exception_read_timeout">Read Data Timeout</string>
+    <string name="dblogin_http_exception_parse_error">Parsing Data Exception</string>
+    <string name="dblogin_http_exception_unknow_error">Unknown Exception Occurred</string>
+    <string name="dblogin_http_exception_download_error">Server Exception</string>
+    <!--************************************************* 网络错误信息 End *************************************************-->
+
+
+    <!--************************************************* 接口错误信息 Start *************************************************-->
+    <string name="dblogin_fail_unknow">Unknown Exception</string>
+    <string name="dblogin_fail_unknow_with_code">Unknown Exception，ErrorCode is </string>
+    <string name="dblogin_fail_nodata">Empty Data</string>
+    <!--json数据格式问题-->
+    <string name="dblogin_fail_json">Data Format Does Not Match</string>
+
+    <!--扫描二维码，极端情况，等待扫描-->
+    <string name="dblogin_fail_0_scancode">Scan Failed, Please Scan Again</string>
+    <string name="dblogin_fail_2">Old Password Is Wrong</string>
+    <string name="dblogin_fail_3">Account Does Not Exist</string>
+    <string name="dblogin_fail_4">Account Or Password Error</string>
+    <string name="dblogin_fail_10_modifypwd">Login Status Error</string>
+    <string name="dblogin_fail_10_login">Account Does Not Exist Or Password Is Incorrect</string>
+    <string name="dblogin_fail_11">Too Many Retries Are Limited</string>
+    <string name="dblogin_fail_12">Account Disabled</string>
+    <string name="dblogin_fail_13">Password Expired, Please Change Password</string>
+    <string name="dblogin_fail_14">The Account And The Device ID Bound To It Are Inconsistent</string>
+    <string name="dblogin_fail_15">Account Binding Tenant Error</string>
+    <string name="dblogin_fail_16">Account Binding Application Error</string>
+    <string name="dblogin_fail_17">Tenant Information Error</string>
+    <string name="dblogin_fail_18">Tenant Binding Application Error</string>
+    <string name="dblogin_fail_20">Application Disabled</string>
+    <string name="dblogin_fail_21">Application Security Code Error</string>
+    <string name="dblogin_fail_22">Device Ip Is Restricted</string>
+    <string name="dblogin_fail_23">The Parameters Is Incorrect</string>
+    <string name="dblogin_fail_30">Application Device Delivery Error</string>
+    <string name="dblogin_fail_80">Parsing Authentication Result Error</string>
+    <string name="dblogin_fail_81">Error Calling Authentication Service</string>
+    <!--扫描二维码 scancode-->
+    <string name="dblogin_fail_200">Authorized To Log In, Cannot Be Scanned Repeatedly</string>
+    <!--扫描二维码 scancode-->
+    <string name="dblogin_fail_201">It Has Been Scanned And Cannot Be Scanned Repeatedly</string>
+    <!--扫描二维码 scancode-->
+    <string name="dblogin_fail_400">Invalid, Please Refresh The QR Code</string>
+    <!--扫描二维码 scancode-->
+    <string name="dblogin_fail_500">Status Error, Please Rescan</string>
+    <!--************************************************* 接口错误信息 End *************************************************-->
+
+    <string name="dblogin_cancel_login">Cancel</string>
+    <string name="dblogin_pc_login_confirm">Confirm login to system for browser</string>
+    <string name="dblogin_close">Close</string>
+    <string name="dblogin_login">Log In</string>
+    <string name="dblogin_login_success">Login successful</string>
+    <string name="dblogin_login_fail">Login failed</string>
+    <string name="dblogin_cancel_login_success">Cancel successful</string>
+    <string name="dblogin_cancel_login_fail">Cancel failed</string>
 
 </resources>

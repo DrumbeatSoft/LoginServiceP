@@ -6,10 +6,6 @@ package com.drumbeat.service.login.constant;
  */
 public interface APIInterface {
     /**
-     * 基础URL
-     */
-    String BASE_URL = "http://192.168.20.233:30060/";
-    /**
      * 查询租户列表
      */
     String GET_TENANT_URL = "gateway/api/accounttenantrelation/querybyinfo";

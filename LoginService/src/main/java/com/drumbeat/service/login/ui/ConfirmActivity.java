@@ -9,18 +9,19 @@ import android.widget.LinearLayout;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.blankj.utilcode.util.BarUtils;
-import com.drumbeat.service.login.Messenger;
+import com.blankj.utilcode.util.ToastUtils;
+import com.drumbeat.service.login.LoginService;
 import com.drumbeat.service.login.ProcessControl;
 import com.drumbeat.service.login.R;
-import com.drumbeat.service.login.callback.Callback;
 import com.drumbeat.service.login.callback.FailureBean;
-import com.drumbeat.service.login.constant.ResultCode;
 
 /**
  * 扫描二维码后的确认登录页
  * Created by ZuoHailong on 2020/1/9.
  */
 public class ConfirmActivity extends Activity implements View.OnClickListener {
+
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,41 +38,58 @@ public class ConfirmActivity extends Activity implements View.OnClickListener {
         findViewById(R.id.tvLogin).setOnClickListener(this);
         findViewById(R.id.tvCancel).setOnClickListener(this);
         findViewById(R.id.tvClose).setOnClickListener(this);
+
+        userId = getIntent().getStringExtra("userId");
     }
 
     @Override
     public void onClick(View view) {
         int viewId = view.getId();
         if (viewId == R.id.tvLogin) {
-            ProcessControl.login(this, new Callback() {
+            ProcessControl.login(userId, new LoginService.Callback<Boolean>() {
                 @Override
-                public void onSuccess(Object success) {
-                    Messenger.send(ConfirmActivity.this, new Messenger.Message().setCode(Messenger.CODE_SUCCESS).setData((String) success));
-                    finish();
+                public void onSuccess(Boolean success) {
+                    if (success) {
+                        ToastUtils.showShort(R.string.dblogin_login_success);
+                        finish();
+                    } else {
+                        ToastUtils.showShort(R.string.dblogin_login_fail);
+                    }
                 }
 
                 @Override
                 public void onFailure(FailureBean failure) {
-                    Messenger.send(ConfirmActivity.this, new Messenger.Message().setCode(Messenger.CODE_FAILURE));
-                    finish();
+                    ToastUtils.showShort(R.string.dblogin_login_fail);
                 }
 
             });
         } else if (viewId == R.id.tvCancel) {
-            ProcessControl.cancelLogin(this, new Callback() {
+            ProcessControl.cancelLogin(userId, new LoginService.Callback<Boolean>() {
                 @Override
-                public void onSuccess(Object success) {
-                    Messenger.send(ConfirmActivity.this, new Messenger.Message().setCode(Messenger.CODE_SUCCESS).setData((String) success));
-                    finish();
+                public void onSuccess(Boolean success) {
+                    if (success) {
+                        ToastUtils.showShort(R.string.dblogin_cancel_login_success);
+                        finish();
+                    } else {
+                        ToastUtils.showShort(R.string.dblogin_cancel_login_fail);
+                    }
                 }
 
                 @Override
                 public void onFailure(FailureBean failure) {
-                    Messenger.send(ConfirmActivity.this, new Messenger.Message().setCode(Messenger.CODE_FAILURE));
-                    finish();
+                    ToastUtils.showShort(R.string.dblogin_cancel_login_fail);
                 }
             });
         } else if (viewId == R.id.tvClose) {
+            ProcessControl.cancelLogin(userId, new LoginService.Callback<Boolean>() {
+                @Override
+                public void onSuccess(Boolean success) {
+                }
+
+                @Override
+                public void onFailure(FailureBean failure) {
+                }
+            });
             finish();
         }
     }

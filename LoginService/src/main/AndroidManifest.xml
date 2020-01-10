@@ -4,6 +4,7 @@
     <application>
         <activity
             android:name=".ui.ConfirmActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait" />
     </application>
 </manifest>
