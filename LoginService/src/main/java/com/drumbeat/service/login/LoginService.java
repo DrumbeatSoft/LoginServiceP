@@ -8,13 +8,16 @@ import androidx.annotation.NonNull;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.Utils;
-import com.drumbeat.service.login.bean.LoginResultBean;
-import com.drumbeat.service.login.bean.ResultBean;
+import com.drumbeat.service.login.bean.LoginBean;
+import com.drumbeat.service.login.bean.BooleanResultBean;
 import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
+import com.drumbeat.service.login.bean.FailureBean;
 import com.drumbeat.service.login.config.ServiceConfig;
 import com.drumbeat.service.login.utils.SharedPreferencesUtil;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -65,7 +68,7 @@ public class LoginService {
      * @param account  手机号/账号/邮箱号/身份证号
      * @param callback
      */
-    public static void getTenantList(String account, ResultCallback<List<TenantBean.ResultBean>> callback) {
+    public static void getTenantList(String account, Callback<List<TenantBean.ResultBean>> callback) {
         ProcessControl.getTenantList(account, callback);
     }
 
@@ -76,26 +79,14 @@ public class LoginService {
      * @param password
      * @param callback
      */
-    public static void login(String account, String password, ResultCallback<LoginResultBean> callback) {
+    public static void login(String account, String password, Callback<LoginBean> callback) {
         String centralizerToken = getCentralizerToken();
         // 已有token，直接返回，不再登录
         if (!TextUtils.isEmpty(centralizerToken)) {
-            callback.onSuccess(new LoginResultBean().setToken(centralizerToken));
+            callback.onSuccess(new LoginBean().setToken(centralizerToken));
             return;
         }
         ProcessControl.login(LoginService.getConfig(), account, password, callback);
-    }
-
-    /**
-     * 登录中台，供宿主APP使用
-     *
-     * @param serviceConfig 可选，一次性参数
-     * @param account
-     * @param password
-     * @param callback
-     */
-    public static void login(ServiceConfig serviceConfig, String account, String password, ResultCallback<LoginResultBean> callback) {
-        ProcessControl.login(serviceConfig, account, password, callback);
     }
 
     /**
@@ -103,29 +94,29 @@ public class LoginService {
      *
      * @param callback
      */
-    public static void checkPasswordExpire(@NonNull String centralizerToken, ResultCallback<Boolean> callback) {
+    public static void checkPasswordExpire(@NonNull String centralizerToken, Callback<Boolean> callback) {
         ProcessControl.checkPasswordExpire(centralizerToken, callback);
     }
 
     /**
      * 修改密码
      */
-    public static void modifyPassword(@NonNull String oldPwd, @NonNull String newPwd, @NonNull String centralizerToken, ResultCallback<ResultBean> callback) {
+    public static void modifyPassword(@NonNull String oldPwd, @NonNull String newPwd, @NonNull String centralizerToken, Callback<BooleanResultBean> callback) {
         ProcessControl.modifyPwd(oldPwd, newPwd, centralizerToken, callback);
     }
 
     /**
      * 查询用户信息
      */
-    public static void getUserInfo(@NonNull String centralizerToken, ResultCallback<UserInfoBean.ResultBean> callback) {
+    public static void getUserInfo(@NonNull String centralizerToken, Callback<UserInfoBean.ResultBean> callback) {
         ProcessControl.getUserInfo(centralizerToken, callback);
     }
 
     /**
      * 扫码登录，目前用于web页的登录
      */
-    public static void scan(Activity activity, ResultCallback callback) {
-        ProcessControl.scan(activity, callback);
+    public static void loginQrcode(final Activity activity, String userId, LoginService.Callback callback) {
+        ProcessControl.loginQrcode(activity, userId, callback);
     }
 
     /**
@@ -140,5 +131,22 @@ public class LoginService {
      */
     public static String getCentralizerToken(Context context) {
         return ProcessControl.getTokenFromCP(context);
+    }
+
+    public abstract static class Callback<T> {
+
+        /**
+         * 获取传入泛型的Type
+         *
+         * @return
+         */
+        public Type getSuccessType() {
+            Type superClass = getClass().getGenericSuperclass();
+            return ((ParameterizedType) superClass).getActualTypeArguments()[0];
+        }
+
+        public abstract void onSuccess(T success);
+
+        public abstract void onFailure(FailureBean failure);
     }
 }

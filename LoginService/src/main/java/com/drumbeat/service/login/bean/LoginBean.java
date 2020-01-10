@@ -3,7 +3,7 @@ package com.drumbeat.service.login.bean;
 /**
  * Created by ZuoHailong on 2019/12/3.
  */
-public class LoginResultBean {
+public class LoginBean {
     private int Result;
     private String Token;
     private String AbsExpire;
@@ -13,7 +13,7 @@ public class LoginResultBean {
         return Token;
     }
 
-    public LoginResultBean setToken(String token) {
+    public LoginBean setToken(String token) {
         Token = token;
         return this;
     }
@@ -22,7 +22,7 @@ public class LoginResultBean {
         return Result;
     }
 
-    public LoginResultBean setResult(int result) {
+    public LoginBean setResult(int result) {
         Result = result;
         return this;
     }
@@ -31,7 +31,7 @@ public class LoginResultBean {
         return AbsExpire;
     }
 
-    public LoginResultBean setAbsExpire(String absExpire) {
+    public LoginBean setAbsExpire(String absExpire) {
         AbsExpire = absExpire;
         return this;
     }
@@ -40,7 +40,7 @@ public class LoginResultBean {
         return Data;
     }
 
-    public LoginResultBean setData(String data) {
+    public LoginBean setData(String data) {
         Data = data;
         return this;
     }

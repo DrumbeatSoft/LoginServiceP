@@ -1,14 +1,10 @@
-package com.drumbeat.service.login.constant;
+package com.drumbeat.service.login.config;
 
 /**
  * 中台接口
  * Created by ZuoHailong on 2019/10/17.
  */
-public interface APIInterface {
-    /**
-     * 基础URL
-     */
-    String BASE_URL = "http://192.168.20.233:30060/";
+public interface UrlConfig {
     /**
      * 查询租户列表
      */

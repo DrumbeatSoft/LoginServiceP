@@ -1,4 +1,4 @@
-package com.drumbeat.service.login.qbar;
+package com.drumbeat.service.login.demo.qbar;
 
 /**
  * 扫描结果

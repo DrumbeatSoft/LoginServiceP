@@ -1,4 +1,4 @@
-package com.drumbeat.service.login.drumsdk.kalle;
+package com.drumbeat.service.login.http.kalle;
 
 import com.blankj.utilcode.util.StringUtils;
 import com.drumbeat.service.login.R;
@@ -59,21 +59,21 @@ public abstract class KalleCallback<T> extends Callback<T, String> {
     public void onException(Exception e) {
         String message;
         if (e instanceof NetworkError) {
-            message = StringUtils.getString(R.string.http_exception_network);
+            message = StringUtils.getString(R.string.dblogin_http_exception_network);
         } else if (e instanceof URLError) {
-            message = StringUtils.getString(R.string.http_exception_url);
+            message = StringUtils.getString(R.string.dblogin_http_exception_url);
         } else if (e instanceof HostError) {
-            message = StringUtils.getString(R.string.http_exception_host);
+            message = StringUtils.getString(R.string.dblogin_http_exception_host);
         } else if (e instanceof ConnectTimeoutError) {
-            message = StringUtils.getString(R.string.http_exception_connect_timeout);
+            message = StringUtils.getString(R.string.dblogin_http_exception_connect_timeout);
         } else if (e instanceof WriteException) {
-            message = StringUtils.getString(R.string.http_exception_write);
+            message = StringUtils.getString(R.string.dblogin_http_exception_write);
         } else if (e instanceof ReadTimeoutError) {
-            message = StringUtils.getString(R.string.http_exception_read_timeout);
+            message = StringUtils.getString(R.string.dblogin_http_exception_read_timeout);
         } else if (e instanceof ConnectException) {
-            message = StringUtils.getString(R.string.http_exception_connect_fail);
+            message = StringUtils.getString(R.string.dblogin_http_exception_connect_fail);
         } else {
-            message = StringUtils.getString(R.string.http_exception_unknow_error);
+            message = StringUtils.getString(R.string.dblogin_http_exception_unknow_error);
         }
         onResponse(SimpleResponse.<T, String>newBuilder().failed(message).build());
     }

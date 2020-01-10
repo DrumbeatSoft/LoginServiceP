@@ -13,6 +13,10 @@ public class BaseBean<T> {
     private String Entity;
     private boolean IsSucceed;
     private String Message;
+    /*
+     * 成功条件：==200 && Entity != null
+     * 失败条件：!= 200 || Entity == null
+     * */
     private int StatusCode;
 
     public String getEntity() {
