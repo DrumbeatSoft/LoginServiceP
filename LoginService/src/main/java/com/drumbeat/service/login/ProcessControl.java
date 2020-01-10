@@ -19,28 +19,28 @@ import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.Utils;
 import com.drumbeat.service.login.bean.BaseBean;
 import com.drumbeat.service.login.bean.BooleanResultBean;
-import com.drumbeat.service.login.bean.LoginResultBean;
+import com.drumbeat.service.login.bean.LoginBean;
 import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
-import com.drumbeat.service.login.callback.FailureBean;
+import com.drumbeat.service.login.bean.FailureBean;
 import com.drumbeat.service.login.config.ServiceConfig;
-import com.drumbeat.service.login.drumsdk.helper.HttpHelper;
-import com.drumbeat.service.login.drumsdk.kalle.NetCallback;
+import com.drumbeat.service.login.http.HttpHelper;
+import com.drumbeat.service.login.http.kalle.NetCallback;
 import com.drumbeat.service.login.ui.ConfirmActivity;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.drumbeat.service.login.constant.APIInterface.CANCEL_LOGIN;
-import static com.drumbeat.service.login.constant.APIInterface.CHECK_PASSWORD_EXPIRE;
-import static com.drumbeat.service.login.constant.APIInterface.CONFIRM_LOGIN;
-import static com.drumbeat.service.login.constant.APIInterface.GET_TENANT_URL;
-import static com.drumbeat.service.login.constant.APIInterface.GET_USER_INFO;
-import static com.drumbeat.service.login.constant.APIInterface.LOGIN_URL;
-import static com.drumbeat.service.login.constant.APIInterface.MODIFY_PASSWORD;
-import static com.drumbeat.service.login.constant.APIInterface.SCAN_CODE;
-import static com.drumbeat.service.login.constant.Constant.SP_TOKEN;
+import static com.drumbeat.service.login.config.UrlConfig.CANCEL_LOGIN;
+import static com.drumbeat.service.login.config.UrlConfig.CHECK_PASSWORD_EXPIRE;
+import static com.drumbeat.service.login.config.UrlConfig.CONFIRM_LOGIN;
+import static com.drumbeat.service.login.config.UrlConfig.GET_TENANT_URL;
+import static com.drumbeat.service.login.config.UrlConfig.GET_USER_INFO;
+import static com.drumbeat.service.login.config.UrlConfig.LOGIN_URL;
+import static com.drumbeat.service.login.config.UrlConfig.MODIFY_PASSWORD;
+import static com.drumbeat.service.login.config.UrlConfig.SCAN_CODE;
+import static com.drumbeat.service.login.config.SPConfig.SP_TOKEN;
 
 /**
  * Created by ZuoHailong on 2019/10/17.
@@ -136,7 +136,7 @@ public class ProcessControl {
     /**
      * 账号密码登录
      */
-    static void login(ServiceConfig serviceConfig, @NonNull String account, @NonNull String password, LoginService.Callback<LoginResultBean> callback) {
+    static void login(ServiceConfig serviceConfig, @NonNull String account, @NonNull String password, LoginService.Callback<LoginBean> callback) {
         serviceConfig = serviceConfig == null ? LoginService.getConfig() : serviceConfig;
 
         JSONObject jsonObject = new JSONObject();
@@ -158,7 +158,7 @@ public class ProcessControl {
         HttpHelper.post(serviceConfig.getBaseUrl() + LOGIN_URL, null, object, new NetCallback() {
             @Override
             public void onSuccess(String success) {
-                LoginResultBean bean = dispatchSuccessData(callback, success, LoginResultBean.class);
+                LoginBean bean = dispatchSuccessData(callback, success, LoginBean.class);
                 if (bean == null) {
                     return;
                 }

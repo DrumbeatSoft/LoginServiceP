@@ -15,11 +15,11 @@ import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.drumbeat.service.login.LoginService;
-import com.drumbeat.service.login.bean.LoginResultBean;
+import com.drumbeat.service.login.bean.LoginBean;
 import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
-import com.drumbeat.service.login.callback.FailureBean;
-import com.drumbeat.service.login.constant.Constant;
+import com.drumbeat.service.login.bean.FailureBean;
+import com.drumbeat.service.login.config.SPConfig;
 import com.drumbeat.service.login.demo.qbar.CodeType;
 import com.drumbeat.service.login.demo.qbar.OnScanListener;
 import com.drumbeat.service.login.demo.qbar.QBarHelper;
@@ -133,9 +133,9 @@ public class LoginActivity extends AppCompatActivity {
         SPUtils.getInstance().put("account", etAccount.getEditableText().toString().trim());
         SPUtils.getInstance().put("pwd", etPwd.getEditableText().toString().trim());
 
-        LoginService.login(account1, pwd1, new LoginService.Callback<LoginResultBean>() {
+        LoginService.login(account1, pwd1, new LoginService.Callback<LoginBean>() {
             @Override
-            public void onSuccess(LoginResultBean succeed) {
+            public void onSuccess(LoginBean succeed) {
                 ToastUtils.showShort("登录成功");
                 btnScan.setVisibility(View.VISIBLE);
                 btnModify.setVisibility(View.VISIBLE);
@@ -151,7 +151,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkPwd() {
-        LoginService.checkPasswordExpire(SPUtils.getInstance().getString(Constant.SP_TOKEN), new LoginService.Callback<Boolean>() {
+        LoginService.checkPasswordExpire(SPUtils.getInstance().getString(SPConfig.SP_TOKEN), new LoginService.Callback<Boolean>() {
             @Override
             public void onSuccess(Boolean succeed) {
                 ToastUtils.showLong(succeed ? "失效" : "未失效");
@@ -202,7 +202,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void getUserInfo() {
-        LoginService.getUserInfo(SPUtils.getInstance().getString(Constant.SP_TOKEN), new LoginService.Callback<UserInfoBean.ResultBean>() {
+        LoginService.getUserInfo(SPUtils.getInstance().getString(SPConfig.SP_TOKEN), new LoginService.Callback<UserInfoBean.ResultBean>() {
             @Override
             public void onSuccess(UserInfoBean.ResultBean success) {
                 if (success != null) {

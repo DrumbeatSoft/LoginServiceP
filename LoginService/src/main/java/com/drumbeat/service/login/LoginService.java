@@ -8,11 +8,11 @@ import androidx.annotation.NonNull;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.Utils;
-import com.drumbeat.service.login.bean.LoginResultBean;
+import com.drumbeat.service.login.bean.LoginBean;
 import com.drumbeat.service.login.bean.BooleanResultBean;
 import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
-import com.drumbeat.service.login.callback.FailureBean;
+import com.drumbeat.service.login.bean.FailureBean;
 import com.drumbeat.service.login.config.ServiceConfig;
 import com.drumbeat.service.login.utils.SharedPreferencesUtil;
 
@@ -79,11 +79,11 @@ public class LoginService {
      * @param password
      * @param callback
      */
-    public static void login(String account, String password, Callback<LoginResultBean> callback) {
+    public static void login(String account, String password, Callback<LoginBean> callback) {
         String centralizerToken = getCentralizerToken();
         // 已有token，直接返回，不再登录
         if (!TextUtils.isEmpty(centralizerToken)) {
-            callback.onSuccess(new LoginResultBean().setToken(centralizerToken));
+            callback.onSuccess(new LoginBean().setToken(centralizerToken));
             return;
         }
         ProcessControl.login(LoginService.getConfig(), account, password, callback);

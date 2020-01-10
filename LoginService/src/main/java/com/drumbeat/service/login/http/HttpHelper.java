@@ -1,12 +1,12 @@
-package com.drumbeat.service.login.drumsdk.helper;
+package com.drumbeat.service.login.http;
 
 import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.PathUtils;
 import com.blankj.utilcode.util.Utils;
 import com.drumbeat.service.login.BuildConfig;
-import com.drumbeat.service.login.drumsdk.kalle.DrumInterceptor;
-import com.drumbeat.service.login.drumsdk.kalle.KalleCallback;
-import com.drumbeat.service.login.drumsdk.kalle.NetCallback;
+import com.drumbeat.service.login.http.kalle.KalleCallback;
+import com.drumbeat.service.login.http.kalle.LoggerInterceptor;
+import com.drumbeat.service.login.http.kalle.NetCallback;
 import com.yanzhenjie.kalle.JsonBody;
 import com.yanzhenjie.kalle.Kalle;
 import com.yanzhenjie.kalle.KalleConfig;
@@ -40,7 +40,7 @@ public class HttpHelper {
                 .cacheStore(DiskCacheStore.newBuilder(PathUtils.getExternalAppCachePath()).build())
                 .network(new BroadcastNetwork(Utils.getApp()))
                 .setHeader(KEY_CONTENT_TYPE, VALUE_APPLICATION_JSON)
-                .addInterceptor(new DrumInterceptor("Kalle", BuildConfig.DEBUG))
+                .addInterceptor(new LoggerInterceptor("Kalle", BuildConfig.DEBUG))
                 .converter(Converter.DEFAULT)
                 .build());
     }

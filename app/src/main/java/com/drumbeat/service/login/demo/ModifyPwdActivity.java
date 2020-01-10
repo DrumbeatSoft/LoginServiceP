@@ -1,7 +1,6 @@
 package com.drumbeat.service.login.demo;
 
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,8 +9,8 @@ import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.drumbeat.service.login.LoginService;
 import com.drumbeat.service.login.bean.BooleanResultBean;
-import com.drumbeat.service.login.callback.FailureBean;
-import com.drumbeat.service.login.constant.Constant;
+import com.drumbeat.service.login.bean.FailureBean;
+import com.drumbeat.service.login.config.SPConfig;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,7 +38,7 @@ public class ModifyPwdActivity extends AppCompatActivity {
     private void modifyPwd() {
         LoginService.modifyPassword(etOldPwd.getEditableText().toString().trim(),
                 etNewPwd.getEditableText().toString().trim(),
-                SPUtils.getInstance().getString(Constant.SP_TOKEN),
+                SPUtils.getInstance().getString(SPConfig.SP_TOKEN),
                 new LoginService.Callback<BooleanResultBean>() {
                     @Override
                     public void onSuccess(BooleanResultBean succeed) {

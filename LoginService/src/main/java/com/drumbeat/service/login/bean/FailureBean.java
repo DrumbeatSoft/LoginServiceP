@@ -1,4 +1,4 @@
-package com.drumbeat.service.login.callback;
+package com.drumbeat.service.login.bean;
 
 /**
  * Created by ZuoHailong on 2020/1/9.

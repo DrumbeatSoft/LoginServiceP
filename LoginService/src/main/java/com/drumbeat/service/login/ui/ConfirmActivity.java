@@ -13,7 +13,7 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.drumbeat.service.login.LoginService;
 import com.drumbeat.service.login.ProcessControl;
 import com.drumbeat.service.login.R;
-import com.drumbeat.service.login.callback.FailureBean;
+import com.drumbeat.service.login.bean.FailureBean;
 
 /**
  * 扫描二维码后的确认登录页
