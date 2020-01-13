@@ -9,20 +9,21 @@ import android.text.TextUtils;
 import android.util.Base64;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.AppUtils;
-import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.Utils;
 import com.drumbeat.service.login.bean.BaseBean;
 import com.drumbeat.service.login.bean.BooleanResultBean;
+import com.drumbeat.service.login.bean.FailureBean;
 import com.drumbeat.service.login.bean.LoginBean;
 import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
-import com.drumbeat.service.login.bean.FailureBean;
 import com.drumbeat.service.login.config.ServiceConfig;
 import com.drumbeat.service.login.http.HttpHelper;
 import com.drumbeat.service.login.http.kalle.NetCallback;
@@ -40,7 +41,6 @@ import static com.drumbeat.service.login.config.UrlConfig.GET_USER_INFO;
 import static com.drumbeat.service.login.config.UrlConfig.LOGIN_URL;
 import static com.drumbeat.service.login.config.UrlConfig.MODIFY_PASSWORD;
 import static com.drumbeat.service.login.config.UrlConfig.SCAN_CODE;
-import static com.drumbeat.service.login.config.SPConfig.SP_TOKEN;
 
 /**
  * Created by ZuoHailong on 2019/10/17.
@@ -54,7 +54,8 @@ public class ProcessControl {
      * @param context
      * @return
      */
-    static String getTokenFromCP(Context context) {
+    static String getTokenFromCP(@Nullable Context context) {
+        context = context == null ? ActivityUtils.getTopActivity() : context;
         if (context == null) {
             return null;
         }
@@ -85,7 +86,7 @@ public class ProcessControl {
     /**
      * 查询租户列表
      */
-    static void getTenantList(String account, LoginService.Callback<List<TenantBean.ResultBean>> callback) {
+    static void getTenantList(String account, @NonNull LoginService.Callback<List<TenantBean.ResultBean>> callback) {
         ServiceConfig serviceConfig = LoginService.getConfig();
         Map<String, String> params = new HashMap<>();
         params.put("info", account);
@@ -136,7 +137,7 @@ public class ProcessControl {
     /**
      * 账号密码登录
      */
-    static void login(ServiceConfig serviceConfig, @NonNull String account, @NonNull String password, LoginService.Callback<LoginBean> callback) {
+    static void login(ServiceConfig serviceConfig, String account, String password, @NonNull LoginService.Callback<LoginBean> callback) {
         serviceConfig = serviceConfig == null ? LoginService.getConfig() : serviceConfig;
 
         JSONObject jsonObject = new JSONObject();
@@ -166,7 +167,6 @@ public class ProcessControl {
                 switch (bean.getResult()) {
                     case 1:
                         callback.onSuccess(bean);
-                        SPUtils.getInstance().put(SP_TOKEN, bean.getToken());
                         break;
                     case 10:
                         dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_10_login);
@@ -235,7 +235,7 @@ public class ProcessControl {
      *
      * @param callback
      */
-    static void checkPasswordExpire(@NonNull String centralizerToken, LoginService.Callback<Boolean> callback) {
+    static void checkPasswordExpire(String centralizerToken, @NonNull LoginService.Callback<Boolean> callback) {
 
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", centralizerToken);
@@ -280,7 +280,7 @@ public class ProcessControl {
     /**
      * 修改密码
      */
-    static void modifyPwd(@NonNull String oldPwd, @NonNull String newPwd, @NonNull String centralizerToken, LoginService.Callback<BooleanResultBean> callback) {
+    static void modifyPwd(String centralizerToken, String oldPwd, String newPwd, @NonNull LoginService.Callback<Boolean> callback) {
 
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", centralizerToken);
@@ -310,7 +310,7 @@ public class ProcessControl {
                 // 处理业务code
                 switch (bean.getCode()) {
                     case 1:
-                        callback.onSuccess(bean);
+                        callback.onSuccess(bean.getResult());
                         break;
                     case 2:
                         dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_2);
@@ -341,7 +341,7 @@ public class ProcessControl {
     /**
      * 查询用户信息
      */
-    static void getUserInfo(@NonNull String centralizerToken, LoginService.Callback<UserInfoBean.ResultBean> callback) {
+    static void getUserInfo(String centralizerToken, @NonNull LoginService.Callback<UserInfoBean.ResultBean> callback) {
 
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", centralizerToken);
@@ -385,9 +385,9 @@ public class ProcessControl {
     /**
      * 使用二维码扫出来的数据，访问server，获取待登录的用户信息
      */
-    static void loginQrcode(final Activity activity, String userId, LoginService.Callback callback) {
+    static void loginQrcode(@NonNull Activity activity, String centralizerToken, String userId, @NonNull LoginService.Callback callback) {
         Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", SPUtils.getInstance().getString(SP_TOKEN));
+        headers.put("Authorization", centralizerToken);
         Map<String, String> map = new HashMap<>();
         map.put("id", userId);
         ServiceConfig serviceConfig = LoginService.getConfig();
@@ -406,6 +406,7 @@ public class ProcessControl {
                     case 1:
                         Intent intent = new Intent(activity, ConfirmActivity.class);
                         intent.putExtra("userId", userId);
+                        intent.putExtra("centralizerToken", centralizerToken);
                         activity.startActivity(intent);
                         break;
                     case 0:
@@ -440,9 +441,9 @@ public class ProcessControl {
     /**
      * 扫码后确认登录
      */
-    public static void login(String userId, LoginService.Callback<Boolean> callback) {
+    public static void login(String centralizerToken, String userId, @NonNull LoginService.Callback<Boolean> callback) {
         Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", SPUtils.getInstance().getString(SP_TOKEN));
+        headers.put("Authorization", centralizerToken);
         Map<String, String> params = new HashMap<>();
         params.put("id", userId);
         ServiceConfig serviceConfig = LoginService.getConfig();
@@ -475,9 +476,9 @@ public class ProcessControl {
     /**
      * 取消登录
      */
-    public static void cancelLogin(String userId, LoginService.Callback<Boolean> callback) {
+    public static void cancelLogin(String centralizerToken, String userId, @NonNull LoginService.Callback<Boolean> callback) {
         Map<String, String> headers = new HashMap<>();
-        headers.put("Authorization", SPUtils.getInstance().getString(SP_TOKEN));
+        headers.put("Authorization", centralizerToken);
         Map<String, String> map = new HashMap<>();
         map.put("id", userId);
         ServiceConfig serviceConfig = LoginService.getConfig();
@@ -568,6 +569,9 @@ public class ProcessControl {
      * @param msg      错误信息
      */
     private static void dispatchFailureData(LoginService.Callback callback, int code, String msg) {
+        if (callback == null) {
+            return;
+        }
         callback.onFailure(
                 new FailureBean()
                         .setCode(code)

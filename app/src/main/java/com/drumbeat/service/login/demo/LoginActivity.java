@@ -15,11 +15,10 @@ import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.drumbeat.service.login.LoginService;
+import com.drumbeat.service.login.bean.FailureBean;
 import com.drumbeat.service.login.bean.LoginBean;
 import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
-import com.drumbeat.service.login.bean.FailureBean;
-import com.drumbeat.service.login.config.SPConfig;
 import com.drumbeat.service.login.demo.qbar.CodeType;
 import com.drumbeat.service.login.demo.qbar.OnScanListener;
 import com.drumbeat.service.login.demo.qbar.QBarHelper;
@@ -141,6 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                 btnModify.setVisibility(View.VISIBLE);
                 btnCheckPwd.setVisibility(View.VISIBLE);
                 btnGetUserInfo.setVisibility(View.VISIBLE);
+                SPUtils.getInstance().put(SPConfig.SP_TOKEN, succeed.getToken());
             }
 
             @Override
@@ -188,7 +188,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void loginQrcode(String userId) {
-        LoginService.loginQrcode(LoginActivity.this, userId, new LoginService.Callback() {
+        LoginService.loginQrcode(LoginActivity.this, SPUtils.getInstance().getString(SPConfig.SP_TOKEN), userId, new LoginService.Callback() {
             @Override
             public void onSuccess(Object success) {
                 ToastUtils.showShort("扫码登录成功");

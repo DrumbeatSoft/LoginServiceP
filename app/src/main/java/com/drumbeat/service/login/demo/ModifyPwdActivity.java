@@ -8,9 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.drumbeat.service.login.LoginService;
-import com.drumbeat.service.login.bean.BooleanResultBean;
 import com.drumbeat.service.login.bean.FailureBean;
-import com.drumbeat.service.login.config.SPConfig;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,11 +37,15 @@ public class ModifyPwdActivity extends AppCompatActivity {
         LoginService.modifyPassword(etOldPwd.getEditableText().toString().trim(),
                 etNewPwd.getEditableText().toString().trim(),
                 SPUtils.getInstance().getString(SPConfig.SP_TOKEN),
-                new LoginService.Callback<BooleanResultBean>() {
+                new LoginService.Callback<Boolean>() {
                     @Override
-                    public void onSuccess(BooleanResultBean succeed) {
-                        ToastUtils.showShort("密码修改成功，改为了 " + etNewPwd.getEditableText().toString().trim());
-                        finish();
+                    public void onSuccess(Boolean succeed) {
+                        if (succeed) {
+                            ToastUtils.showShort("密码修改成功，改为了 " + etNewPwd.getEditableText().toString().trim());
+                            finish();
+                        } else {
+                            ToastUtils.showShort("密码修改失败");
+                        }
                     }
 
                     @Override

@@ -1,4 +1,4 @@
-package com.drumbeat.service.login.config;
+package com.drumbeat.service.login.demo;
 
 /**
  * Created by ZuoHailong on 2019/10/17.

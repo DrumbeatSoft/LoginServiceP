@@ -22,6 +22,7 @@ import com.drumbeat.service.login.bean.FailureBean;
 public class ConfirmActivity extends Activity implements View.OnClickListener {
 
     private String userId;
+    private String centralizerToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +41,14 @@ public class ConfirmActivity extends Activity implements View.OnClickListener {
         findViewById(R.id.tvClose).setOnClickListener(this);
 
         userId = getIntent().getStringExtra("userId");
+        centralizerToken = getIntent().getStringExtra("centralizerToken");
     }
 
     @Override
     public void onClick(View view) {
         int viewId = view.getId();
         if (viewId == R.id.tvLogin) {
-            ProcessControl.login(userId, new LoginService.Callback<Boolean>() {
+            ProcessControl.login(centralizerToken, userId, new LoginService.Callback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean success) {
                     if (success) {
@@ -64,7 +66,7 @@ public class ConfirmActivity extends Activity implements View.OnClickListener {
 
             });
         } else if (viewId == R.id.tvCancel) {
-            ProcessControl.cancelLogin(userId, new LoginService.Callback<Boolean>() {
+            ProcessControl.cancelLogin(centralizerToken, userId, new LoginService.Callback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean success) {
                     if (success) {
@@ -81,7 +83,7 @@ public class ConfirmActivity extends Activity implements View.OnClickListener {
                 }
             });
         } else if (viewId == R.id.tvClose) {
-            ProcessControl.cancelLogin(userId, new LoginService.Callback<Boolean>() {
+            ProcessControl.cancelLogin(centralizerToken, userId, new LoginService.Callback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean success) {
                 }
