@@ -50,6 +50,7 @@
     <string name="dblogin_fail_201">It Has Been Scanned And Cannot Be Scanned Repeatedly</string>
     <!--扫描二维码 scancode-->
     <string name="dblogin_fail_400">Invalid, Please Refresh The QR Code</string>
+    <string name="dblogin_fail_401">Token Is Invalid, Please Login Again</string>
     <!--扫描二维码 scancode-->
     <string name="dblogin_fail_500">Status Error, Please Rescan</string>
     <!--************************************************* 接口错误信息 End *************************************************-->

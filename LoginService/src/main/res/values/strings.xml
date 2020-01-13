@@ -49,6 +49,7 @@
     <string name="dblogin_fail_201">已被扫描过，不可重复扫描</string>
     <!--扫描二维码 scancode-->
     <string name="dblogin_fail_400">已失效，请刷新二维码</string>
+    <string name="dblogin_fail_401">token失效，请重新登录</string>
     <!--扫描二维码 scancode-->
     <string name="dblogin_fail_500">状态错误，请重新扫描</string>
     <!--************************************************* 接口错误信息 End *************************************************-->

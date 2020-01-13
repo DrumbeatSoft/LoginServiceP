@@ -2,6 +2,7 @@ package com.drumbeat.service.login.demo;
 
 import android.app.Application;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.drumbeat.service.login.LoginService;
 import com.drumbeat.service.login.config.ServiceConfig;
 
@@ -17,6 +18,7 @@ public class MyApplication extends Application {
 //                .setAppId("121535616969084928")//体验店
 //                .setBaseUrl("http://192.168.20.233:30060/")
                 .setBaseUrl("http://api.drumbeatsoft.com/")
+                .setTokenInterceptor(() -> ToastUtils.showShort("token失效啦啦啦啦"))
                 .build());
     }
 }

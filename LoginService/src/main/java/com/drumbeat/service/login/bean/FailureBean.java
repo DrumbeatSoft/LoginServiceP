@@ -9,7 +9,7 @@ public class FailureBean {
     /**
      * 错误码<br>
      * 1、FailureBean.CODE_DEFAULT：多是业务相关的异常，具体的异常原因在 msg 中，msg可直接提示给用户；<br>
-     * 2、其他：特殊的异常，如401、415等，msg 统一是“失败”，开发者需分析具体的code，并对某些code做特殊的处理。
+     * 2、其他：特殊的异常，如415、500等，msg 处理为 “未知异常，错误码是XXX” ，开发者需分析具体的code，并对某些code做特殊的处理。
      */
     private int code;
     /**

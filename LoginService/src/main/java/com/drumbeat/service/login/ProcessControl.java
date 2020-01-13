@@ -26,6 +26,7 @@ import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
 import com.drumbeat.service.login.config.ServiceConfig;
 import com.drumbeat.service.login.http.HttpHelper;
+import com.drumbeat.service.login.http.TokenInterceptor;
 import com.drumbeat.service.login.http.kalle.NetCallback;
 import com.drumbeat.service.login.ui.ConfirmActivity;
 
@@ -95,34 +96,21 @@ public class ProcessControl {
         HttpHelper.get(serviceConfig.getBaseUrl() + GET_TENANT_URL, null, params, new NetCallback() {
             @Override
             public void onSuccess(String success) {
-                try {
-                    if (TextUtils.isEmpty(success)) {
-                        callback.onSuccess(null);
-                        return;
-                    }
-                    BaseBean baseBean = JSONObject.parseObject(success, BaseBean.class);
-                    if (baseBean == null || TextUtils.isEmpty(baseBean.getEntity())) {
-                        callback.onSuccess(null);
-                        return;
-                    }
-                    TenantBean bean = JSONObject.parseObject(baseBean.getEntity(), TenantBean.class);
-                    if (bean == null) {
-                        callback.onSuccess(null);
-                        return;
-                    }
-                    // 处理业务code
-                    switch (bean.getCode()) {
-                        case 1:
-                            callback.onSuccess(bean.getResult());
-                            break;
-                        default:
+                TenantBean bean = dispatchSuccessData(callback, success, TenantBean.class);
+                if (bean == null) {
+                    callback.onSuccess(null);
+                    return;
+                }
+                // 处理业务code
+                switch (bean.getCode()) {
+                    case 1:
+                        callback.onSuccess(bean.getResult());
+                        break;
+                    default:
                         /*dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
                                 Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + bean.getCode());*/
-                            callback.onSuccess(null);
-                            break;
-                    }
-                } catch (Exception e) {
-                    callback.onSuccess(null);
+                        callback.onSuccess(null);
+                        break;
                 }
             }
 
@@ -526,8 +514,14 @@ public class ProcessControl {
                 return null;
             }
             BaseBean baseBean = JSONObject.parseObject(success, BaseBean.class);
+            // 统一处理401 Token失效
+            if (baseBean.getStatusCode() == 401) {
+                TokenInterceptor tokenInterceptor = LoginService.getConfig().getTokenInterceptor();
+                tokenInterceptor.onInvalid();
+                return null;
+            }
             if (baseBean.getStatusCode() != 200 || TextUtils.isEmpty(baseBean.getEntity())) {
-                // 特殊的错误码，需要开发者处理，如401、415等
+                // 特殊的错误码，需要开发者处理，如415等
                 dispatchFailureData(callback, baseBean.getStatusCode(),
                         Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getStatusCode());
                 return null;

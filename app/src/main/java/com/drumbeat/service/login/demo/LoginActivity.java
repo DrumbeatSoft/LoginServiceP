@@ -100,9 +100,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(List<TenantBean.ResultBean> succeed) {
                 if (succeed != null && succeed.size() > 0) {
-                    ToastUtils.showLong(String.valueOf(succeed.get(0).getTenantId()));
-                    LoginService.setTenantId(succeed.get(0).getTenantId());
-                    tvTenantNull.setText("tenantId：" + succeed.get(0).getTenantId());
+                    ToastUtils.showLong(String.valueOf(succeed.get(1).getTenantId()));
+                    LoginService.setTenantId(succeed.get(1).getTenantId());
+                    tvTenantNull.setText("tenantId：" + succeed.get(1).getTenantId());
                 } else {
                     tvTenantNull.setText("未查询到租户信息");
                 }
