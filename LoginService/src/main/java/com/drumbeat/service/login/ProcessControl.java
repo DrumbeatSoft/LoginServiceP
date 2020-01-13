@@ -517,7 +517,12 @@ public class ProcessControl {
             // 统一处理401 Token失效
             if (baseBean.getStatusCode() == 401) {
                 TokenInterceptor tokenInterceptor = LoginService.getConfig().getTokenInterceptor();
-                tokenInterceptor.onInvalid();
+                if (tokenInterceptor != null) {
+                    tokenInterceptor.onInvalid();
+                } else {
+                    dispatchFailureData(callback, baseBean.getStatusCode(),
+                            Utils.getApp().getString(R.string.dblogin_fail_401) + baseBean.getStatusCode());
+                }
                 return null;
             }
             if (baseBean.getStatusCode() != 200 || TextUtils.isEmpty(baseBean.getEntity())) {
