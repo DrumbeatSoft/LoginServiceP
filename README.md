@@ -7,4 +7,4 @@
 [![api](https://img.shields.io/badge/API-19+-brightgreen.svg)](https://android-arsenal.com/api?level=19)
 [![csdn](https://img.shields.io/badge/CSDN-ZuoHailong-red.svg)](https://blog.csdn.net/hailong0529)
 
-详细用法请查看[wiki文档](https://github.com/ZuoHailong/LoginServiceP/wiki)
+详细用法请查看 [Wiki文档](https://github.com/ZuoHailong/LoginServiceP/wiki)
