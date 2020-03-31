@@ -4,87 +4,38 @@ package com.drumbeat.service.login.bean;
  * Created by ZuoHailong on 2019/10/16.
  */
 public class BaseBean<T> {
-    /**
-     * IsSucceed : true
-     * Message : string
-     * StatusCode : 0
-     */
-
-    private String Entity;
-    private boolean IsSucceed;
-    private String Message;
     /*
-     * 成功条件：==200 && Entity != null
-     * 失败条件：!= 200 || Entity == null
+     * 成功条件：==200
+     * 失败条件：!= 200
      * */
-    private int StatusCode;
+    private int code;
+    private String message;
+    private T data;
 
-    public String getEntity() {
-        return Entity;
+    public int getCode() {
+        return code;
     }
 
-    public BaseBean<T> setEntity(String entity) {
-        Entity = entity;
+    public BaseBean<T> setCode(int code) {
+        this.code = code;
         return this;
     }
 
-    public boolean getIsSucceed() {
-        return IsSucceed;
-    }
-
-    public void setIsSucceed(boolean IsSucceed) {
-        this.IsSucceed = IsSucceed;
-    }
-
     public String getMessage() {
-        return Message;
+        return message;
     }
 
-    public void setMessage(String Message) {
-        this.Message = Message;
+    public BaseBean<T> setMessage(String message) {
+        this.message = message;
+        return this;
     }
 
-    public int getStatusCode() {
-        return StatusCode;
+    public T getData() {
+        return data;
     }
 
-    public void setStatusCode(int StatusCode) {
-        this.StatusCode = StatusCode;
-    }
-
-    public static class EntityBean {
-        /**
-         * Result : true
-         * Success : true
-         * Code : 0
-         */
-
-        private boolean Result;
-        private boolean Success;
-        private int Code;
-
-        public boolean isResult() {
-            return Result;
-        }
-
-        public void setResult(boolean Result) {
-            this.Result = Result;
-        }
-
-        public boolean isSuccess() {
-            return Success;
-        }
-
-        public void setSuccess(boolean Success) {
-            this.Success = Success;
-        }
-
-        public int getCode() {
-            return Code;
-        }
-
-        public void setCode(int Code) {
-            this.Code = Code;
-        }
+    public BaseBean<T> setData(T data) {
+        this.data = data;
+        return this;
     }
 }

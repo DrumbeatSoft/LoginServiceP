@@ -34,9 +34,8 @@ public class ModifyPwdActivity extends AppCompatActivity {
     }
 
     private void modifyPwd() {
-        LoginService.modifyPassword(etOldPwd.getEditableText().toString().trim(),
+        LoginService.modifyPassword(SPUtils.getInstance().getString(SPConfig.SP_TOKEN), etOldPwd.getEditableText().toString().trim(),
                 etNewPwd.getEditableText().toString().trim(),
-                SPUtils.getInstance().getString(SPConfig.SP_TOKEN),
                 new LoginService.Callback<Boolean>() {
                     @Override
                     public void onSuccess(Boolean succeed) {

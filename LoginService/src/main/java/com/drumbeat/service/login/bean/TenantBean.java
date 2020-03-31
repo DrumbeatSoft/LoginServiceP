@@ -1,79 +1,40 @@
 package com.drumbeat.service.login.bean;
 
-import java.util.List;
-
 /**
  * Created by ZuoHailong on 2020/1/7.
  */
 public class TenantBean {
-
     /**
-     * Result : [{"TenantId":"100000000000000000","Code":"auth","TenantName":"认证平台"}]
-     * Success : true
-     * Code : 1
+     * tenantId : 100000000000000000
+     * code : auth
+     * tenantName : 认证平台
      */
 
-    private boolean Success;
-    private int Code;
-    private List<ResultBean> Result;
+    private String tenantId;
+    private String code;
+    private String tenantName;
 
-    public boolean isSuccess() {
-        return Success;
+    public String getTenantId() {
+        return tenantId;
     }
 
-    public void setSuccess(boolean Success) {
-        this.Success = Success;
+    public void setTenantId(String TenantId) {
+        this.tenantId = TenantId;
     }
 
-    public int getCode() {
-        return Code;
+    public String getCode() {
+        return code;
     }
 
-    public void setCode(int Code) {
-        this.Code = Code;
+    public void setCode(String Code) {
+        this.code = Code;
     }
 
-    public List<ResultBean> getResult() {
-        return Result;
+    public String getTenantName() {
+        return tenantName;
     }
 
-    public void setResult(List<ResultBean> Result) {
-        this.Result = Result;
-    }
-
-    public static class ResultBean {
-        /**
-         * TenantId : 100000000000000000
-         * Code : auth
-         * TenantName : 认证平台
-         */
-
-        private String TenantId;
-        private String Code;
-        private String TenantName;
-
-        public String getTenantId() {
-            return TenantId;
-        }
-
-        public void setTenantId(String TenantId) {
-            this.TenantId = TenantId;
-        }
-
-        public String getCode() {
-            return Code;
-        }
-
-        public void setCode(String Code) {
-            this.Code = Code;
-        }
-
-        public String getTenantName() {
-            return TenantName;
-        }
-
-        public void setTenantName(String TenantName) {
-            this.TenantName = TenantName;
-        }
+    public void setTenantName(String TenantName) {
+        this.tenantName = TenantName;
     }
 }

@@ -15,11 +15,11 @@ import androidx.annotation.StringRes;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.AppUtils;
 import com.blankj.utilcode.util.Utils;
 import com.drumbeat.service.login.bean.BaseBean;
-import com.drumbeat.service.login.bean.BooleanResultBean;
 import com.drumbeat.service.login.bean.FailureBean;
 import com.drumbeat.service.login.bean.LoginBean;
 import com.drumbeat.service.login.bean.TenantBean;
@@ -87,31 +87,18 @@ public class ProcessControl {
     /**
      * 查询租户列表
      */
-    static void getTenantList(String account, @NonNull LoginService.Callback<List<TenantBean.ResultBean>> callback) {
+    static void getTenantList(String account, @NonNull LoginService.Callback<List<TenantBean>> callback) {
         ServiceConfig serviceConfig = LoginService.getConfig();
-        Map<String, String> params = new HashMap<>();
-        params.put("info", account);
-        params.put("appId", serviceConfig.getAppId());
 
-        HttpHelper.get(serviceConfig.getBaseUrl() + GET_TENANT_URL, null, params, new NetCallback() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("info", account);
+        jsonObject.put("appId", serviceConfig.getAppId());
+
+        HttpHelper.post(serviceConfig.getBaseUrl() + GET_TENANT_URL, null, jsonObject, new NetCallback() {
             @Override
             public void onSuccess(String success) {
-                TenantBean bean = dispatchSuccessData(callback, success, TenantBean.class);
-                if (bean == null) {
-                    callback.onSuccess(null);
-                    return;
-                }
-                // 处理业务code
-                switch (bean.getCode()) {
-                    case 1:
-                        callback.onSuccess(bean.getResult());
-                        break;
-                    default:
-                        /*dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                                Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + bean.getCode());*/
-                        callback.onSuccess(null);
-                        break;
-                }
+                BaseBean<List<TenantBean>> baseBean = dispatchSuccessDataToList(callback, success, TenantBean.class);
+                callback.onSuccess(baseBean == null || baseBean.getCode() != 200 ? null : baseBean.getData());
             }
 
             @Override
@@ -129,17 +116,17 @@ public class ProcessControl {
         serviceConfig = serviceConfig == null ? LoginService.getConfig() : serviceConfig;
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("TenantCode", "");
-        jsonObject.put("DeviceId", "");
-        jsonObject.put("TenantId", LoginService.getTenantId());
-        jsonObject.put("AppId", serviceConfig.getAppId());
-        jsonObject.put("Device", 20);//20 android
-        jsonObject.put("TokenType", 0);
-        jsonObject.put("AccountName", account);
-        jsonObject.put("Password", password);
-        jsonObject.put("AppSecurityCode", "");
-        jsonObject.put("OperatorAccountId", 0);
-        jsonObject.put("OperatorAccountName", "");
+        jsonObject.put("tenantCode", "");
+        jsonObject.put("deviceId", "");
+        jsonObject.put("tenantId", LoginService.getTenantId());
+        jsonObject.put("appId", serviceConfig.getAppId());
+        jsonObject.put("device", 20);//20 android
+        jsonObject.put("tokenType", 0);
+        jsonObject.put("accountName", account);
+        jsonObject.put("password", password);
+        jsonObject.put("appSecurityCode", "");
+        jsonObject.put("operatorAccountId", 0);
+        jsonObject.put("operatorAccountName", "");
 
         JSONObject object = new JSONObject();
         object.put("input", jsonObject);
@@ -147,14 +134,20 @@ public class ProcessControl {
         HttpHelper.post(serviceConfig.getBaseUrl() + LOGIN_URL, null, object, new NetCallback() {
             @Override
             public void onSuccess(String success) {
-                LoginBean bean = dispatchSuccessData(callback, success, LoginBean.class);
-                if (bean == null) {
+                BaseBean<LoginBean> baseBean = dispatchSuccessDataToBean(callback, success, LoginBean.class);
+                if (baseBean == null) {
                     return;
                 }
+                if (baseBean.getCode() != 200) {
+                    dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
+                            Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
+                    return;
+                }
+                LoginBean loginBean = baseBean.getData();
                 // 处理业务code
-                switch (bean.getResult()) {
+                switch (loginBean.getResult()) {
                     case 1:
-                        callback.onSuccess(bean);
+                        callback.onSuccess(loginBean);
                         break;
                     case 10:
                         dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_10_login);
@@ -205,8 +198,7 @@ public class ProcessControl {
                         dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_81);
                         break;
                     default:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                                Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + bean.getResult());
+                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + loginBean.getResult());
                         break;
                 }
             }
@@ -232,7 +224,7 @@ public class ProcessControl {
         String base64 = split[1];
         String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
         JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
-        String id = userJSONObject.getString("AccountId");
+        String id = userJSONObject.getString("accountId");
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("accountId", id);
@@ -242,19 +234,13 @@ public class ProcessControl {
         HttpHelper.post(serviceConfig.getBaseUrl() + CHECK_PASSWORD_EXPIRE, headers, jsonObject, new NetCallback() {
             @Override
             public void onSuccess(String success) {
-                BooleanResultBean bean = dispatchSuccessData(callback, success, BooleanResultBean.class);
-                if (bean == null) {
-                    return;
-                }
-                // 处理业务code
-                switch (bean.getCode()) {
-                    case 1:
-                        callback.onSuccess(bean.getResult());
-                        break;
-                    default:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                                Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + bean.getCode());
-                        break;
+                BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
+                if (baseBean == null) {
+                } else if (baseBean.getCode() != 200) {
+                    dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
+                            Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
+                } else {
+                    callback.onSuccess(baseBean.getData());
                 }
             }
 
@@ -277,12 +263,12 @@ public class ProcessControl {
         String base64 = split[1];
         String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
         JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
-        String id = userJSONObject.getString("AccountId");
+        String id = userJSONObject.getString("accountId");
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("OldPassword", oldPwd);
-        jsonObject.put("Password", newPwd);
-        jsonObject.put("Id", id);
+        jsonObject.put("oldPassword", oldPwd);
+        jsonObject.put("password", newPwd);
+        jsonObject.put("id", id);
 
         JSONObject object = new JSONObject();
         object.put("input", jsonObject);
@@ -291,31 +277,31 @@ public class ProcessControl {
         HttpHelper.post(serviceConfig.getBaseUrl() + MODIFY_PASSWORD, headers, object, new NetCallback() {
             @Override
             public void onSuccess(String success) {
-                BooleanResultBean bean = dispatchSuccessData(callback, success, BooleanResultBean.class);
-                if (bean == null) {
-                    return;
-                }
-                // 处理业务code
-                switch (bean.getCode()) {
-                    case 1:
-                        callback.onSuccess(bean.getResult());
-                        break;
-                    case 2:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_2);
-                        break;
-                    case 3:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_3);
-                        break;
-                    case 4:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_4);
-                        break;
-                    case 10:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_10_modifypwd);
-                        break;
-                    default:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                                Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + bean.getCode());
-                        break;
+                BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
+                if (baseBean == null) {
+                } else {
+                    // 处理业务code
+                    switch (baseBean.getCode()) {
+                        case 200:
+                            callback.onSuccess(baseBean.getData());
+                            break;
+                        case 2:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_2);
+                            break;
+                        case 3:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_3);
+                            break;
+                        case 4:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_4);
+                            break;
+                        case 10:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_10_modifypwd);
+                            break;
+                        default:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
+                                    Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
+                            break;
+                    }
                 }
             }
 
@@ -329,7 +315,7 @@ public class ProcessControl {
     /**
      * 查询用户信息
      */
-    static void getUserInfo(String centralizerToken, @NonNull LoginService.Callback<UserInfoBean.ResultBean> callback) {
+    static void getUserInfo(String centralizerToken, @NonNull LoginService.Callback<UserInfoBean> callback) {
 
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", centralizerToken);
@@ -338,28 +324,22 @@ public class ProcessControl {
         String base64 = split[1];
         String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
         JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
-        String accountId = userJSONObject.getString("AccountId");
+        String accountId = userJSONObject.getString("accountId");
 
-        Map<String, String> map = new HashMap<>();
-        map.put("accountId", accountId);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("accountId", accountId);
 
         ServiceConfig serviceConfig = LoginService.getConfig();
-        HttpHelper.get(serviceConfig.getBaseUrl() + GET_USER_INFO, headers, map, new NetCallback() {
+        HttpHelper.post(serviceConfig.getBaseUrl() + GET_USER_INFO, headers, jsonObject, new NetCallback() {
             @Override
             public void onSuccess(String success) {
-                UserInfoBean bean = dispatchSuccessData(callback, success, UserInfoBean.class);
-                if (bean == null) {
-                    return;
-                }
-                // 处理业务code
-                switch (bean.getCode()) {
-                    case 1:
-                        callback.onSuccess(bean.getResult());
-                        break;
-                    default:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                                Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + bean.getCode());
-                        break;
+                BaseBean<UserInfoBean> baseBean = dispatchSuccessDataToBean(callback, success, UserInfoBean.class);
+                if (baseBean == null) {
+                } else if (baseBean.getCode() != 200) {
+                    dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
+                            Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
+                } else {
+                    callback.onSuccess(baseBean.getData());
                 }
             }
 
@@ -376,46 +356,46 @@ public class ProcessControl {
     static void loginQrcode(@NonNull Activity activity, String centralizerToken, String userId, @NonNull LoginService.Callback callback) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", centralizerToken);
-        Map<String, String> map = new HashMap<>();
-        map.put("id", userId);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", userId);
         ServiceConfig serviceConfig = LoginService.getConfig();
-        HttpHelper.get(serviceConfig.getBaseUrl() + SCAN_CODE, headers, map, new NetCallback() {
+        HttpHelper.post(serviceConfig.getBaseUrl() + SCAN_CODE, headers, jsonObject, new NetCallback() {
             @Override
             public void onSuccess(String success) {
-                BooleanResultBean bean = dispatchSuccessData(callback, success, BooleanResultBean.class);
-                if (bean == null) {
-                    return;
-                }
-                // 处理业务code
-                switch (bean.getCode()) {
-                    /*
-                     * 1：扫码成功，下一步登录确认
-                     * */
-                    case 1:
-                        Intent intent = new Intent(activity, ConfirmActivity.class);
-                        intent.putExtra("userId", userId);
-                        intent.putExtra("centralizerToken", centralizerToken);
-                        activity.startActivity(intent);
-                        break;
-                    case 0:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_0_scancode);
-                        break;
-                    case 200:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_200);
-                        break;
-                    case 201:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_201);
-                        break;
-                    case 400:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_400);
-                        break;
-                    case 500:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_500);
-                        break;
-                    default:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                                Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + bean.getCode());
-                        break;
+                BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
+                if (baseBean == null) {
+                } else {
+                    // 处理业务code
+                    switch (baseBean.getCode()) {
+                        /*
+                         * 1：扫码成功，下一步登录确认
+                         * */
+                        case 200:
+                            Intent intent = new Intent(activity, ConfirmActivity.class);
+                            intent.putExtra("userId", userId);
+                            intent.putExtra("centralizerToken", centralizerToken);
+                            activity.startActivity(intent);
+                            break;
+                        case 0:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_0_scancode);
+                            break;
+                        case 101:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_201);
+                            break;
+                        case 102:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_200);
+                            break;
+                        case 103:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_400);
+                            break;
+                        case 104:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_500);
+                            break;
+                        default:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
+                                    Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
+                            break;
+                    }
                 }
             }
 
@@ -432,25 +412,19 @@ public class ProcessControl {
     public static void login(String centralizerToken, String userId, @NonNull LoginService.Callback<Boolean> callback) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", centralizerToken);
-        Map<String, String> params = new HashMap<>();
-        params.put("id", userId);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", userId);
         ServiceConfig serviceConfig = LoginService.getConfig();
-        HttpHelper.get(serviceConfig.getBaseUrl() + CONFIRM_LOGIN, headers, params, new NetCallback() {
+        HttpHelper.post(serviceConfig.getBaseUrl() + CONFIRM_LOGIN, headers, jsonObject, new NetCallback() {
             @Override
             public void onSuccess(String success) {
-                BooleanResultBean bean = dispatchSuccessData(callback, success, BooleanResultBean.class);
-                if (bean == null) {
-                    return;
-                }
-                // 处理业务code
-                switch (bean.getCode()) {
-                    case 1:
-                        callback.onSuccess(bean.getResult());
-                        break;
-                    default:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                                Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + bean.getCode());
-                        break;
+                BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
+                if (baseBean == null) {
+                } else if (baseBean.getCode() != 200) {
+                    dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
+                            Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
+                } else {
+                    callback.onSuccess(baseBean.getData());
                 }
             }
 
@@ -467,26 +441,19 @@ public class ProcessControl {
     public static void cancelLogin(String centralizerToken, String userId, @NonNull LoginService.Callback<Boolean> callback) {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", centralizerToken);
-        Map<String, String> map = new HashMap<>();
-        map.put("id", userId);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", userId);
         ServiceConfig serviceConfig = LoginService.getConfig();
-        HttpHelper.get(serviceConfig.getBaseUrl() + CANCEL_LOGIN, headers, map, new NetCallback() {
+        HttpHelper.post(serviceConfig.getBaseUrl() + CANCEL_LOGIN, headers, jsonObject, new NetCallback() {
             @Override
             public void onSuccess(String success) {
-                BooleanResultBean bean = dispatchSuccessData(callback, success, BooleanResultBean.class);
-                if (bean == null) {
-                    return;
-                }
-                // 处理业务code
-                switch (bean.getCode()) {
-                    // 取消登录成功
-                    case 1:
-                        callback.onSuccess(bean.getResult());
-                        break;
-                    default:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                                Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + bean.getCode());
-                        break;
+                BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
+                if (baseBean == null) {
+                } else if (baseBean.getCode() != 200) {
+                    dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
+                            Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
+                } else {
+                    callback.onSuccess(baseBean.getData());
                 }
             }
 
@@ -505,33 +472,38 @@ public class ProcessControl {
      * @param cls      要转换的结果实体类
      * @return
      */
-    private static <T> T dispatchSuccessData(LoginService.Callback callback, String success, Class<T> cls) {
-        T t;
+    private static <T> BaseBean<T> dispatchSuccessDataToBean(LoginService.Callback callback, String success, Class<T> cls) {
         try {
-            if (TextUtils.isEmpty(success) || JSONObject.parseObject(success, BaseBean.class) == null) {
+            if (TextUtils.isEmpty(success)) {
                 // 外层数据实体是空的
                 dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_nodata);
                 return null;
             }
-            BaseBean baseBean = JSONObject.parseObject(success, BaseBean.class);
+            BaseBean<T> baseBean = JSON.parseObject(success, new TypeReference<BaseBean<T>>(cls) {
+            });
+
+            if (baseBean == null) {
+                dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_unknow);
+                return null;
+            }
             // 统一处理401 Token失效
-            if (baseBean.getStatusCode() == 401) {
+            if (baseBean.getCode() == 401) {
                 TokenInterceptor tokenInterceptor = LoginService.getConfig().getTokenInterceptor();
                 if (tokenInterceptor != null) {
                     tokenInterceptor.onInvalid();
                 } else {
-                    dispatchFailureData(callback, baseBean.getStatusCode(),
-                            Utils.getApp().getString(R.string.dblogin_fail_401) + baseBean.getStatusCode());
+                    dispatchFailureData(callback, baseBean.getCode(),
+                            Utils.getApp().getString(R.string.dblogin_fail_401) + baseBean.getCode());
                 }
                 return null;
             }
-            if (baseBean.getStatusCode() != 200 || TextUtils.isEmpty(baseBean.getEntity())) {
+            /*if (baseBean.getCode() != 200) {
                 // 特殊的错误码，需要开发者处理，如415等
-                dispatchFailureData(callback, baseBean.getStatusCode(),
-                        Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getStatusCode());
+                dispatchFailureData(callback, baseBean.getCode(),
+                        Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
                 return null;
-            }
-            t = JSON.parseObject(baseBean.getEntity(), cls);
+            }*/
+            return baseBean;
         } catch (JSONException e) {
             // json转换异常
             dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_json);
@@ -541,12 +513,56 @@ public class ProcessControl {
             dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_unknow);
             return null;
         }
-        // 内层数据实体是空的
-        if (t == null) {
-            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_nodata);
+    }
+
+    /**
+     * 处理 onSuccess 数据，已处理返回true，未处理返回false
+     *
+     * @param callback 回调
+     * @param success  onSuccess 数据
+     * @param cls      要转换的结果实体类
+     * @return
+     */
+    private static <T> BaseBean<List<T>> dispatchSuccessDataToList(LoginService.Callback callback, String success, Class<T> cls) {
+        try {
+            if (TextUtils.isEmpty(success)) {
+                // 外层数据实体是空的
+                dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_nodata);
+                return null;
+            }
+            BaseBean<List<T>> baseBean = JSON.parseObject(success, new TypeReference<BaseBean<List<T>>>(cls) {
+            });
+            if (baseBean == null) {
+                dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_unknow);
+                return null;
+            }
+            // 统一处理401 Token失效
+            if (baseBean.getCode() == 401) {
+                TokenInterceptor tokenInterceptor = LoginService.getConfig().getTokenInterceptor();
+                if (tokenInterceptor != null) {
+                    tokenInterceptor.onInvalid();
+                } else {
+                    dispatchFailureData(callback, baseBean.getCode(),
+                            Utils.getApp().getString(R.string.dblogin_fail_401) + baseBean.getCode());
+                }
+                return null;
+            }
+            if (baseBean.getCode() != 200) {
+                // 特殊的错误码，需要开发者处理，如415等
+                dispatchFailureData(callback, baseBean.getCode(),
+                        Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
+                return null;
+            }
+            return baseBean;
+        } catch (JSONException e) {
+            // json转换异常
+            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_json);
+            return null;
+        } catch (Exception e) {
+            // 未知异常
+            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_unknow);
             return null;
         }
-        return t;
     }
 
     /**

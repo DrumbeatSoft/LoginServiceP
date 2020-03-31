@@ -29,10 +29,11 @@ public final class ServiceConfig {
     }
 
     public String getBaseUrl() {
-        if (TextUtils.isEmpty(baseUrl)) {
+        /*if (TextUtils.isEmpty(baseUrl)) {
             return null;
         }
-        return baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
+        return baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";*/
+        return baseUrl;
     }
 
     public TokenInterceptor getTokenInterceptor() {

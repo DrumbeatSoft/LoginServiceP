@@ -56,7 +56,7 @@ public class LoginService {
      * @param callback
      */
     public static void getTenantList(@NonNull String account,
-                                     @NonNull Callback<List<TenantBean.ResultBean>> callback) {
+                                     @NonNull Callback<List<TenantBean>> callback) {
         ProcessControl.getTenantList(account, callback);
     }
 
@@ -126,7 +126,7 @@ public class LoginService {
     /**
      * 查询用户信息
      */
-    public static void getUserInfo(@NonNull String centralizerToken, @NonNull Callback<UserInfoBean.ResultBean> callback) {
+    public static void getUserInfo(@NonNull String centralizerToken, @NonNull Callback<UserInfoBean> callback) {
         ProcessControl.getUserInfo(centralizerToken, callback);
     }
 

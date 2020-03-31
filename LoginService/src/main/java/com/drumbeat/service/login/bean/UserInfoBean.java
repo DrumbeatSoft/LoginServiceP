@@ -5,164 +5,138 @@ package com.drumbeat.service.login.bean;
  */
 public class UserInfoBean {
     /**
-     * Result : {"Account":"岳真真","FullName":"岳真真","MobilePhone":"19939133884","Email":"19939133884","IdCard":"19939133884","ModifyAccountId":121589783771226110,"ModifyAccountName":"岳真真","ModifyDate":"2019-12-23T19:02:22","CreateAccountId":0,"CreateAccountName":"系统","CreateDate":"2019-12-02T18:55:24","Id":"121589783771226112"}
-     * Success : true
-     * Code : 1
+     * account : 岳真真
+     * fullName : 岳真真
+     * mobilePhone : 19939133884
+     * email : 19939133884
+     * idCard : 19939133884
+     * modifyAccountId : 121589783771226110
+     * modifyAccountName : 岳真真
+     * modifyDate : 2019-12-23T19:02:22
+     * createAccountId : 0
+     * createAccountName : 系统
+     * createDate : 2019-12-02T18:55:24
+     * id : 121589783771226112
      */
 
-    private ResultBean Result;
-    private boolean Success;
-    private int Code;
+    private String account;
+    private String fullName;
+    private String mobilePhone;
+    private String email;
+    private String idCard;
+    private String modifyAccountId;
+    private String modifyAccountName;
+    private String modifyDate;
+    private String createAccountId;
+    private String createAccountName;
+    private String createDate;
+    private String id;
 
-    public ResultBean getResult() {
-        return Result;
+    public String getAccount() {
+        return account;
     }
 
-    public void setResult(ResultBean Result) {
-        this.Result = Result;
+    public UserInfoBean setAccount(String account) {
+        this.account = account;
+        return this;
     }
 
-    public boolean isSuccess() {
-        return Success;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setSuccess(boolean Success) {
-        this.Success = Success;
+    public UserInfoBean setFullName(String fullName) {
+        this.fullName = fullName;
+        return this;
     }
 
-    public int getCode() {
-        return Code;
+    public String getMobilePhone() {
+        return mobilePhone;
     }
 
-    public void setCode(int Code) {
-        this.Code = Code;
+    public UserInfoBean setMobilePhone(String mobilePhone) {
+        this.mobilePhone = mobilePhone;
+        return this;
     }
 
-    public static class ResultBean {
-        /**
-         * Account : 岳真真
-         * FullName : 岳真真
-         * MobilePhone : 19939133884
-         * Email : 19939133884
-         * IdCard : 19939133884
-         * ModifyAccountId : 121589783771226110
-         * ModifyAccountName : 岳真真
-         * ModifyDate : 2019-12-23T19:02:22
-         * CreateAccountId : 0
-         * CreateAccountName : 系统
-         * CreateDate : 2019-12-02T18:55:24
-         * Id : 121589783771226112
-         */
+    public String getEmail() {
+        return email;
+    }
 
-        private String Account;
-        private String FullName;
-        private String MobilePhone;
-        private String Email;
-        private String IdCard;
-        private String ModifyAccountId;
-        private String ModifyAccountName;
-        private String ModifyDate;
-        private String CreateAccountId;
-        private String CreateAccountName;
-        private String CreateDate;
-        private String Id;
+    public UserInfoBean setEmail(String email) {
+        this.email = email;
+        return this;
+    }
 
-        public String getAccount() {
-            return Account;
-        }
+    public String getIdCard() {
+        return idCard;
+    }
 
-        public void setAccount(String Account) {
-            this.Account = Account;
-        }
+    public UserInfoBean setIdCard(String idCard) {
+        this.idCard = idCard;
+        return this;
+    }
 
-        public String getFullName() {
-            return FullName;
-        }
+    public String getModifyAccountId() {
+        return modifyAccountId;
+    }
 
-        public void setFullName(String FullName) {
-            this.FullName = FullName;
-        }
+    public UserInfoBean setModifyAccountId(String modifyAccountId) {
+        this.modifyAccountId = modifyAccountId;
+        return this;
+    }
 
-        public String getMobilePhone() {
-            return MobilePhone;
-        }
+    public String getModifyAccountName() {
+        return modifyAccountName;
+    }
 
-        public void setMobilePhone(String MobilePhone) {
-            this.MobilePhone = MobilePhone;
-        }
+    public UserInfoBean setModifyAccountName(String modifyAccountName) {
+        this.modifyAccountName = modifyAccountName;
+        return this;
+    }
 
-        public String getEmail() {
-            return Email;
-        }
+    public String getModifyDate() {
+        return modifyDate;
+    }
 
-        public void setEmail(String Email) {
-            this.Email = Email;
-        }
+    public UserInfoBean setModifyDate(String modifyDate) {
+        this.modifyDate = modifyDate;
+        return this;
+    }
 
-        public String getIdCard() {
-            return IdCard;
-        }
+    public String getCreateAccountId() {
+        return createAccountId;
+    }
 
-        public void setIdCard(String IdCard) {
-            this.IdCard = IdCard;
-        }
+    public UserInfoBean setCreateAccountId(String createAccountId) {
+        this.createAccountId = createAccountId;
+        return this;
+    }
 
-        public String getModifyAccountName() {
-            return ModifyAccountName;
-        }
+    public String getCreateAccountName() {
+        return createAccountName;
+    }
 
-        public void setModifyAccountName(String ModifyAccountName) {
-            this.ModifyAccountName = ModifyAccountName;
-        }
+    public UserInfoBean setCreateAccountName(String createAccountName) {
+        this.createAccountName = createAccountName;
+        return this;
+    }
 
-        public String getModifyDate() {
-            return ModifyDate;
-        }
+    public String getCreateDate() {
+        return createDate;
+    }
 
-        public void setModifyDate(String ModifyDate) {
-            this.ModifyDate = ModifyDate;
-        }
+    public UserInfoBean setCreateDate(String createDate) {
+        this.createDate = createDate;
+        return this;
+    }
 
-        public String getModifyAccountId() {
-            return ModifyAccountId;
-        }
+    public String getId() {
+        return id;
+    }
 
-        public ResultBean setModifyAccountId(String modifyAccountId) {
-            ModifyAccountId = modifyAccountId;
-            return this;
-        }
-
-        public String getCreateAccountId() {
-            return CreateAccountId;
-        }
-
-        public ResultBean setCreateAccountId(String createAccountId) {
-            CreateAccountId = createAccountId;
-            return this;
-        }
-
-        public String getCreateAccountName() {
-            return CreateAccountName;
-        }
-
-        public void setCreateAccountName(String CreateAccountName) {
-            this.CreateAccountName = CreateAccountName;
-        }
-
-        public String getCreateDate() {
-            return CreateDate;
-        }
-
-        public void setCreateDate(String CreateDate) {
-            this.CreateDate = CreateDate;
-        }
-
-        public String getId() {
-            return Id;
-        }
-
-        public void setId(String Id) {
-            this.Id = Id;
-        }
+    public UserInfoBean setId(String id) {
+        this.id = id;
+        return this;
     }
 }

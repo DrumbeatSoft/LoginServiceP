@@ -62,10 +62,10 @@ public class LoginActivity extends AppCompatActivity {
         String account = SPUtils.getInstance().getString("account");
         String pwd = SPUtils.getInstance().getString("pwd");
 
-        account = TextUtils.isEmpty(account) ? "GD020" : account;
+        account = TextUtils.isEmpty(account) ? "admin" : account;
         etAccount.setText(account);
         getTenant();
-        etPwd.setText(TextUtils.isEmpty(pwd) ? "MM20200108" : pwd);
+        etPwd.setText(TextUtils.isEmpty(pwd) ? "admin" : pwd);
 
         etAccount.setOnFocusChangeListener((v, hasFocus) -> {
             if (!TextUtils.isEmpty(etAccount.getEditableText().toString().trim()) && !hasFocus) {
@@ -96,13 +96,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void getTenant() {
-        LoginService.getTenantList(etAccount.getEditableText().toString().trim(), new LoginService.Callback<List<TenantBean.ResultBean>>() {
+        LoginService.getTenantList(etAccount.getEditableText().toString().trim(), new LoginService.Callback<List<TenantBean>>() {
             @Override
-            public void onSuccess(List<TenantBean.ResultBean> succeed) {
+            public void onSuccess(List<TenantBean> succeed) {
                 if (succeed != null && succeed.size() > 0) {
-                    ToastUtils.showLong(String.valueOf(succeed.get(1).getTenantId()));
-                    LoginService.setTenantId(succeed.get(1).getTenantId());
-                    tvTenantNull.setText("tenantId：" + succeed.get(1).getTenantId());
+                    ToastUtils.showLong(String.valueOf(succeed.get(0).getTenantId()));
+                    LoginService.setTenantId(succeed.get(0).getTenantId());
+                    tvTenantNull.setText("tenantId：" + succeed.get(0).getTenantId());
                 } else {
                     tvTenantNull.setText("未查询到租户信息");
                 }
@@ -202,9 +202,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void getUserInfo() {
-        LoginService.getUserInfo(SPUtils.getInstance().getString(SPConfig.SP_TOKEN), new LoginService.Callback<UserInfoBean.ResultBean>() {
+        LoginService.getUserInfo(SPUtils.getInstance().getString(SPConfig.SP_TOKEN), new LoginService.Callback<UserInfoBean>() {
             @Override
-            public void onSuccess(UserInfoBean.ResultBean success) {
+            public void onSuccess(UserInfoBean success) {
                 if (success != null) {
                     tvName.setText(StringUtils.null2Length0(success.getFullName()));
                 } else {

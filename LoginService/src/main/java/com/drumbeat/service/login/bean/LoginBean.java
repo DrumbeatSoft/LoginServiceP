@@ -4,44 +4,44 @@ package com.drumbeat.service.login.bean;
  * Created by ZuoHailong on 2019/12/3.
  */
 public class LoginBean {
-    private int Result;
-    private String Token;
-    private String AbsExpire;
-    private String Data;
+    private int result;
+    private String token;
+    private String absExpire;
+    private String data;
 
     public String getToken() {
-        return Token;
+        return token;
     }
 
     public LoginBean setToken(String token) {
-        Token = token;
+        this.token = token;
         return this;
     }
 
     public int getResult() {
-        return Result;
+        return result;
     }
 
     public LoginBean setResult(int result) {
-        Result = result;
+        this.result = result;
         return this;
     }
 
     public String getAbsExpire() {
-        return AbsExpire;
+        return absExpire;
     }
 
     public LoginBean setAbsExpire(String absExpire) {
-        AbsExpire = absExpire;
+        this.absExpire = absExpire;
         return this;
     }
 
     public String getData() {
-        return Data;
+        return data;
     }
 
     public LoginBean setData(String data) {
-        Data = data;
+        this.data = data;
         return this;
     }
 }
