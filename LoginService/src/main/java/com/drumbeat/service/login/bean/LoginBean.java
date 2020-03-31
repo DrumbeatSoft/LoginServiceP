@@ -4,7 +4,6 @@ package com.drumbeat.service.login.bean;
  * Created by ZuoHailong on 2019/12/3.
  */
 public class LoginBean {
-    private int result;
     private String token;
     private String absExpire;
     private String data;
@@ -15,15 +14,6 @@ public class LoginBean {
 
     public LoginBean setToken(String token) {
         this.token = token;
-        return this;
-    }
-
-    public int getResult() {
-        return result;
-    }
-
-    public LoginBean setResult(int result) {
-        this.result = result;
         return this;
     }
 

@@ -138,16 +138,10 @@ public class ProcessControl {
                 if (baseBean == null) {
                     return;
                 }
-                if (baseBean.getCode() != 200) {
-                    dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                            Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
-                    return;
-                }
-                LoginBean loginBean = baseBean.getData();
                 // 处理业务code
-                switch (loginBean.getResult()) {
-                    case 1:
-                        callback.onSuccess(loginBean);
+                switch (baseBean.getCode()) {
+                    case 200:
+                        callback.onSuccess(baseBean.getData());
                         break;
                     case 10:
                         dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_10_login);
@@ -198,7 +192,7 @@ public class ProcessControl {
                         dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_81);
                         break;
                     default:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + loginBean.getResult());
+                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
                         break;
                 }
             }
@@ -279,29 +273,29 @@ public class ProcessControl {
             public void onSuccess(String success) {
                 BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
                 if (baseBean == null) {
-                } else {
-                    // 处理业务code
-                    switch (baseBean.getCode()) {
-                        case 200:
-                            callback.onSuccess(baseBean.getData());
-                            break;
-                        case 2:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_2);
-                            break;
-                        case 3:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_3);
-                            break;
-                        case 4:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_4);
-                            break;
-                        case 10:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_10_modifypwd);
-                            break;
-                        default:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                                    Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
-                            break;
-                    }
+                    return;
+                }
+                // 处理业务code
+                switch (baseBean.getCode()) {
+                    case 200:
+                        callback.onSuccess(baseBean.getData());
+                        break;
+                    case 2:
+                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_2);
+                        break;
+                    case 3:
+                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_3);
+                        break;
+                    case 4:
+                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_4);
+                        break;
+                    case 10:
+                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_10_modifypwd);
+                        break;
+                    default:
+                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
+                                Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
+                        break;
                 }
             }
 
@@ -364,38 +358,35 @@ public class ProcessControl {
             public void onSuccess(String success) {
                 BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
                 if (baseBean == null) {
-                } else {
-                    // 处理业务code
-                    switch (baseBean.getCode()) {
-                        /*
-                         * 1：扫码成功，下一步登录确认
-                         * */
-                        case 200:
-                            Intent intent = new Intent(activity, ConfirmActivity.class);
-                            intent.putExtra("userId", userId);
-                            intent.putExtra("centralizerToken", centralizerToken);
-                            activity.startActivity(intent);
-                            break;
-                        case 0:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_0_scancode);
-                            break;
-                        case 101:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_201);
-                            break;
-                        case 102:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_200);
-                            break;
-                        case 103:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_400);
-                            break;
-                        case 104:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_500);
-                            break;
-                        default:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                                    Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
-                            break;
-                    }
+                    return;
+                }
+                // 处理业务code
+                switch (baseBean.getCode()) {
+                    case 200:
+                        Intent intent = new Intent(activity, ConfirmActivity.class);
+                        intent.putExtra("userId", userId);
+                        intent.putExtra("centralizerToken", centralizerToken);
+                        activity.startActivity(intent);
+                        break;
+                    case 0:
+                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_0_scancode);
+                        break;
+                    case 101:
+                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_201);
+                        break;
+                    case 102:
+                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_200);
+                        break;
+                    case 103:
+                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_400);
+                        break;
+                    case 104:
+                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_500);
+                        break;
+                    default:
+                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
+                                Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
+                        break;
                 }
             }
 
