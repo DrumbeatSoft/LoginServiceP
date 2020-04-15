@@ -48,7 +48,6 @@ import static com.drumbeat.service.login.config.UrlConfig.SCAN_CODE;
  */
 public class ProcessControl {
 
-
     /**
      * 从 ContentProvider 中获取 centralizerToken
      *
@@ -103,8 +102,8 @@ public class ProcessControl {
 
             @Override
             public void onFailure(String failure) {
-//                dispatchFailureData(callback, FailureBean.CODE_DEFAULT, failure);
-                callback.onSuccess(null);
+                dispatchFailureData(callback, FailureBean.CODE_DEFAULT, failure);
+//                callback.onSuccess(null);
             }
         });
     }
@@ -120,7 +119,8 @@ public class ProcessControl {
         jsonObject.put("deviceId", "");
         jsonObject.put("tenantId", LoginService.getTenantId());
         jsonObject.put("appId", serviceConfig.getAppId());
-        jsonObject.put("device", 20);//20 android
+        //20 android
+        jsonObject.put("device", 20);
         jsonObject.put("tokenType", 0);
         jsonObject.put("accountName", account);
         jsonObject.put("password", password);
