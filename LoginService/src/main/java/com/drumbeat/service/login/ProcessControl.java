@@ -103,21 +103,24 @@ public class ProcessControl {
                 }
                 // 处理业务code
                 switch (bean.getCode()) {
+                    case 0:
+                        callback.onSuccess(null);
+                        break;
                     case 1:
                         callback.onSuccess(bean.getResult());
                         break;
                     default:
-                        /*dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                                Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + bean.getCode());*/
-                        callback.onSuccess(null);
+                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
+                                Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + bean.getCode());
+//                        callback.onSuccess(null);
                         break;
                 }
             }
 
             @Override
             public void onFailure(String failure) {
-//                dispatchFailureData(callback, FailureBean.CODE_DEFAULT, failure);
-                callback.onSuccess(null);
+                dispatchFailureData(callback, FailureBean.CODE_DEFAULT, failure);
+//                callback.onSuccess(null);
             }
         });
     }
@@ -133,7 +136,8 @@ public class ProcessControl {
         jsonObject.put("DeviceId", "");
         jsonObject.put("TenantId", LoginService.getTenantId());
         jsonObject.put("AppId", serviceConfig.getAppId());
-        jsonObject.put("Device", 20);//20 android
+        //20 android
+        jsonObject.put("Device", 20);
         jsonObject.put("TokenType", 0);
         jsonObject.put("AccountName", account);
         jsonObject.put("Password", password);
