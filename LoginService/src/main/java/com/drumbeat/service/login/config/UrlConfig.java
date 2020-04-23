@@ -42,4 +42,14 @@ public interface UrlConfig {
      * 检查密码是否失效需要重置
      */
     String CHECK_PASSWORD_EXPIRE = "gateway/api/account/checkpasswordexpire";
+
+    /**
+     * 获取短信验证码
+     */
+    String GET_SMS_CODE = "v2-gateway/technical/sms/sendunverifycode";
+
+    /**
+     * 验证短信验证码
+     */
+    String CHECK_SMS_CODE = "v2-gateway/technical/sms/checkunverifycode";
 }

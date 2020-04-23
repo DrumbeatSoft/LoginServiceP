@@ -1,9 +1,15 @@
 /**
  * Alipay.com Inc. Copyright (c) 2004-2012 All Rights Reserved.
  */
-package com.drumbeat.service.login.utils.alipay.util;
+package com.drumbeat.service.login.utils;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
 
 /**
  * @author runzhi
@@ -93,30 +99,35 @@ public class StreamUtil {
             this.lock = lock;
         }
 
+        @Override
         public void write(int datum) throws IOException {
             synchronized (lock) {
                 out.write(datum);
             }
         }
 
+        @Override
         public void write(byte[] data) throws IOException {
             synchronized (lock) {
                 out.write(data);
             }
         }
 
+        @Override
         public void write(byte[] data, int offset, int length) throws IOException {
             synchronized (lock) {
                 out.write(data, offset, length);
             }
         }
 
+        @Override
         public void flush() throws IOException {
             synchronized (lock) {
                 out.flush();
             }
         }
 
+        @Override
         public void close() throws IOException {
             synchronized (lock) {
                 out.close();

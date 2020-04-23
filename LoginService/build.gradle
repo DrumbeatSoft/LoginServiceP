@@ -40,4 +40,7 @@ dependencies {
     implementation 'com.blankj:utilcodex:1.26.0'
     // fastjson
     implementation 'com.alibaba:fastjson:1.1.71.android'
+
+    // https://mvnrepository.com/artifact/commons-codec/commons-codec
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.14'
 }

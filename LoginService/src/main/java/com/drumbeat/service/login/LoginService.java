@@ -142,6 +142,29 @@ public class LoginService {
         return ProcessControl.getTokenFromCP(context);
     }
 
+    /**
+     * 获取短信验证码
+     *
+     * @param mobile     手机号
+     * @param privateKey 私钥
+     * @param callback
+     */
+    public static void getSmsCode(@NonNull String mobile, @NonNull String privateKey, @NonNull Callback<Boolean> callback) {
+        ProcessControl.getSmsCode(LoginService.getConfig(), mobile, privateKey, callback);
+    }
+
+    /**
+     * 验证短信验证码
+     *
+     * @param mobile     手机号
+     * @param smsCode    短信验证码
+     * @param privateKey 私钥
+     * @param callback
+     */
+    public static void checkSmsCode(@NonNull String mobile, @NonNull String smsCode, @NonNull String privateKey, @NonNull Callback<Boolean> callback) {
+        ProcessControl.checkSmsCode(LoginService.getConfig(), mobile, smsCode, privateKey, callback);
+    }
+
     public abstract static class Callback<T> {
 
         /**

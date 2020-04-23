@@ -34,8 +34,8 @@ public class HttpHelper {
     public static void init() {
         Kalle.setConfig(KalleConfig.newBuilder()
 //                .connectFactory(OkHttpConnectFactory.newBuilder().build())
-                .connectionTimeout(3, TimeUnit.MINUTES)
-                .readTimeout(3, TimeUnit.MINUTES)
+                .connectionTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
                 .cookieStore(DBCookieStore.newBuilder(Utils.getApp()).build())
                 .cacheStore(DiskCacheStore.newBuilder(PathUtils.getExternalAppCachePath()).build())
                 .network(new BroadcastNetwork(Utils.getApp()))
@@ -46,6 +46,10 @@ public class HttpHelper {
     }
 
     public static void post(String url, Map<String, String> headers, JSONObject jsonObject, NetCallback netCallback) {
+        post(url, headers, jsonObject.toJSONString(), netCallback);
+    }
+
+    public static void post(String url, Map<String, String> headers, String jsonStr, NetCallback netCallback) {
         SimpleBodyRequest.Api postApi = Kalle.post(url);
 
         // 添加header
@@ -58,7 +62,7 @@ public class HttpHelper {
         }
 
         postApi.cacheMode(CacheMode.NETWORK)
-                .body(new JsonBody(jsonObject.toJSONString()))
+                .body(new JsonBody(jsonStr))
                 .perform(new KalleCallback<String>() {
                     @Override
                     protected void onSuccess(String succeed) {

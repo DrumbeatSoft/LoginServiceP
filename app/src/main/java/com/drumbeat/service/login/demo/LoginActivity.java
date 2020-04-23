@@ -49,6 +49,10 @@ public class LoginActivity extends AppCompatActivity {
     Button btnCheckPwd;
     @BindView(R.id.btnScan)
     Button btnScan;
+    @BindView(R.id.btngetSmsCode)
+    Button btngetSmsCode;
+    @BindView(R.id.btnCheckSmsCode)
+    Button btnCheckSmsCode;
     @BindView(R.id.tvTenantNull)
     TextView tvTenantNull;
     @BindView(R.id.tvName)
@@ -74,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    @OnClick({R.id.btnLogin, R.id.btnCheckPwd, R.id.btnModify, R.id.btnScan, R.id.btnGetUserInfo})
+    @OnClick({R.id.btnLogin, R.id.btnCheckPwd, R.id.btnModify, R.id.btnScan, R.id.btnGetUserInfo, R.id.btngetSmsCode, R.id.btnCheckSmsCode})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btnLogin:
@@ -91,6 +95,43 @@ public class LoginActivity extends AppCompatActivity {
                 break;
             case R.id.btnGetUserInfo:
                 getUserInfo();
+                break;
+            case R.id.btngetSmsCode:
+                LoginService.getSmsCode(etAccount.getEditableText().toString().trim(), KeyConstant.privateKey, new LoginService.Callback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean success) {
+                        if (success) {
+                            ToastUtils.showShort("短信验证码获取成功");
+                        } else {
+                            ToastUtils.showShort("短信验证码获取失败");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(FailureBean failure) {
+                        ToastUtils.showShort(failure.getMsg());
+                    }
+                });
+                break;
+            case R.id.btnCheckSmsCode:
+                LoginService.checkSmsCode(etAccount.getEditableText().toString().trim(),
+                        etPwd.getEditableText().toString().trim(), KeyConstant.privateKey, new LoginService.Callback<Boolean>() {
+                            @Override
+                            public void onSuccess(Boolean success) {
+                                if (success) {
+                                    ToastUtils.showShort("验证码正确");
+                                } else {
+                                    ToastUtils.showShort("短信验证码获取失败");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(FailureBean failure) {
+                                ToastUtils.showShort(failure.getMsg());
+                            }
+                        });
+                break;
+            default:
                 break;
         }
     }

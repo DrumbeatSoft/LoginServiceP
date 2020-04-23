@@ -66,6 +66,20 @@
             android:text="检查密码是否失效"
             android:visibility="invisible" />
 
+        <Button
+            android:id="@+id/btngetSmsCode"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:text="获取短信验证码" />
+
+        <Button
+            android:id="@+id/btnCheckSmsCode"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:text="验证短信验证码" />
+
     </LinearLayout>
 
     <TextView
