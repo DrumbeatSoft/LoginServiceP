@@ -44,10 +44,10 @@ import static com.drumbeat.service.login.config.UrlConfig.MODIFY_PASSWORD;
 import static com.drumbeat.service.login.config.UrlConfig.SCAN_CODE;
 
 /**
- * Created by ZuoHailong on 2019/10/17.
+ * @author ZuoHailong
+ * @date 2019/10/17
  */
 public class ProcessControl {
-
 
     /**
      * 从 ContentProvider 中获取 centralizerToken
