@@ -31,7 +31,7 @@ import com.drumbeat.service.login.http.HttpHelper;
 import com.drumbeat.service.login.http.TokenInterceptor;
 import com.drumbeat.service.login.http.kalle.NetCallback;
 import com.drumbeat.service.login.ui.ConfirmActivity;
-import com.drumbeat.service.login.utils.SignUtils;
+import com.drumbeat.service.login.utils.SignUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -534,7 +534,7 @@ public class ProcessControl {
                     String timeStamp = String.valueOf(System.currentTimeMillis() / 1000L);
 
                     String requestStr = timeStamp + "mobilePhone=" + mobile + "&verifyCodeType=1";
-                    String sign = SignUtils.signRsa2(requestStr, privateKey);
+                    String sign = SignUtil.signRsa2(requestStr, privateKey);
 
                     Map<String, String> headers = new HashMap<>(3);
                     headers.put("AppId", serviceConfig.getAppId());
@@ -593,14 +593,14 @@ public class ProcessControl {
             String timeStamp = String.valueOf(System.currentTimeMillis() / 1000L);
 
             String requestStr = timeStamp + "mobilePhone=" + mobile + "&verifyCodeType=1" + "&verifyCode=" + smsCode;
-            String sign = SignUtils.signRsa2(requestStr, privateKey);
+            String sign = SignUtil.signRsa2(requestStr, privateKey);
 
             Map<String, String> headers = new HashMap<>(3);
             headers.put("AppId", serviceConfig.getAppId());
             headers.put("TimeStamp", timeStamp);
             headers.put("Sign", sign);
 
-            Map<String, String> params = new HashMap<>(2);
+            Map<String, String> params = new HashMap<>(3);
             params.put("mobilePhone", mobile);
             params.put("verifyCodeType", "1");
             params.put("verifyCode", smsCode);

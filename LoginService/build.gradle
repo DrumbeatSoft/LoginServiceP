@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 39
-        versionName "0.3.9"
+        versionCode 41
+        versionName "0.4.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
     }
@@ -37,10 +37,7 @@ dependencies {
     // Kalle
     implementation 'com.yanzhenjie:kalle:0.1.7'
     // AndroidUtilCode
-    implementation 'com.blankj:utilcodex:1.26.0'
+    implementation 'com.blankj:utilcodex:1.28.1'
     // fastjson
     implementation 'com.alibaba:fastjson:1.1.71.android'
-
-    // https://mvnrepository.com/artifact/commons-codec/commons-codec
-    implementation group: 'commons-codec', name: 'commons-codec', version: '1.14'
 }

@@ -4,28 +4,29 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 /**
- * Created by ZuoHailong on 2020/1/6.
+ * @author ZuoHailong
+ * @date 2020/1/6
  */
-public class SharedPreferencesUtil {
+public class LocalSpUtil {
     private static final String FILE_NAME = "sp_name_loginservice";
 
-    private static SharedPreferencesUtil mSharedPreferencesUtil;
+    private static LocalSpUtil mLocalSpUtil;
 
     private static SharedPreferences mPreferences;
     private static SharedPreferences.Editor mEditor;
 
     //构造方法
-    private SharedPreferencesUtil(Context context) {
+    private LocalSpUtil(Context context) {
         mPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
         mEditor = mPreferences.edit();
     }
 
     //单例模式
-    public static SharedPreferencesUtil getInstance(Context context) {
-        if (mSharedPreferencesUtil == null) {
-            mSharedPreferencesUtil = new SharedPreferencesUtil(context);
+    public static LocalSpUtil getInstance(Context context) {
+        if (mLocalSpUtil == null) {
+            mLocalSpUtil = new LocalSpUtil(context);
         }
-        return mSharedPreferencesUtil;
+        return mLocalSpUtil;
     }
 
     /**

@@ -14,7 +14,7 @@ import java.io.Writer;
 /**
  * @author runzhi
  */
-public class StreamUtil {
+class StreamUtil {
     private static final int DEFAULT_BUFFER_SIZE = 8192;
 
     public static void io(InputStream in, OutputStream out) throws IOException {
@@ -88,7 +88,7 @@ public class StreamUtil {
 
     private static class SynchronizedOutputStream extends OutputStream {
         private OutputStream out;
-        private Object       lock;
+        private Object lock;
 
         SynchronizedOutputStream(OutputStream out) {
             this(out, out);

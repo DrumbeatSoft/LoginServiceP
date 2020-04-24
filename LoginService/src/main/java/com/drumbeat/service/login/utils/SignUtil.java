@@ -13,18 +13,18 @@ import java.security.spec.PKCS8EncodedKeySpec;
  * @author ZuoHailong
  * @date 2020/4/23
  */
-public class SignUtils {
+public class SignUtil {
 
     /**
      * 默认字符集编码。现在推荐使用UTF-8，之前默认是GBK
      */
     private static String DEFAULT_CHARSET = "UTF-8";
 
-    public static final String SIGN_TYPE_RSA = "RSA";
+    private static final String SIGN_TYPE_RSA = "RSA";
 
-    public static final String SIGN_ALGORITHMS = "SHA1WithRSA";
+    private static final String SIGN_ALGORITHMS = "SHA1WithRSA";
 
-    public static final String SIGN_SHA256RSA_ALGORITHMS = "SHA256WithRSA";
+    private static final String SIGN_SHA256RSA_ALGORITHMS = "SHA256WithRSA";
 
     public static String signRsa2(String content, String privateKey) throws Exception {
         try {
@@ -36,7 +36,6 @@ public class SignUtils {
             }
             return doSign(content, DEFAULT_CHARSET, privateKey);
         } catch (Exception e) {
-
             String errorMessage = "RSA2签名遭遇异常，请检查私钥格式是否正确。" + e.getMessage() +
                     " content=" + content + "，charset=" + DEFAULT_CHARSET + "，privateKeySize=" + privateKey.length();
             throw new Exception(errorMessage, e);
@@ -65,7 +64,7 @@ public class SignUtils {
         return new String(Base64.encodeBase64(signed));
     }
 
-    public static PrivateKey getPrivateKeyFromPKCS8(String algorithm,
+    private static PrivateKey getPrivateKeyFromPKCS8(String algorithm,
                                                     InputStream ins) throws Exception {
         if (ins == null || StringUtils.isEmpty(algorithm)) {
             return null;

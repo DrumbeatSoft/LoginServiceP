@@ -7,21 +7,22 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.Utils;
 import com.drumbeat.service.login.bean.FailureBean;
 import com.drumbeat.service.login.bean.LoginBean;
 import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
 import com.drumbeat.service.login.config.ServiceConfig;
-import com.drumbeat.service.login.utils.SharedPreferencesUtil;
+import com.drumbeat.service.login.utils.LocalSpUtil;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * Created by ZuoHailong on 2019/10/17.
+ *
+ * @author ZuoHailong
+ * @date 2019/10/17
  */
 public class LoginService {
 
@@ -66,7 +67,7 @@ public class LoginService {
      * @param tenantId 租户ID
      */
     public static void setTenantId(String tenantId) {
-        SharedPreferencesUtil.getInstance(Utils.getApp()).put(SP_TENANT_ID, tenantId);
+        LocalSpUtil.getInstance(Utils.getApp()).put(SP_TENANT_ID, tenantId);
     }
 
     /**
@@ -75,7 +76,7 @@ public class LoginService {
      * @return
      */
     public static String getTenantId() {
-        return SharedPreferencesUtil.getInstance(Utils.getApp()).getString(SP_TENANT_ID);
+        return LocalSpUtil.getInstance(Utils.getApp()).getString(SP_TENANT_ID);
     }
 
     /**
