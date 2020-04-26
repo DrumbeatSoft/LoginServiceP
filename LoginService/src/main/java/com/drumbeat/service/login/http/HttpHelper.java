@@ -19,6 +19,7 @@ import com.yanzhenjie.kalle.simple.SimpleUrlRequest;
 import com.yanzhenjie.kalle.simple.cache.CacheMode;
 import com.yanzhenjie.kalle.simple.cache.DiskCacheStore;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +27,10 @@ import java.util.concurrent.TimeUnit;
 import static com.yanzhenjie.kalle.Headers.KEY_CONTENT_TYPE;
 import static com.yanzhenjie.kalle.Headers.VALUE_APPLICATION_JSON;
 
+/**
+ * @author ZuoHailong
+ * @date 2019/12/2
+ */
 public class HttpHelper {
 
     /**
@@ -76,7 +81,7 @@ public class HttpHelper {
                 });
     }
 
-    public static void get(String url, Map<String, String> headers, Map<String, String> params, NetCallback netCallback) {
+    public static void get(String url, Map<String, String> headers, LinkedHashMap<String, String> params, NetCallback netCallback) {
         SimpleUrlRequest.Api getApi = Kalle.get(url);
         // 添加header
         if (headers != null && !headers.isEmpty()) {

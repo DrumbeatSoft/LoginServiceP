@@ -39,6 +39,8 @@ public class LoginActivity extends AppCompatActivity {
     EditText etAccount;
     @BindView(R.id.etPwd)
     EditText etPwd;
+    @BindView(R.id.etSmsCode)
+    EditText etSmsCode;
     @BindView(R.id.btnLogin)
     Button btnLogin;
     @BindView(R.id.btnGetUserInfo)
@@ -53,6 +55,8 @@ public class LoginActivity extends AppCompatActivity {
     Button btngetSmsCode;
     @BindView(R.id.btnCheckSmsCode)
     Button btnCheckSmsCode;
+    @BindView(R.id.btnForgotPassword)
+    Button btnForgotPassword;
     @BindView(R.id.tvTenantNull)
     TextView tvTenantNull;
     @BindView(R.id.tvName)
@@ -78,7 +82,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    @OnClick({R.id.btnLogin, R.id.btnCheckPwd, R.id.btnModify, R.id.btnScan, R.id.btnGetUserInfo, R.id.btngetSmsCode, R.id.btnCheckSmsCode})
+    @OnClick({R.id.btnLogin, R.id.btnCheckPwd, R.id.btnModify, R.id.btnScan, R.id.btnGetUserInfo, R.id.btngetSmsCode, R.id.btnCheckSmsCode, R.id.btnForgotPassword})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btnLogin:
@@ -115,13 +119,31 @@ public class LoginActivity extends AppCompatActivity {
                 break;
             case R.id.btnCheckSmsCode:
                 LoginService.checkSmsCode(etAccount.getEditableText().toString().trim(),
-                        etPwd.getEditableText().toString().trim(), KeyConstant.privateKey, new LoginService.Callback<Boolean>() {
+                        etSmsCode.getEditableText().toString().trim(), KeyConstant.privateKey, new LoginService.Callback<Boolean>() {
                             @Override
                             public void onSuccess(Boolean success) {
                                 if (success) {
                                     ToastUtils.showShort("验证码正确");
                                 } else {
                                     ToastUtils.showShort("短信验证码获取失败");
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(FailureBean failure) {
+                                ToastUtils.showShort(failure.getMsg());
+                            }
+                        });
+                break;
+            case R.id.btnForgotPassword:
+                LoginService.forgotPassword(etAccount.getEditableText().toString().trim(), etSmsCode.getEditableText().toString().trim(),
+                        etPwd.getEditableText().toString().trim(), KeyConstant.privateKey, new LoginService.Callback<Boolean>() {
+                            @Override
+                            public void onSuccess(Boolean success) {
+                                if (success) {
+                                    ToastUtils.showShort("新密码设置成功");
+                                } else {
+                                    ToastUtils.showShort("新密码设置失败");
                                 }
                             }
 
@@ -141,9 +163,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(List<TenantBean.ResultBean> succeed) {
                 if (succeed != null && succeed.size() > 0) {
-                    ToastUtils.showLong(String.valueOf(succeed.get(1).getTenantId()));
-                    LoginService.setTenantId(succeed.get(1).getTenantId());
-                    tvTenantNull.setText("tenantId：" + succeed.get(1).getTenantId());
+                    ToastUtils.showLong(String.valueOf(succeed.get(0).getTenantId()));
+                    LoginService.setTenantId(succeed.get(0).getTenantId());
+                    tvTenantNull.setText("tenantId：" + succeed.get(0).getTenantId());
                 } else {
                     tvTenantNull.setText("未查询到租户信息");
                 }

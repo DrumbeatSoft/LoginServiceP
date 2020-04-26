@@ -20,7 +20,6 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- *
  * @author ZuoHailong
  * @date 2019/10/17
  */
@@ -164,6 +163,20 @@ public class LoginService {
      */
     public static void checkSmsCode(@NonNull String mobile, @NonNull String smsCode, @NonNull String privateKey, @NonNull Callback<Boolean> callback) {
         ProcessControl.checkSmsCode(LoginService.getConfig(), mobile, smsCode, privateKey, callback);
+    }
+
+    /**
+     * 忘记密码，新设置密码
+     *
+     * @param mobile
+     * @param smsCode     短信验证码
+     * @param newPassword 新密码
+     * @param privateKey  私钥
+     * @param callback
+     */
+    public static void forgotPassword(@NonNull String mobile, @NonNull String smsCode,
+                                      @NonNull String newPassword, @NonNull String privateKey, @NonNull Callback<Boolean> callback) {
+        ProcessControl.forgotPassword(LoginService.getConfig(), mobile, smsCode, newPassword, privateKey, callback);
     }
 
     public abstract static class Callback<T> {

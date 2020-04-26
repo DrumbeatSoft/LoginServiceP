@@ -23,6 +23,7 @@
     <string name="dblogin_fail_json">Data Format Does Not Match</string>
     <!-- 手机号码非法 -->
     <string name="dblogin_fail_mobile_illegal">Mobile phone number illegal</string>
+    <string name="dblogin_fail_sign">Signature failure</string>
 
     <!--扫描二维码，极端情况，等待扫描-->
     <string name="dblogin_fail_0_scancode">Scan Failed, Please Scan Again</string>
@@ -53,6 +54,7 @@
     <!--扫描二维码 scancode-->
     <string name="dblogin_fail_400">Invalid, Please Refresh The QR Code</string>
     <string name="dblogin_fail_401">Token Is Invalid, Please Login Again</string>
+    <string name="dblogin_fail_412">Signature failure</string>
     <!--扫描二维码 scancode-->
     <string name="dblogin_fail_500">Status Error, Please Rescan</string>
     <!-- 短信验证码 -->

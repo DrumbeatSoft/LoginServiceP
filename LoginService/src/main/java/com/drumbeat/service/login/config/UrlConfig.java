@@ -52,4 +52,9 @@ public interface UrlConfig {
      * 验证短信验证码
      */
     String CHECK_SMS_CODE = "v2-gateway/technical/sms/checkunverifycode";
+
+    /**
+     * 忘记密码，修改密码
+     */
+    String FORGOT_PASSWORD = "v2-gateway/api/account/forgetpassword";
 }
