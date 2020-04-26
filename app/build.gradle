@@ -58,7 +58,7 @@ dependencies {
     implementation "com.jakewharton:butterknife:10.2.1"
     annotationProcessor "com.jakewharton:butterknife-compiler:10.2.1"
     // AndroidUtilCode
-    implementation 'com.blankj:utilcodex:1.26.0'
+    implementation 'com.blankj:utilcodex:1.28.1'
     // Kalle
     implementation 'com.yanzhenjie:okalle:0.1.7'
     // fastjson
