@@ -7,21 +7,21 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.Utils;
 import com.drumbeat.service.login.bean.FailureBean;
 import com.drumbeat.service.login.bean.LoginBean;
 import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
 import com.drumbeat.service.login.config.ServiceConfig;
-import com.drumbeat.service.login.utils.SharedPreferencesUtil;
+import com.drumbeat.service.login.utils.LocalSpUtil;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * Created by ZuoHailong on 2019/10/17.
+ * @author ZuoHailong
+ * @date 2019/10/17
  */
 public class LoginService {
 
@@ -66,7 +66,7 @@ public class LoginService {
      * @param tenantId 租户ID
      */
     public static void setTenantId(String tenantId) {
-        SharedPreferencesUtil.getInstance(Utils.getApp()).put(SP_TENANT_ID, tenantId);
+        LocalSpUtil.getInstance(Utils.getApp()).put(SP_TENANT_ID, tenantId);
     }
 
     /**
@@ -75,7 +75,7 @@ public class LoginService {
      * @return
      */
     public static String getTenantId() {
-        return SharedPreferencesUtil.getInstance(Utils.getApp()).getString(SP_TENANT_ID);
+        return LocalSpUtil.getInstance(Utils.getApp()).getString(SP_TENANT_ID);
     }
 
     /**
@@ -140,6 +140,43 @@ public class LoginService {
      */
     public static String getCentralizerToken(@Nullable Context context) {
         return ProcessControl.getTokenFromCP(context);
+    }
+
+    /**
+     * 获取短信验证码
+     *
+     * @param mobile     手机号
+     * @param privateKey 私钥
+     * @param callback
+     */
+    public static void getSmsCode(@NonNull String mobile, @NonNull String privateKey, @NonNull Callback<Boolean> callback) {
+        ProcessControl.getSmsCode(LoginService.getConfig(), mobile, privateKey, callback);
+    }
+
+    /**
+     * 验证短信验证码
+     *
+     * @param mobile     手机号
+     * @param smsCode    短信验证码
+     * @param privateKey 私钥
+     * @param callback
+     */
+    public static void checkSmsCode(@NonNull String mobile, @NonNull String smsCode, @NonNull String privateKey, @NonNull Callback<Boolean> callback) {
+        ProcessControl.checkSmsCode(LoginService.getConfig(), mobile, smsCode, privateKey, callback);
+    }
+
+    /**
+     * 忘记密码，新设置密码
+     *
+     * @param mobile
+     * @param smsCode     短信验证码
+     * @param newPassword 新密码
+     * @param privateKey  私钥
+     * @param callback
+     */
+    public static void forgotPassword(@NonNull String mobile, @NonNull String smsCode,
+                                      @NonNull String newPassword, @NonNull String privateKey, @NonNull Callback<Boolean> callback) {
+        ProcessControl.forgotPassword(LoginService.getConfig(), mobile, smsCode, newPassword, privateKey, callback);
     }
 
     public abstract static class Callback<T> {

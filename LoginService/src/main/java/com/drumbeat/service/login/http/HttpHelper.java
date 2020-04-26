@@ -19,6 +19,7 @@ import com.yanzhenjie.kalle.simple.SimpleUrlRequest;
 import com.yanzhenjie.kalle.simple.cache.CacheMode;
 import com.yanzhenjie.kalle.simple.cache.DiskCacheStore;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +27,10 @@ import java.util.concurrent.TimeUnit;
 import static com.yanzhenjie.kalle.Headers.KEY_CONTENT_TYPE;
 import static com.yanzhenjie.kalle.Headers.VALUE_APPLICATION_JSON;
 
+/**
+ * @author ZuoHailong
+ * @date 2019/12/2
+ */
 public class HttpHelper {
 
     /**
@@ -34,8 +39,8 @@ public class HttpHelper {
     public static void init() {
         Kalle.setConfig(KalleConfig.newBuilder()
 //                .connectFactory(OkHttpConnectFactory.newBuilder().build())
-                .connectionTimeout(3, TimeUnit.MINUTES)
-                .readTimeout(3, TimeUnit.MINUTES)
+                .connectionTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
                 .cookieStore(DBCookieStore.newBuilder(Utils.getApp()).build())
                 .cacheStore(DiskCacheStore.newBuilder(PathUtils.getExternalAppCachePath()).build())
                 .network(new BroadcastNetwork(Utils.getApp()))
@@ -46,6 +51,10 @@ public class HttpHelper {
     }
 
     public static void post(String url, Map<String, String> headers, JSONObject jsonObject, NetCallback netCallback) {
+        post(url, headers, jsonObject.toJSONString(), netCallback);
+    }
+
+    public static void post(String url, Map<String, String> headers, String jsonStr, NetCallback netCallback) {
         SimpleBodyRequest.Api postApi = Kalle.post(url);
 
         // 添加header
@@ -58,7 +67,7 @@ public class HttpHelper {
         }
 
         postApi.cacheMode(CacheMode.NETWORK)
-                .body(new JsonBody(jsonObject.toJSONString()))
+                .body(new JsonBody(jsonStr))
                 .perform(new KalleCallback<String>() {
                     @Override
                     protected void onSuccess(String succeed) {
@@ -72,7 +81,7 @@ public class HttpHelper {
                 });
     }
 
-    public static void get(String url, Map<String, String> headers, Map<String, String> params, NetCallback netCallback) {
+    public static void get(String url, Map<String, String> headers, LinkedHashMap<String, String> params, NetCallback netCallback) {
         SimpleUrlRequest.Api getApi = Kalle.get(url);
         // 添加header
         if (headers != null && !headers.isEmpty()) {

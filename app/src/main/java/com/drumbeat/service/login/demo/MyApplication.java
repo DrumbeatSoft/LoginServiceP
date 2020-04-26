@@ -15,7 +15,7 @@ public class MyApplication extends Application {
         super.onCreate();
         LoginService.setConfig(ServiceConfig.newBuilder()
                 .setAppId("125438260305469440")//认证平台
-                .setBaseUrl("http://192.168.20.233:30060/v2-")
+                .setBaseUrl("http://192.168.20.233:30060/")
 //                .setBaseUrl("http://api.drumbeatsoft.com/")
                 .setTokenInterceptor(() -> ToastUtils.showShort("token失效啦啦啦啦"))
                 .build());

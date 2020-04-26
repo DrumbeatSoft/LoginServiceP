@@ -18,10 +18,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.RegexUtils;
 import com.blankj.utilcode.util.Utils;
 import com.drumbeat.service.login.bean.BaseBean;
 import com.drumbeat.service.login.bean.FailureBean;
 import com.drumbeat.service.login.bean.LoginBean;
+import com.drumbeat.service.login.bean.SmsCodeResultBean;
 import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
 import com.drumbeat.service.login.config.ServiceConfig;
@@ -29,14 +31,19 @@ import com.drumbeat.service.login.http.HttpHelper;
 import com.drumbeat.service.login.http.TokenInterceptor;
 import com.drumbeat.service.login.http.kalle.NetCallback;
 import com.drumbeat.service.login.ui.ConfirmActivity;
+import com.drumbeat.service.login.utils.SignUtil;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.drumbeat.service.login.config.UrlConfig.CANCEL_LOGIN;
 import static com.drumbeat.service.login.config.UrlConfig.CHECK_PASSWORD_EXPIRE;
+import static com.drumbeat.service.login.config.UrlConfig.CHECK_SMS_CODE;
 import static com.drumbeat.service.login.config.UrlConfig.CONFIRM_LOGIN;
+import static com.drumbeat.service.login.config.UrlConfig.FORGOT_PASSWORD;
+import static com.drumbeat.service.login.config.UrlConfig.GET_SMS_CODE;
 import static com.drumbeat.service.login.config.UrlConfig.GET_TENANT_URL;
 import static com.drumbeat.service.login.config.UrlConfig.GET_USER_INFO;
 import static com.drumbeat.service.login.config.UrlConfig.LOGIN_URL;
@@ -44,7 +51,8 @@ import static com.drumbeat.service.login.config.UrlConfig.MODIFY_PASSWORD;
 import static com.drumbeat.service.login.config.UrlConfig.SCAN_CODE;
 
 /**
- * Created by ZuoHailong on 2019/10/17.
+ * @author ZuoHailong
+ * @date 2019/10/17
  */
 public class ProcessControl {
 
@@ -456,6 +464,221 @@ public class ProcessControl {
     }
 
     /**
+     * 获取短信验证码
+     *
+     * @param mobile   手机号/账号/邮箱号/身份证号
+     * @param callback
+     */
+    public static void getSmsCode(ServiceConfig serviceConfig, @NonNull String mobile,
+                                  @NonNull String privateKey, @NonNull LoginService.Callback<Boolean> callback) {
+        if (!RegexUtils.isMobileSimple(mobile)) {
+            dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
+                    Utils.getApp().getString(R.string.dblogin_fail_mobile_illegal));
+            return;
+        }
+        getTenantList(mobile, new LoginService.Callback<List<TenantBean>>() {
+            @Override
+            public void onSuccess(List<TenantBean> success) {
+                // 未查到租户
+                if (success == null || success.size() == 0) {
+                    dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
+                            Utils.getApp().getString(R.string.dblogin_fail_3));
+                    return;
+                }
+
+                try {
+                    // 租户存在，查询短信验证码
+                    String timeStamp = String.valueOf(System.currentTimeMillis() / 1000L);
+
+                    String requestStr = timeStamp + "mobilePhone=" + mobile + "&verifyCodeType=1";
+                    String sign = SignUtil.signRsa2(requestStr, privateKey);
+
+                    Map<String, String> headers = new HashMap<>(3);
+                    headers.put("AppId", serviceConfig.getAppId());
+                    headers.put("TimeStamp", timeStamp);
+                    headers.put("Sign", sign);
+
+                    LinkedHashMap<String, String> params = new LinkedHashMap<>(2);
+                    params.put("mobilePhone", mobile);
+                    params.put("verifyCodeType", "1");
+
+                    HttpHelper.get(serviceConfig.getBaseUrl() + GET_SMS_CODE, headers, params, new NetCallback() {
+                        @Override
+                        public void onSuccess(String success) {
+                            SmsCodeResultBean bean = JSONObject.parseObject(success, SmsCodeResultBean.class);
+                            if (bean == null || bean.getCode() != 200) {
+                                dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_unknow));
+                                return;
+                            }
+                            callback.onSuccess(true);
+                        }
+
+                        @Override
+                        public void onFailure(String failure) {
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, failure);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    dispatchFailureData(callback, FailureBean.CODE_DEFAULT, e.getMessage());
+                }
+            }
+
+            @Override
+            public void onFailure(FailureBean failure) {
+                callback.onFailure(failure);
+            }
+        });
+    }
+
+    /**
+     * 验证短信验证码
+     *
+     * @param mobile
+     * @param smsCode
+     * @param privateKey
+     * @param callback
+     */
+    public static void checkSmsCode(ServiceConfig serviceConfig, @NonNull String mobile, @NonNull String smsCode,
+                                    @NonNull String privateKey, @NonNull LoginService.Callback<Boolean> callback) {
+        if (!RegexUtils.isMobileSimple(mobile)) {
+            dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
+                    Utils.getApp().getString(R.string.dblogin_fail_mobile_illegal));
+            return;
+        }
+
+        try {
+            String timeStamp = String.valueOf(System.currentTimeMillis() / 1000L);
+
+            String requestStr = timeStamp + "mobilePhone=" + mobile + "&verifyCodeType=1" + "&verifyCode=" + smsCode;
+            String sign = SignUtil.signRsa2(requestStr, privateKey);
+
+            Map<String, String> headers = new HashMap<>(3);
+            headers.put("AppId", serviceConfig.getAppId());
+            headers.put("TimeStamp", timeStamp);
+            headers.put("Sign", sign);
+
+            LinkedHashMap<String, String> params = new LinkedHashMap<>(3);
+            params.put("mobilePhone", mobile);
+            params.put("verifyCodeType", "1");
+            params.put("verifyCode", smsCode);
+
+            HttpHelper.get(serviceConfig.getBaseUrl() + CHECK_SMS_CODE, headers, params, new NetCallback() {
+                @Override
+                public void onSuccess(String success) {
+                    SmsCodeResultBean bean = JSONObject.parseObject(success, SmsCodeResultBean.class);
+                    if (bean == null) {
+                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_unknow));
+                        return;
+                    }
+                    switch (bean.getCode()) {
+                        case 200:
+                            callback.onSuccess(true);
+                            break;
+                        case 1200:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_1200));
+                            break;
+                        case 1201:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_1201));
+                            break;
+                        default:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
+                                    Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + bean.getCode());
+                            break;
+                    }
+                }
+
+                @Override
+                public void onFailure(String failure) {
+                    dispatchFailureData(callback, FailureBean.CODE_DEFAULT, failure);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_unknow));
+        }
+    }
+
+
+    /**
+     * 忘记密码，新设置密码
+     *
+     * @param serviceConfig
+     * @param mobile
+     * @param smsCode
+     * @param newPassword
+     * @param privateKey
+     * @param callback
+     */
+    public static void forgotPassword(ServiceConfig serviceConfig, @NonNull String mobile, @NonNull String smsCode,
+                                      @NonNull String newPassword, @NonNull String privateKey, @NonNull LoginService.Callback<Boolean> callback) {
+        if (!RegexUtils.isMobileSimple(mobile)) {
+            dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
+                    Utils.getApp().getString(R.string.dblogin_fail_mobile_illegal));
+            return;
+        }
+
+        try {
+            String timeStamp = String.valueOf(System.currentTimeMillis() / 1000L);
+
+            String requestStr = timeStamp + "mobilePhone=" + mobile
+                    + "&verifyCode=" + smsCode
+                    + "&appId=" + serviceConfig.getAppId()
+                    + "&password=" + newPassword;
+
+            String sign = SignUtil.signRsa2(requestStr, privateKey);
+
+            Map<String, String> headers = new HashMap<>(3);
+            headers.put("AppId", serviceConfig.getAppId());
+            headers.put("TimeStamp", timeStamp);
+            headers.put("Sign", sign);
+
+            LinkedHashMap<String, String> params = new LinkedHashMap<>(4);
+            params.put("mobilePhone", mobile);
+            params.put("verifyCode", smsCode);
+            params.put("appId", serviceConfig.getAppId());
+            params.put("password", newPassword);
+
+            HttpHelper.get(serviceConfig.getBaseUrl() + FORGOT_PASSWORD, headers, params, new NetCallback() {
+                @Override
+                public void onSuccess(String success) {
+                    SmsCodeResultBean bean = JSONObject.parseObject(success, SmsCodeResultBean.class);
+                    if (bean == null) {
+                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_unknow));
+                        return;
+                    }
+                    switch (bean.getCode()) {
+                        case 200:
+                            callback.onSuccess(true);
+                            break;
+                        case 3:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_3);
+                            break;
+                        case 1200:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_1200));
+                            break;
+                        case 1201:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_1201));
+                            break;
+                        default:
+                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
+                                    Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + bean.getCode());
+                            break;
+                    }
+                }
+
+                @Override
+                public void onFailure(String failure) {
+                    dispatchFailureData(callback, FailureBean.CODE_DEFAULT, failure);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_unknow));
+        }
+    }
+
+    /**
      * 处理 onSuccess 数据，已处理返回true，未处理返回false
      *
      * @param callback 回调
@@ -488,12 +711,18 @@ public class ProcessControl {
                 }
                 return null;
             }
-            /*if (baseBean.getCode() != 200) {
+            // 统一处理401 Token失效
+            if (baseBean.getCode() == 412) {
+                dispatchFailureData(callback, baseBean.getCode(),
+                        Utils.getApp().getString(R.string.dblogin_fail_412) + baseBean.getCode());
+                return null;
+            }
+            if (baseBean.getCode() != 200) {
                 // 特殊的错误码，需要开发者处理，如415等
                 dispatchFailureData(callback, baseBean.getCode(),
                         Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
                 return null;
-            }*/
+            }
             return baseBean;
         } catch (JSONException e) {
             // json转换异常
@@ -536,6 +765,12 @@ public class ProcessControl {
                     dispatchFailureData(callback, baseBean.getCode(),
                             Utils.getApp().getString(R.string.dblogin_fail_401) + baseBean.getCode());
                 }
+                return null;
+            }
+            // 统一处理401 Token失效
+            if (baseBean.getCode() == 412) {
+                dispatchFailureData(callback, baseBean.getCode(),
+                        Utils.getApp().getString(R.string.dblogin_fail_412) + baseBean.getCode());
                 return null;
             }
             if (baseBean.getCode() != 200) {
