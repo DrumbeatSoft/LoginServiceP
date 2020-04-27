@@ -1,7 +1,5 @@
 package com.drumbeat.service.login.config;
 
-import android.text.TextUtils;
-
 import com.drumbeat.service.login.http.HttpHelper;
 import com.drumbeat.service.login.http.TokenInterceptor;
 

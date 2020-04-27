@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 43
-        versionName "0.4.3"
+        versionCode 44
+        versionName "0.4.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
     }
@@ -39,5 +39,6 @@ dependencies {
     // AndroidUtilCode
     implementation 'com.blankj:utilcodex:1.28.1'
     // fastjson
-    implementation 'com.alibaba:fastjson:1.1.71.android'
+    implementation 'com.alibaba:fastjson:1.2.59'
+//    implementation 'com.alibaba:fastjson:1.1.71.android'
 }

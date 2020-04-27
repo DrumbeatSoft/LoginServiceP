@@ -17,7 +17,7 @@
 
     <!--************************************************* 接口错误信息 Start *************************************************-->
     <string name="dblogin_fail_unknow">Unknown Exception</string>
-    <string name="dblogin_fail_unknow_with_code">Unknown Exception，ErrorCode is </string>
+    <string name="dblogin_fail_uncontrolled_code">Unknown Exception，ErrorCode is </string>
     <string name="dblogin_fail_nodata">Empty Data</string>
     <!--json数据格式问题-->
     <string name="dblogin_fail_json">Data Format Does Not Match</string>
@@ -25,13 +25,11 @@
     <string name="dblogin_fail_mobile_illegal">Mobile phone number illegal</string>
     <string name="dblogin_fail_sign">Signature failure</string>
 
-    <!--扫描二维码，极端情况，等待扫描-->
+    <string name="dblogin_fail_negative_1">Fusing</string>
+    <string name="dblogin_fail_0"></string>
     <string name="dblogin_fail_0_scancode">Scan Failed, Please Scan Again</string>
-    <string name="dblogin_fail_2">Old Password Is Wrong</string>
-    <string name="dblogin_fail_3">Account Does Not Exist</string>
-    <string name="dblogin_fail_4">Account Or Password Error</string>
+    <string name="dblogin_fail_10">Account Does Not Exist Or Password Is Incorrect</string>
     <string name="dblogin_fail_10_modifypwd">Login Status Error</string>
-    <string name="dblogin_fail_10_login">Account Does Not Exist Or Password Is Incorrect</string>
     <string name="dblogin_fail_11">Too Many Retries Are Limited</string>
     <string name="dblogin_fail_12">Account Disabled</string>
     <string name="dblogin_fail_13">Password Expired, Please Change Password</string>
@@ -47,17 +45,23 @@
     <string name="dblogin_fail_30">Application Device Delivery Error</string>
     <string name="dblogin_fail_80">Parsing Authentication Result Error</string>
     <string name="dblogin_fail_81">Error Calling Authentication Service</string>
-    <!--扫描二维码 scancode-->
-    <string name="dblogin_fail_200">Authorized To Log In, Cannot Be Scanned Repeatedly</string>
-    <!--扫描二维码 scancode-->
-    <string name="dblogin_fail_201">It Has Been Scanned And Cannot Be Scanned Repeatedly</string>
-    <!--扫描二维码 scancode-->
-    <string name="dblogin_fail_400">Invalid, Please Refresh The QR Code</string>
+    <string name="dblogin_fail_100">Waiting scan</string>
+    <string name="dblogin_fail_101">It Has Been Scanned And Cannot Be Scanned Repeatedly</string>
+    <string name="dblogin_fail_102">Authorized To Log In, Cannot Be Scanned Repeatedly</string>
+    <string name="dblogin_fail_103">Invalid, Please Refresh The QR Code</string>
+    <string name="dblogin_fail_104">Status Error, Please Rescan</string>
+    <string name="dblogin_fail_200">Success</string>
     <string name="dblogin_fail_401">Token Is Invalid, Please Login Again</string>
+    <string name="dblogin_fail_403">Permission denied</string>
     <string name="dblogin_fail_412">Signature failure</string>
-    <!--扫描二维码 scancode-->
-    <string name="dblogin_fail_500">Status Error, Please Rescan</string>
-    <!-- 短信验证码 -->
+    <string name="dblogin_fail_500">Unknown Exception</string>
+    <string name="dblogin_fail_1000">Old Password Is Wrong</string>
+    <string name="dblogin_fail_1001">Account Does Not Exist</string>
+    <string name="dblogin_fail_1002">Phone number exist</string>
+    <string name="dblogin_fail_1003">Email exist</string>
+    <string name="dblogin_fail_1004">ID exist</string>
+    <string name="dblogin_fail_1005">Account exist</string>
+    <string name="dblogin_fail_1006">Login error</string>
     <string name="dblogin_fail_1200">Sms code invalid</string>
     <string name="dblogin_fail_1201">Sms code error</string>
     <!--************************************************* 接口错误信息 End *************************************************-->

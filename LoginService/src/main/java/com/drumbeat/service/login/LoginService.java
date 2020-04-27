@@ -174,8 +174,8 @@ public class LoginService {
      * @param privateKey  私钥
      * @param callback
      */
-    public static void forgotPassword(@NonNull String mobile, @NonNull String smsCode,
-                                      @NonNull String newPassword, @NonNull String privateKey, @NonNull Callback<Boolean> callback) {
+    public static void forgotPassword(@NonNull String mobile, @NonNull String smsCode, @NonNull String newPassword,
+                                      @NonNull String privateKey, @NonNull Callback<Boolean> callback) {
         ProcessControl.forgotPassword(LoginService.getConfig(), mobile, smsCode, newPassword, privateKey, callback);
     }
 

@@ -23,9 +23,9 @@ import com.blankj.utilcode.util.Utils;
 import com.drumbeat.service.login.bean.BaseBean;
 import com.drumbeat.service.login.bean.FailureBean;
 import com.drumbeat.service.login.bean.LoginBean;
-import com.drumbeat.service.login.bean.SmsCodeResultBean;
 import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
+import com.drumbeat.service.login.code.CodeEnum;
 import com.drumbeat.service.login.config.ServiceConfig;
 import com.drumbeat.service.login.http.HttpHelper;
 import com.drumbeat.service.login.http.TokenInterceptor;
@@ -105,7 +105,12 @@ public class ProcessControl {
             @Override
             public void onSuccess(String success) {
                 BaseBean<List<TenantBean>> baseBean = dispatchSuccessDataToList(callback, success, TenantBean.class);
-                callback.onSuccess(baseBean == null || baseBean.getCode() != 200 ? null : baseBean.getData());
+                // baseBean == null 在方法 dispatchSuccessDataToXXX() 已处理
+                if (baseBean == null) {
+                    callback.onSuccess(null);
+                    return;
+                }
+                callback.onSuccess(baseBean.getData());
             }
 
             @Override
@@ -143,66 +148,11 @@ public class ProcessControl {
             @Override
             public void onSuccess(String success) {
                 BaseBean<LoginBean> baseBean = dispatchSuccessDataToBean(callback, success, LoginBean.class);
+                // baseBean == null 在方法 dispatchSuccessDataToXXX() 已处理
                 if (baseBean == null) {
                     return;
                 }
-                // 处理业务code
-                switch (baseBean.getCode()) {
-                    case 200:
-                        callback.onSuccess(baseBean.getData());
-                        break;
-                    case 10:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_10_login);
-                        break;
-                    case 11:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_11);
-                        break;
-                    case 12:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_12);
-                        break;
-                    case 13:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_13);
-                        break;
-                    case 14:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_14);
-                        break;
-                    case 15:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_15);
-                        break;
-                    case 16:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_16);
-                        break;
-                    case 17:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_17);
-                        break;
-                    case 18:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_18);
-                        break;
-                    case 20:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_20);
-                        break;
-                    case 21:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_21);
-                        break;
-                    case 22:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_22);
-                        break;
-                    case 23:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_23);
-                        break;
-                    case 30:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_30);
-                        break;
-                    case 80:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_80);
-                        break;
-                    case 81:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_81);
-                        break;
-                    default:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
-                        break;
-                }
+                callback.onSuccess(baseBean.getData());
             }
 
             @Override
@@ -237,13 +187,11 @@ public class ProcessControl {
             @Override
             public void onSuccess(String success) {
                 BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
+                // baseBean == null 在方法 dispatchSuccessDataToXXX() 已处理
                 if (baseBean == null) {
-                } else if (baseBean.getCode() != 200) {
-                    dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                            Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
-                } else {
-                    callback.onSuccess(baseBean.getData());
+                    return;
                 }
+                callback.onSuccess(baseBean.getData());
             }
 
             @Override
@@ -280,31 +228,11 @@ public class ProcessControl {
             @Override
             public void onSuccess(String success) {
                 BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
+                // baseBean == null 在方法 dispatchSuccessDataToXXX() 已处理
                 if (baseBean == null) {
                     return;
                 }
-                // 处理业务code
-                switch (baseBean.getCode()) {
-                    case 200:
-                        callback.onSuccess(baseBean.getData());
-                        break;
-                    case 2:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_2);
-                        break;
-                    case 3:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_3);
-                        break;
-                    case 4:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_4);
-                        break;
-                    case 10:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_10_modifypwd);
-                        break;
-                    default:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                                Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
-                        break;
-                }
+                callback.onSuccess(baseBean.getData());
             }
 
             @Override
@@ -336,13 +264,11 @@ public class ProcessControl {
             @Override
             public void onSuccess(String success) {
                 BaseBean<UserInfoBean> baseBean = dispatchSuccessDataToBean(callback, success, UserInfoBean.class);
+                // baseBean == null 在方法 dispatchSuccessDataToXXX() 已处理
                 if (baseBean == null) {
-                } else if (baseBean.getCode() != 200) {
-                    dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                            Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
-                } else {
-                    callback.onSuccess(baseBean.getData());
+                    return;
                 }
+                callback.onSuccess(baseBean.getData());
             }
 
             @Override
@@ -365,37 +291,14 @@ public class ProcessControl {
             @Override
             public void onSuccess(String success) {
                 BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
+                // baseBean == null 在方法 dispatchSuccessDataToXXX() 已处理
                 if (baseBean == null) {
                     return;
                 }
-                // 处理业务code
-                switch (baseBean.getCode()) {
-                    case 200:
-                        Intent intent = new Intent(activity, ConfirmActivity.class);
-                        intent.putExtra("userId", userId);
-                        intent.putExtra("centralizerToken", centralizerToken);
-                        activity.startActivity(intent);
-                        break;
-                    case 0:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_0_scancode);
-                        break;
-                    case 101:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_201);
-                        break;
-                    case 102:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_200);
-                        break;
-                    case 103:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_400);
-                        break;
-                    case 104:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_500);
-                        break;
-                    default:
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                                Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
-                        break;
-                }
+                Intent intent = new Intent(activity, ConfirmActivity.class);
+                intent.putExtra("userId", userId);
+                intent.putExtra("centralizerToken", centralizerToken);
+                activity.startActivity(intent);
             }
 
             @Override
@@ -418,13 +321,11 @@ public class ProcessControl {
             @Override
             public void onSuccess(String success) {
                 BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
+                // baseBean == null 在方法 dispatchSuccessDataToXXX() 已处理
                 if (baseBean == null) {
-                } else if (baseBean.getCode() != 200) {
-                    dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                            Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
-                } else {
-                    callback.onSuccess(baseBean.getData());
+                    return;
                 }
+                callback.onSuccess(baseBean.getData());
             }
 
             @Override
@@ -447,13 +348,11 @@ public class ProcessControl {
             @Override
             public void onSuccess(String success) {
                 BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
+                // baseBean == null 在方法 dispatchSuccessDataToXXX() 已处理
                 if (baseBean == null) {
-                } else if (baseBean.getCode() != 200) {
-                    dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                            Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
-                } else {
-                    callback.onSuccess(baseBean.getData());
+                    return;
                 }
+                callback.onSuccess(baseBean.getData());
             }
 
             @Override
@@ -482,7 +381,7 @@ public class ProcessControl {
                 // 未查到租户
                 if (success == null || success.size() == 0) {
                     dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                            Utils.getApp().getString(R.string.dblogin_fail_3));
+                            Utils.getApp().getString(R.string.dblogin_fail_1001));
                     return;
                 }
 
@@ -505,9 +404,9 @@ public class ProcessControl {
                     HttpHelper.get(serviceConfig.getBaseUrl() + GET_SMS_CODE, headers, params, new NetCallback() {
                         @Override
                         public void onSuccess(String success) {
-                            SmsCodeResultBean bean = JSONObject.parseObject(success, SmsCodeResultBean.class);
-                            if (bean == null || bean.getCode() != 200) {
-                                dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_unknow));
+                            BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
+                            // baseBean == null 在方法 dispatchSuccessDataToXXX() 已处理
+                            if (baseBean == null) {
                                 return;
                             }
                             callback.onSuccess(true);
@@ -566,26 +465,12 @@ public class ProcessControl {
             HttpHelper.get(serviceConfig.getBaseUrl() + CHECK_SMS_CODE, headers, params, new NetCallback() {
                 @Override
                 public void onSuccess(String success) {
-                    SmsCodeResultBean bean = JSONObject.parseObject(success, SmsCodeResultBean.class);
-                    if (bean == null) {
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_unknow));
+                    BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
+                    // baseBean == null 在方法 dispatchSuccessDataToXXX() 已处理
+                    if (baseBean == null) {
                         return;
                     }
-                    switch (bean.getCode()) {
-                        case 200:
-                            callback.onSuccess(true);
-                            break;
-                        case 1200:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_1200));
-                            break;
-                        case 1201:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_1201));
-                            break;
-                        default:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                                    Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + bean.getCode());
-                            break;
-                    }
+                    callback.onSuccess(true);
                 }
 
                 @Override
@@ -642,29 +527,12 @@ public class ProcessControl {
             HttpHelper.get(serviceConfig.getBaseUrl() + FORGOT_PASSWORD, headers, params, new NetCallback() {
                 @Override
                 public void onSuccess(String success) {
-                    SmsCodeResultBean bean = JSONObject.parseObject(success, SmsCodeResultBean.class);
-                    if (bean == null) {
-                        dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_unknow));
+                    BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
+                    // baseBean == null 在方法 dispatchSuccessDataToXXX() 已处理
+                    if (baseBean == null) {
                         return;
                     }
-                    switch (bean.getCode()) {
-                        case 200:
-                            callback.onSuccess(true);
-                            break;
-                        case 3:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_3);
-                            break;
-                        case 1200:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_1200));
-                            break;
-                        case 1201:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_1201));
-                            break;
-                        default:
-                            dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
-                                    Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + bean.getCode());
-                            break;
-                    }
+                    callback.onSuccess(true);
                 }
 
                 @Override
@@ -718,9 +586,14 @@ public class ProcessControl {
                 return null;
             }
             if (baseBean.getCode() != 200) {
-                // 特殊的错误码，需要开发者处理，如415等
-                dispatchFailureData(callback, baseBean.getCode(),
-                        Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
+                int stringResId = CodeEnum.valueOf(baseBean.getCode()).getStringResId();
+                // 未处理的错误码，向上抛出
+                if (stringResId == R.string.dblogin_fail_uncontrolled_code) {
+                    dispatchFailureData(callback, baseBean.getCode(),
+                            Utils.getApp().getString(CodeEnum.valueOf(baseBean.getCode()).getStringResId()) + baseBean.getCode());
+                } else {
+                    dispatchFailureData(callback, baseBean.getCode(), CodeEnum.valueOf(baseBean.getCode()).getStringResId());
+                }
                 return null;
             }
             return baseBean;
@@ -750,10 +623,10 @@ public class ProcessControl {
                 dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_nodata);
                 return null;
             }
-            BaseBean<List<T>> baseBean = JSON.parseObject(success, new TypeReference<BaseBean<List<T>>>(cls) {
+            BaseBean<List<T>> baseBean = JSONObject.parseObject(success, new TypeReference<BaseBean<List<T>>>(cls) {
             });
             if (baseBean == null) {
-                dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_unknow);
+                dispatchFailureData(callback, FailureBean.CODE_DEFAULT, R.string.dblogin_fail_nodata);
                 return null;
             }
             // 统一处理401 Token失效
@@ -773,10 +646,16 @@ public class ProcessControl {
                         Utils.getApp().getString(R.string.dblogin_fail_412) + baseBean.getCode());
                 return null;
             }
+            // 普通错误码的统一处理
             if (baseBean.getCode() != 200) {
-                // 特殊的错误码，需要开发者处理，如415等
-                dispatchFailureData(callback, baseBean.getCode(),
-                        Utils.getApp().getString(R.string.dblogin_fail_unknow_with_code) + baseBean.getCode());
+                int stringResId = CodeEnum.valueOf(baseBean.getCode()).getStringResId();
+                // 未处理的错误码，向上抛出
+                if (stringResId == R.string.dblogin_fail_uncontrolled_code) {
+                    dispatchFailureData(callback, baseBean.getCode(),
+                            Utils.getApp().getString(CodeEnum.valueOf(baseBean.getCode()).getStringResId()) + baseBean.getCode());
+                } else {
+                    dispatchFailureData(callback, baseBean.getCode(), CodeEnum.valueOf(baseBean.getCode()).getStringResId());
+                }
                 return null;
             }
             return baseBean;

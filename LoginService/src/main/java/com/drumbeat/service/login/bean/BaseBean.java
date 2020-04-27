@@ -1,7 +1,8 @@
 package com.drumbeat.service.login.bean;
 
 /**
- * Created by ZuoHailong on 2019/10/16.
+ * @author ZuoHailong
+ * @date 2019/10/16
  */
 public class BaseBean<T> {
     /*
