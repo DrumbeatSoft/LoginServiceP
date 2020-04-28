@@ -404,7 +404,7 @@ public class ProcessControl {
                     HttpHelper.get(serviceConfig.getBaseUrl() + GET_SMS_CODE, headers, params, new NetCallback() {
                         @Override
                         public void onSuccess(String success) {
-                            BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
+                            BaseBean<Object> baseBean = dispatchSuccessDataToBean(callback, success, Object.class);
                             // baseBean == null 在方法 dispatchSuccessDataToXXX() 已处理
                             if (baseBean == null) {
                                 return;
