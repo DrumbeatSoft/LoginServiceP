@@ -397,7 +397,7 @@ public class ProcessControl {
 
                 try {
                     // 租户存在，查询短信验证码
-                    String timeStamp = String.valueOf(System.currentTimeMillis() / 1000L);
+                    String timeStamp = String.valueOf(System.currentTimeMillis() / 1000L - 1);
 
                     String requestStr = timeStamp + "mobilePhone=" + mobile + "&verifyCodeType=1";
                     String sign = SignUtil.signRsa2(requestStr, privateKey);
@@ -457,7 +457,7 @@ public class ProcessControl {
         }
 
         try {
-            String timeStamp = String.valueOf(System.currentTimeMillis() / 1000L);
+            String timeStamp = String.valueOf(System.currentTimeMillis() / 1000L - 1);
 
             String requestStr = timeStamp + "mobilePhone=" + mobile + "&verifyCodeType=1" + "&verifyCode=" + smsCode;
             String sign = SignUtil.signRsa2(requestStr, privateKey);
@@ -516,7 +516,7 @@ public class ProcessControl {
         }
 
         try {
-            String timeStamp = String.valueOf(System.currentTimeMillis() / 1000L);
+            String timeStamp = String.valueOf(System.currentTimeMillis() / 1000L - 1);
 
             String requestStr = timeStamp + "mobilePhone=" + mobile
                     + "&verifyCode=" + smsCode
