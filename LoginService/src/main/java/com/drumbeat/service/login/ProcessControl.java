@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -464,6 +465,7 @@ public class ProcessControl {
             Map<String, String> headers = new HashMap<>(3);
             headers.put("AppId", serviceConfig.getAppId());
             headers.put("TimeStamp", timeStamp);
+            Log.d("loginS",timeStamp);
             headers.put("Sign", sign);
 
             LinkedHashMap<String, String> params = new LinkedHashMap<>(3);
@@ -474,6 +476,7 @@ public class ProcessControl {
             HttpHelper.get(serviceConfig.getBaseUrl() + CHECK_SMS_CODE, headers, params, new NetCallback() {
                 @Override
                 public void onSuccess(String success) {
+                    Log.d("loginS",success);
                     BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
                     // baseBean == null 在方法 dispatchSuccessDataToXXX() 已处理
                     if (baseBean == null) {

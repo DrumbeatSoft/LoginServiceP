@@ -12,8 +12,8 @@ import java.lang.annotation.RetentionPolicy;
  * @date 2020/4/27
  */
 @StringDef({
-        CodeFlag.FLAG_0_SCAN_CODE,
-        CodeFlag.FLAG_10_MODIFY_PWD,
+        /**CodeFlag.FLAG_0_SCAN_CODE,
+        CodeFlag.FLAG_10_MODIFY_PWD,**/
 })
 @Retention(RetentionPolicy.SOURCE)
 public @interface CodeFlagDef {
