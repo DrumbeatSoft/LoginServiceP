@@ -25,10 +25,7 @@
 
     <string name="dblogin_fail_uncontrolled_code">未知异常，错误码是</string>
     <string name="dblogin_fail_negative_1">熔断</string>
-    <string name="dblogin_fail_0"></string>
-    <string name="dblogin_fail_0_scancode">扫描失败，请重新扫描</string>
     <string name="dblogin_fail_10">账户不存在或密码错误</string>
-    <string name="dblogin_fail_10_modifypwd">登录状态错误</string>
     <string name="dblogin_fail_11">重试次数过多被限制</string>
     <string name="dblogin_fail_12">账户禁用</string>
     <string name="dblogin_fail_13">账户密码过期，请修改密码</string>

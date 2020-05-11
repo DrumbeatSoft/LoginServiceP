@@ -177,6 +177,9 @@ public class ProcessControl {
         String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
         JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
         String id = userJSONObject.getString("accountId");
+        if(TextUtils.isEmpty(id)){
+            id = userJSONObject.getString("AccountId");
+        }
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("accountId", id);
@@ -214,6 +217,9 @@ public class ProcessControl {
         String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
         JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
         String id = userJSONObject.getString("accountId");
+        if(TextUtils.isEmpty(id)){
+            id = userJSONObject.getString("AccountId");
+        }
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("oldPassword", oldPwd);
@@ -247,7 +253,7 @@ public class ProcessControl {
      */
     static void getUserInfo(String centralizerToken, @NonNull LoginService.Callback<UserInfoBean> callback) {
 
-        Map<String, String> headers = new HashMap<>();
+        Map<String, String> headers = new HashMap<>(1);
         headers.put("Authorization", centralizerToken);
 
         String[] split = centralizerToken.split("\\.");
@@ -255,6 +261,9 @@ public class ProcessControl {
         String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
         JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
         String accountId = userJSONObject.getString("accountId");
+        if(TextUtils.isEmpty(accountId)){
+            accountId = userJSONObject.getString("AccountId");
+        }
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("accountId", accountId);
@@ -282,7 +291,7 @@ public class ProcessControl {
      * 使用二维码扫出来的数据，访问server，获取待登录的用户信息
      */
     static void loginQrcode(@NonNull Activity activity, String centralizerToken, String userId, @NonNull LoginService.Callback callback) {
-        Map<String, String> headers = new HashMap<>();
+        Map<String, String> headers = new HashMap<>(1);
         headers.put("Authorization", centralizerToken);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", userId);

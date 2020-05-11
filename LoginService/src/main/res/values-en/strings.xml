@@ -26,10 +26,7 @@
     <string name="dblogin_fail_sign">Signature failure</string>
 
     <string name="dblogin_fail_negative_1">Fusing</string>
-    <string name="dblogin_fail_0"></string>
-    <string name="dblogin_fail_0_scancode">Scan Failed, Please Scan Again</string>
     <string name="dblogin_fail_10">Account Does Not Exist Or Password Is Incorrect</string>
-    <string name="dblogin_fail_10_modifypwd">Login Status Error</string>
     <string name="dblogin_fail_11">Too Many Retries Are Limited</string>
     <string name="dblogin_fail_12">Account Disabled</string>
     <string name="dblogin_fail_13">Password Expired, Please Change Password</string>

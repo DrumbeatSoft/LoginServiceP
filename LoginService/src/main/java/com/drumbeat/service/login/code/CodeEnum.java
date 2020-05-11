@@ -5,9 +5,6 @@ import androidx.annotation.StringRes;
 
 import com.drumbeat.service.login.R;
 
-import static com.drumbeat.service.login.code.CodeFlag.FLAG_0_SCAN_CODE;
-import static com.drumbeat.service.login.code.CodeFlag.FLAG_10_MODIFY_PWD;
-
 /**
  * 接口状态码
  *
@@ -21,10 +18,7 @@ public enum CodeEnum {
      */
     FAIL_STRING_UNKNOW_WITH_CODE(R.string.dblogin_fail_uncontrolled_code),
     FAIL_STRING_NEGATIVE_1(R.string.dblogin_fail_negative_1),
-    FAIL_STRING_0(R.string.dblogin_fail_0),
-    FAIL_STRING_0_SCAN_CODE(R.string.dblogin_fail_0_scancode),
     FAIL_STRING_10(R.string.dblogin_fail_10),
-    FAIL_STRING_10_MODIFY_PWD(R.string.dblogin_fail_10_modifypwd),
     FAIL_STRING_11(R.string.dblogin_fail_11),
     FAIL_STRING_12(R.string.dblogin_fail_12),
     FAIL_STRING_13(R.string.dblogin_fail_13),
@@ -84,18 +78,8 @@ public enum CodeEnum {
         switch (code) {
             case -1:
                 return FAIL_STRING_NEGATIVE_1;
-            case 0:
-                if (FLAG_0_SCAN_CODE.equals(flag)) {
-                    return FAIL_STRING_0_SCAN_CODE;
-                } else {
-                    return FAIL_STRING_0;
-                }
             case 10:
-                if (FLAG_10_MODIFY_PWD.equals(flag)) {
-                    return FAIL_STRING_10_MODIFY_PWD;
-                } else {
-                    return FAIL_STRING_10;
-                }
+                return FAIL_STRING_10;
             case 11:
                 return FAIL_STRING_11;
             case 12:
