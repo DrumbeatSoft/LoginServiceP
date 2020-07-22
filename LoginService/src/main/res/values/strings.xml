@@ -58,6 +58,8 @@
     <string name="dblogin_fail_1004">身份证号已存在</string>
     <string name="dblogin_fail_1005">账户已存在</string>
     <string name="dblogin_fail_1006">登录状态错误</string>
+    <string name="dblogin_fail_1020">未查到特征码</string>
+    <string name="dblogin_fail_1021">禁止使用人脸登录</string>
     <string name="dblogin_fail_1200">短信验证码失效</string>
     <string name="dblogin_fail_1201">短信验证码错误</string>
     <!--************************************************* 接口错误信息 End *************************************************-->

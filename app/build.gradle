@@ -1,15 +1,17 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    compileSdkVersion 28
     defaultConfig {
         applicationId "com.drumbeat.service.login.demo"
         minSdkVersion 19
-        targetSdkVersion 29
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters 'armeabi-v7a'
+        }
     }
 
     signingConfigs {
@@ -63,5 +65,6 @@ dependencies {
     implementation 'com.yanzhenjie:okalle:0.1.7'
     // fastjson
     implementation 'com.alibaba:fastjson:1.1.71.android'
+    implementation 'com.github.DrumbeatSoft:ZFace:1.1.1'
 
 }

@@ -100,6 +100,30 @@
                 android:layout_margin="10dp"
                 android:text="忘记密码" />
 
+            <Button
+                android:id="@+id/btnSaveFace"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:text="新增人脸"
+                android:visibility="invisible" />
+
+            <Button
+                android:id="@+id/btnGetFace"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:text="查询人脸特征"
+                android:visibility="invisible" />
+
+            <Button
+                android:id="@+id/btnCompareFace"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:text="人脸登录"
+                android:visibility="invisible" />
+
         </LinearLayout>
 
         <TextView

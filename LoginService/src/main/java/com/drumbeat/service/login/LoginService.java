@@ -179,6 +179,38 @@ public class LoginService {
         ProcessControl.forgotPassword(LoginService.getConfig(), mobile, smsCode, newPassword, privateKey, callback);
     }
 
+    /**
+     * 保存人脸特征
+     *
+     * @param centralizerToken
+     * @param featureData      人脸特征数据
+     * @param callback
+     */
+    public static void saveFaceFeatures(@NonNull String centralizerToken, @NonNull float[] featureData, @NonNull Callback<Boolean> callback) {
+        ProcessControl.saveFaceFeatures(centralizerToken, featureData, callback);
+    }
+
+    /**
+     * 查询人脸特征数据
+     *
+     * @param centralizerToken
+     * @param callback
+     */
+    public static void getFaceFeatures(@NonNull String centralizerToken, @NonNull Callback<float[]> callback) {
+        ProcessControl.getFaceFeatures(centralizerToken, callback);
+    }
+
+    /**
+     * 人脸登录
+     *
+     * @param accountId  账户id，注意不是账户
+     * @param privateKey 私钥
+     * @param callback
+     */
+    public static void loginWithFace(@NonNull String accountId, @NonNull String privateKey, @NonNull Callback<LoginBean> callback) {
+        ProcessControl.loginWithFace(accountId, privateKey, callback);
+    }
+
     public abstract static class Callback<T> {
 
         /**

@@ -52,6 +52,8 @@ public enum CodeEnum {
     FAIL_STRING_1004(R.string.dblogin_fail_1004),
     FAIL_STRING_1005(R.string.dblogin_fail_1005),
     FAIL_STRING_1006(R.string.dblogin_fail_1006),
+    FAIL_STRING_1020(R.string.dblogin_fail_1020),
+    FAIL_STRING_1021(R.string.dblogin_fail_1021),
     FAIL_STRING_1200(R.string.dblogin_fail_1200),
     FAIL_STRING_1201(R.string.dblogin_fail_1201);
 
@@ -146,6 +148,10 @@ public enum CodeEnum {
                 return FAIL_STRING_1005;
             case 1006:
                 return FAIL_STRING_1006;
+            case 1020:
+                return FAIL_STRING_1020;
+            case 1021:
+                return FAIL_STRING_1021;
             case 1200:
                 return FAIL_STRING_1200;
             case 1201:

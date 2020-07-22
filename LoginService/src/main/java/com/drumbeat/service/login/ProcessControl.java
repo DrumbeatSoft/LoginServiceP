@@ -34,6 +34,7 @@ import com.drumbeat.service.login.http.kalle.NetCallback;
 import com.drumbeat.service.login.ui.ConfirmActivity;
 import com.drumbeat.service.login.utils.SignUtil;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -44,11 +45,14 @@ import static com.drumbeat.service.login.config.UrlConfig.CHECK_PASSWORD_EXPIRE;
 import static com.drumbeat.service.login.config.UrlConfig.CHECK_SMS_CODE;
 import static com.drumbeat.service.login.config.UrlConfig.CONFIRM_LOGIN;
 import static com.drumbeat.service.login.config.UrlConfig.FORGOT_PASSWORD;
+import static com.drumbeat.service.login.config.UrlConfig.GET_FACE_FEATURES;
 import static com.drumbeat.service.login.config.UrlConfig.GET_SMS_CODE;
 import static com.drumbeat.service.login.config.UrlConfig.GET_TENANT_URL;
 import static com.drumbeat.service.login.config.UrlConfig.GET_USER_INFO;
 import static com.drumbeat.service.login.config.UrlConfig.LOGIN_URL;
+import static com.drumbeat.service.login.config.UrlConfig.LOGIN_WITH_FACE;
 import static com.drumbeat.service.login.config.UrlConfig.MODIFY_PASSWORD;
+import static com.drumbeat.service.login.config.UrlConfig.SAVE_FACE_FEATURES;
 import static com.drumbeat.service.login.config.UrlConfig.SCAN_CODE;
 
 /**
@@ -178,7 +182,7 @@ public class ProcessControl {
         String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
         JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
         String id = userJSONObject.getString("accountId");
-        if(TextUtils.isEmpty(id)){
+        if (TextUtils.isEmpty(id)) {
             id = userJSONObject.getString("AccountId");
         }
 
@@ -218,7 +222,7 @@ public class ProcessControl {
         String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
         JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
         String id = userJSONObject.getString("accountId");
-        if(TextUtils.isEmpty(id)){
+        if (TextUtils.isEmpty(id)) {
             id = userJSONObject.getString("AccountId");
         }
 
@@ -262,7 +266,7 @@ public class ProcessControl {
         String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
         JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
         String accountId = userJSONObject.getString("accountId");
-        if(TextUtils.isEmpty(accountId)){
+        if (TextUtils.isEmpty(accountId)) {
             accountId = userJSONObject.getString("AccountId");
         }
 
@@ -378,8 +382,8 @@ public class ProcessControl {
      * @param mobile   手机号/账号/邮箱号/身份证号
      * @param callback
      */
-    public static void getSmsCode(ServiceConfig serviceConfig, @NonNull String mobile,
-                                  @NonNull String privateKey, @NonNull LoginService.Callback<Boolean> callback) {
+    static void getSmsCode(ServiceConfig serviceConfig, @NonNull String mobile,
+                           @NonNull String privateKey, @NonNull LoginService.Callback<Boolean> callback) {
         if (!RegexUtils.isMobileSimple(mobile)) {
             dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
                     Utils.getApp().getString(R.string.dblogin_fail_mobile_illegal));
@@ -448,8 +452,8 @@ public class ProcessControl {
      * @param privateKey
      * @param callback
      */
-    public static void checkSmsCode(ServiceConfig serviceConfig, @NonNull String mobile, @NonNull String smsCode,
-                                    @NonNull String privateKey, @NonNull LoginService.Callback<Boolean> callback) {
+    static void checkSmsCode(ServiceConfig serviceConfig, @NonNull String mobile, @NonNull String smsCode,
+                             @NonNull String privateKey, @NonNull LoginService.Callback<Boolean> callback) {
         if (!RegexUtils.isMobileSimple(mobile)) {
             dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
                     Utils.getApp().getString(R.string.dblogin_fail_mobile_illegal));
@@ -465,7 +469,7 @@ public class ProcessControl {
             Map<String, String> headers = new HashMap<>(3);
             headers.put("AppId", serviceConfig.getAppId());
             headers.put("TimeStamp", timeStamp);
-            Log.d("loginS",timeStamp);
+            Log.d("loginS", timeStamp);
             headers.put("Sign", sign);
 
             LinkedHashMap<String, String> params = new LinkedHashMap<>(3);
@@ -476,7 +480,7 @@ public class ProcessControl {
             HttpHelper.get(serviceConfig.getBaseUrl() + CHECK_SMS_CODE, headers, params, new NetCallback() {
                 @Override
                 public void onSuccess(String success) {
-                    Log.d("loginS",success);
+                    Log.d("loginS", success);
                     BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
                     // baseBean == null 在方法 dispatchSuccessDataToXXX() 已处理
                     if (baseBean == null) {
@@ -507,8 +511,8 @@ public class ProcessControl {
      * @param privateKey
      * @param callback
      */
-    public static void forgotPassword(ServiceConfig serviceConfig, @NonNull String mobile, @NonNull String smsCode,
-                                      @NonNull String newPassword, @NonNull String privateKey, @NonNull LoginService.Callback<Boolean> callback) {
+    static void forgotPassword(ServiceConfig serviceConfig, @NonNull String mobile, @NonNull String smsCode,
+                               @NonNull String newPassword, @NonNull String privateKey, @NonNull LoginService.Callback<Boolean> callback) {
         if (!RegexUtils.isMobileSimple(mobile)) {
             dispatchFailureData(callback, FailureBean.CODE_DEFAULT,
                     Utils.getApp().getString(R.string.dblogin_fail_mobile_illegal));
@@ -558,6 +562,146 @@ public class ProcessControl {
         }
     }
 
+
+    /**
+     * 保存人脸特征
+     *
+     * @param centralizerToken
+     * @param featureData
+     * @param callback
+     */
+    static void saveFaceFeatures(@NonNull String centralizerToken, @NonNull float[] featureData, @NonNull LoginService.Callback<Boolean> callback) {
+
+        Map<String, String> headers = new HashMap<>(1);
+        headers.put("Authorization", centralizerToken);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("features", Arrays.toString(featureData));
+
+        ServiceConfig serviceConfig = LoginService.getConfig();
+        HttpHelper.post(serviceConfig.getBaseUrl() + SAVE_FACE_FEATURES, headers, jsonObject, new NetCallback() {
+            @Override
+            public void onSuccess(String success) {
+                BaseBean<Boolean> baseBean = dispatchSuccessDataToBean(callback, success, Boolean.class);
+                // baseBean == null 在方法 dispatchSuccessDataToXXX() 已处理
+                if (baseBean == null) {
+                    return;
+                }
+                callback.onSuccess(baseBean.getData());
+            }
+
+            @Override
+            public void onFailure(String failure) {
+                dispatchFailureData(callback, FailureBean.CODE_DEFAULT, failure);
+            }
+        });
+    }
+
+    /**
+     * 查询人脸特征
+     *
+     * @param centralizerToken
+     * @param callback
+     */
+    static void getFaceFeatures(@NonNull String centralizerToken, @NonNull LoginService.Callback<float[]> callback) {
+
+        Map<String, String> headers = new HashMap<>(1);
+        headers.put("Authorization", centralizerToken);
+
+        String[] split = centralizerToken.split("\\.");
+        String base64 = split[1];
+        String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
+        JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
+        String accountId = userJSONObject.getString("accountId");
+        if (TextUtils.isEmpty(accountId)) {
+            accountId = userJSONObject.getString("AccountId");
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("accountId", accountId);
+
+        ServiceConfig serviceConfig = LoginService.getConfig();
+        HttpHelper.post(serviceConfig.getBaseUrl() + GET_FACE_FEATURES, headers, jsonObject, new NetCallback() {
+            @Override
+            public void onSuccess(String success) {
+                BaseBean<String> baseBean = dispatchSuccessDataToBean(callback, success, String.class);
+                // baseBean == null 在方法 dispatchSuccessDataToXXX() 已处理
+                if (baseBean == null) {
+                    return;
+                }
+                if (TextUtils.isEmpty(baseBean.getData())) {
+                    dispatchFailureData(callback, baseBean.getCode(), Utils.getApp().getString(R.string.dblogin_fail_1020));
+                    return;
+                }
+                String[] split = baseBean.getData().replace("[", "").replace("]", "").split(",");
+                if (split.length > 0) {
+                    float[] features = new float[split.length];
+                    for (int i = 0; i < split.length; i++) {
+                        features[i] = Float.parseFloat(split[i]);
+                    }
+                    callback.onSuccess(features);
+                } else {
+                    dispatchFailureData(callback, baseBean.getCode(), Utils.getApp().getString(R.string.dblogin_fail_1020));
+                }
+            }
+
+            @Override
+            public void onFailure(String failure) {
+                dispatchFailureData(callback, FailureBean.CODE_DEFAULT, failure);
+            }
+        });
+    }
+
+    /**
+     * 人脸登录
+     *
+     * @param accountId
+     * @param privateKey
+     * @param callback
+     */
+    static void loginWithFace(@NonNull String accountId, @NonNull String privateKey, @NonNull LoginService.Callback<LoginBean> callback) {
+        try {
+
+            ServiceConfig serviceConfig = LoginService.getConfig();
+            if (serviceConfig == null) return;
+
+            String timeStamp = String.valueOf(System.currentTimeMillis() / 1000L - 1);
+
+            String requestStr = timeStamp + "accountId=" + accountId + "&appId=" + serviceConfig.getAppId() + "&tenantId=" + LoginService.getTenantId();
+            String sign = SignUtil.signRsa2(requestStr, privateKey);
+
+            Map<String, String> headers = new HashMap<>(3);
+            headers.put("AppId", serviceConfig.getAppId());
+            headers.put("TimeStamp", timeStamp);
+            headers.put("Sign", sign);
+
+            LinkedHashMap<String, String> params = new LinkedHashMap<>(3);
+            params.put("accountId", accountId);
+            params.put("appId", serviceConfig.getAppId());
+            params.put("tenantId", LoginService.getTenantId());
+
+            HttpHelper.get(serviceConfig.getBaseUrl() + LOGIN_WITH_FACE, headers, params, new NetCallback() {
+                @Override
+                public void onSuccess(String success) {
+                    BaseBean<LoginBean> baseBean = dispatchSuccessDataToBean(callback, success, LoginBean.class);
+                    // baseBean == null 在方法 dispatchSuccessDataToXXX() 已处理
+                    if (baseBean == null) {
+                        return;
+                    }
+                    callback.onSuccess(baseBean.getData());
+                }
+
+                @Override
+                public void onFailure(String failure) {
+                    dispatchFailureData(callback, FailureBean.CODE_DEFAULT, failure);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_unknow));
+        }
+    }
+
     /**
      * 处理 onSuccess 数据，已处理返回true，未处理返回false
      *
@@ -566,7 +710,8 @@ public class ProcessControl {
      * @param cls      要转换的结果实体类
      * @return
      */
-    private static <T> BaseBean<T> dispatchSuccessDataToBean(LoginService.Callback callback, String success, Class<T> cls) {
+    private static <
+            T> BaseBean<T> dispatchSuccessDataToBean(LoginService.Callback callback, String success, Class<T> cls) {
         try {
             if (TextUtils.isEmpty(success)) {
                 // 外层数据实体是空的
@@ -628,7 +773,8 @@ public class ProcessControl {
      * @param cls      要转换的结果实体类
      * @return
      */
-    private static <T> BaseBean<List<T>> dispatchSuccessDataToList(LoginService.Callback callback, String success, Class<T> cls) {
+    private static <
+            T> BaseBean<List<T>> dispatchSuccessDataToList(LoginService.Callback callback, String success, Class<T> cls) {
         try {
             if (TextUtils.isEmpty(success)) {
                 // 外层数据实体是空的

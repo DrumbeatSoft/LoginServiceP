@@ -57,4 +57,19 @@ public interface UrlConfig {
      * 忘记密码，修改密码
      */
     String FORGOT_PASSWORD = "v2-gateway/api/account/forgetpassword";
+
+    /**
+     * 保存人脸特征信息
+     */
+    String SAVE_FACE_FEATURES = "v2-gateway/api/facefeatures/save";
+
+    /**
+     * 查询人脸特征信息
+     */
+    String GET_FACE_FEATURES = "v2-gateway/api/facefeatures/getbyid";
+
+    /**
+     * 人脸登录
+     */
+    String LOGIN_WITH_FACE = "v2-gateway/api/account/loginface";
 }

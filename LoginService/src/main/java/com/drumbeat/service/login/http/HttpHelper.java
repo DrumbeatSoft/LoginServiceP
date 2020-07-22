@@ -1,7 +1,11 @@
 package com.drumbeat.service.login.http;
 
 import com.alibaba.fastjson.JSONObject;
+import com.blankj.utilcode.util.AppUtils;
+import com.blankj.utilcode.util.DeviceUtils;
+import com.blankj.utilcode.util.EncodeUtils;
 import com.blankj.utilcode.util.PathUtils;
+import com.blankj.utilcode.util.RomUtils;
 import com.blankj.utilcode.util.Utils;
 import com.drumbeat.service.login.BuildConfig;
 import com.drumbeat.service.login.http.kalle.KalleCallback;
@@ -54,9 +58,8 @@ public class HttpHelper {
         post(url, headers, jsonObject.toJSONString(), netCallback);
     }
 
-    public static void post(String url, Map<String, String> headers, String jsonStr, NetCallback netCallback) {
+    private static void post(String url, Map<String, String> headers, String jsonStr, NetCallback netCallback) {
         SimpleBodyRequest.Api postApi = Kalle.post(url);
-
         // 添加header
         if (headers != null && !headers.isEmpty()) {
             Set<String> keySet = headers.keySet();
@@ -65,6 +68,13 @@ public class HttpHelper {
                 postApi.addHeader(key, value);
             }
         }
+        String userAgent = DeviceUtils.getManufacturer() + "&"
+                + DeviceUtils.getModel() + "&"
+                + DeviceUtils.getSDKVersionName() + "&"
+                + EncodeUtils.urlEncode(RomUtils.getRomInfo().getVersion()) + "&"
+                + AppUtils.getAppVersionName();
+        postApi.removeHeader("User-Agent");
+        postApi.addHeader("User-Agent", userAgent);
 
         postApi.cacheMode(CacheMode.NETWORK)
                 .body(new JsonBody(jsonStr))
@@ -91,6 +101,14 @@ public class HttpHelper {
                 getApi.addHeader(key, value);
             }
         }
+        String userAgent = DeviceUtils.getManufacturer() + "&"
+                + DeviceUtils.getModel() + "&"
+                + DeviceUtils.getSDKVersionName() + "&"
+                + EncodeUtils.urlEncode(RomUtils.getRomInfo().getVersion()) + "&"
+                + AppUtils.getAppVersionName();
+        getApi.removeHeader("User-Agent");
+        getApi.addHeader("User-Agent", userAgent);
+
         // 包装参数
         Params.Builder builder = Params.newBuilder();
         if (params != null && !params.isEmpty()) {

@@ -59,6 +59,8 @@
     <string name="dblogin_fail_1004">ID exist</string>
     <string name="dblogin_fail_1005">Account exist</string>
     <string name="dblogin_fail_1006">Login error</string>
+    <string name="dblogin_fail_1020">No face features</string>
+    <string name="dblogin_fail_1021">Prohibition of face login</string>
     <string name="dblogin_fail_1200">Sms code invalid</string>
     <string name="dblogin_fail_1201">Sms code error</string>
     <!--************************************************* 接口错误信息 End *************************************************-->

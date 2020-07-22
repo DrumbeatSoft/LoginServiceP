@@ -1,16 +1,20 @@
 package com.drumbeat.service.login.demo;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.alibaba.fastjson.JSONObject;
 import com.blankj.utilcode.util.SPUtils;
 import com.blankj.utilcode.util.StringUtils;
 import com.blankj.utilcode.util.ToastUtils;
@@ -23,6 +27,12 @@ import com.drumbeat.service.login.demo.qbar.CodeType;
 import com.drumbeat.service.login.demo.qbar.OnScanListener;
 import com.drumbeat.service.login.demo.qbar.QBarHelper;
 import com.drumbeat.service.login.demo.qbar.ScanResult;
+import com.drumbeat.zface.ZFace;
+import com.drumbeat.zface.constant.ErrorCode;
+import com.drumbeat.zface.listener.CompareListener;
+import com.drumbeat.zface.listener.DownloadListener;
+import com.drumbeat.zface.listener.InitListener;
+import com.drumbeat.zface.listener.RecognizeListener;
 
 import java.util.List;
 
@@ -41,26 +51,18 @@ public class LoginActivity extends AppCompatActivity {
     EditText etPwd;
     @BindView(R.id.etSmsCode)
     EditText etSmsCode;
-    @BindView(R.id.btnLogin)
-    Button btnLogin;
-    @BindView(R.id.btnGetUserInfo)
-    Button btnGetUserInfo;
-    @BindView(R.id.btnModify)
-    Button btnModify;
-    @BindView(R.id.btnCheckPwd)
-    Button btnCheckPwd;
-    @BindView(R.id.btnScan)
-    Button btnScan;
-    @BindView(R.id.btngetSmsCode)
-    Button btngetSmsCode;
-    @BindView(R.id.btnCheckSmsCode)
-    Button btnCheckSmsCode;
-    @BindView(R.id.btnForgotPassword)
-    Button btnForgotPassword;
     @BindView(R.id.tvTenantNull)
     TextView tvTenantNull;
     @BindView(R.id.tvName)
     TextView tvName;
+
+    private boolean initFaceSuccess = false;
+    private boolean isUploadFace = false;
+    private boolean isCompareFace = false;
+
+    private float[] faceFeaturesInDb;
+
+    private String accountId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,9 +82,10 @@ public class LoginActivity extends AppCompatActivity {
                 getTenant();
             }
         });
+        queryResourceFace();
     }
 
-    @OnClick({R.id.btnLogin, R.id.btnCheckPwd, R.id.btnModify, R.id.btnScan, R.id.btnGetUserInfo, R.id.btngetSmsCode, R.id.btnCheckSmsCode, R.id.btnForgotPassword})
+    @OnClick({R.id.btnLogin, R.id.btnSaveFace, R.id.btnGetFace, R.id.btnCompareFace, R.id.btnCheckPwd, R.id.btnModify, R.id.btnScan, R.id.btnGetUserInfo, R.id.btngetSmsCode, R.id.btnCheckSmsCode, R.id.btnForgotPassword})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btnLogin:
@@ -153,6 +156,65 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         });
                 break;
+            case R.id.btnSaveFace:
+                isUploadFace = false;
+                if (initFaceSuccess) {
+                    recognizerFace(this::saveFaceFeatures);
+                }
+                break;
+            case R.id.btnGetFace:
+                LoginService.getFaceFeatures(SPUtils.getInstance().getString(SPConfig.SP_TOKEN), new LoginService.Callback<float[]>() {
+                    @Override
+                    public void onSuccess(float[] success) {
+                        if (success == null || success.length <= 0) {
+                            showToast("未查询到人脸特征信息");
+                            return;
+                        }
+                        showToast("查询成功");
+                        faceFeaturesInDb = success;
+                        findViewById(R.id.btnCompareFace).setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onFailure(FailureBean failure) {
+                        ToastUtils.showShort(failure.getMsg());
+                    }
+                });
+                break;
+            case R.id.btnCompareFace:
+                isCompareFace = false;
+                if (initFaceSuccess) {
+                    recognizerFace(featureData -> {
+                        if (isCompareFace) return;
+                        isCompareFace = true;
+                        ZFace.with(this).recognizer().compare(faceFeaturesInDb, featureData, new CompareListener() {
+                            @Override
+                            public void onSuccess(float faceSimilar) {
+                                ZFace.with(LoginActivity.this).recognizer().close();
+                                showToast("比对成功，开始登录");
+                                LoginService.loginWithFace(accountId, KeyConstant.privateKey, new LoginService.Callback<LoginBean>() {
+                                    @Override
+                                    public void onSuccess(LoginBean success) {
+                                        showToast("登录成功");
+                                        SPUtils.getInstance().put(SPConfig.SP_TOKEN, success.getToken());
+                                    }
+
+                                    @Override
+                                    public void onFailure(FailureBean failure) {
+                                        showToast(failure.getMsg());
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onFailure(ErrorCode errorCode, String errorMsg) {
+                                ZFace.with(LoginActivity.this).recognizer().close();
+                                showToast(errorMsg);
+                            }
+                        });
+                    });
+                }
+                break;
             default:
                 break;
         }
@@ -199,11 +261,23 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginBean succeed) {
                 ToastUtils.showShort("登录成功");
-                btnScan.setVisibility(View.VISIBLE);
-                btnModify.setVisibility(View.VISIBLE);
-                btnCheckPwd.setVisibility(View.VISIBLE);
-                btnGetUserInfo.setVisibility(View.VISIBLE);
+                findViewById(R.id.btnScan).setVisibility(View.VISIBLE);
+                findViewById(R.id.btnModify).setVisibility(View.VISIBLE);
+                findViewById(R.id.btnCheckPwd).setVisibility(View.VISIBLE);
+                findViewById(R.id.btnGetUserInfo).setVisibility(View.VISIBLE);
+                findViewById(R.id.btnSaveFace).setVisibility(View.VISIBLE);
+                findViewById(R.id.btnGetFace).setVisibility(View.VISIBLE);
                 SPUtils.getInstance().put(SPConfig.SP_TOKEN, succeed.getToken());
+
+                // 提取accountId备用
+                String[] split = succeed.getToken().split("\\.");
+                String base64 = split[1];
+                String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
+                JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
+                accountId = userJSONObject.getString("accountId");
+                if (TextUtils.isEmpty(accountId)) {
+                    accountId = userJSONObject.getString("AccountId");
+                }
             }
 
             @Override
@@ -280,6 +354,112 @@ public class LoginActivity extends AppCompatActivity {
                 ToastUtils.showShort(failure.getMsg());
             }
         });
+    }
+
+    private void saveFaceFeatures(float[] featureData) {
+        if (isUploadFace) return;
+        isUploadFace = true;
+        LoginService.saveFaceFeatures(SPUtils.getInstance().getString(SPConfig.SP_TOKEN), featureData, new LoginService.Callback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean success) {
+                if (success) {
+                    ToastUtils.showShort("人脸特征保存成功");
+                } else {
+                    ToastUtils.showShort("人脸特征保存失败");
+                }
+            }
+
+            @Override
+            public void onFailure(FailureBean failure) {
+                ToastUtils.showShort(failure.getMsg());
+            }
+        });
+    }
+
+    private void queryResourceFace() {
+        showToast("正在查询……");
+        ZFace.with(this).resource().query(needDownload -> {
+            if (needDownload) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("提示")
+                        .setMessage("需要下载面部识别所需资源文件，是否立即开始下载？")
+                        .setPositiveButton("立即开始", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                ZFace.with(LoginActivity.this).resource().download(new DownloadListener() {
+                                    @Override
+                                    public void onSuccess() {
+                                        showToast("资源文件下载完成");
+                                        initFace();
+                                    }
+
+                                    @Override
+                                    public void onFailure(ErrorCode errorCode, String errorMsg) {
+                                        showToast("资源文件下载失败，错误码：" + errorCode);
+                                    }
+                                });
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .create().show();
+            } else {
+                initFace();
+            }
+        });
+    }
+
+    private void initFace() {
+        showToast("正在初始化……");
+        ZFace.with(this).recognizer().init(new InitListener() {
+            @Override
+            public void onSuccess() {
+                initFaceSuccess = true;
+                showToast("初始化成功");
+            }
+
+            @Override
+            public void onFailure(ErrorCode errorCode, String errorMsg) {
+                showToast("面部识别模块初始化失败，错误码：" + errorCode);
+            }
+        });
+    }
+
+    private void recognizerFace(RecognizerFaceCallback callback) {
+        ZFace.with(this)
+                .recognizer()
+                .recognize(new RecognizeListener() {
+                    @Override
+                    public void onSuccess(float[] featureData) {
+                        if (featureData != null && featureData.length > 0) {
+                            callback.onRecognizer(featureData);
+                            // 处理完成后，关闭检测器
+                            ZFace.with(LoginActivity.this).recognizer().close();
+                        } else {
+                            showToast("未获取到人脸特征数据，请再次识别");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(ErrorCode errorCode, String errorMsg) {
+                        showToast("人脸识别失败，错误码：" + errorCode);
+                        // 处理完成后，关闭检测器
+                        ZFace.with(LoginActivity.this).recognizer().close();
+                    }
+                });
+    }
+
+    private void showToast(String msg) {
+        Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    public interface RecognizerFaceCallback {
+        void onRecognizer(float[] featureData);
     }
 
 }
