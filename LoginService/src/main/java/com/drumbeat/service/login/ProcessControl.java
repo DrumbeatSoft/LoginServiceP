@@ -746,7 +746,6 @@ public class ProcessControl {
             if (baseBean.getCode() == 601) {
                 return baseBean;
             }
-
             if (baseBean.getCode() != 200) {
                 int stringResId = CodeEnum.valueOf(baseBean.getCode()).getStringResId();
                 // 未处理的错误码，向上抛出
