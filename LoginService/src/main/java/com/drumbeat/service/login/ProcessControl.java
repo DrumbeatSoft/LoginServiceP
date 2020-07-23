@@ -742,6 +742,11 @@ public class ProcessControl {
                         Utils.getApp().getString(R.string.dblogin_fail_412) + baseBean.getCode());
                 return null;
             }
+            // 统一处理601 业务数据为空
+            if (baseBean.getCode() == 601) {
+                return baseBean;
+            }
+
             if (baseBean.getCode() != 200) {
                 int stringResId = CodeEnum.valueOf(baseBean.getCode()).getStringResId();
                 // 未处理的错误码，向上抛出
