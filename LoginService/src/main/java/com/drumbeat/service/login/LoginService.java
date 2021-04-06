@@ -12,6 +12,7 @@ import com.drumbeat.service.login.bean.FailureBean;
 import com.drumbeat.service.login.bean.LoginBean;
 import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
+import com.drumbeat.service.login.bean.WeChatBean;
 import com.drumbeat.service.login.config.ServiceConfig;
 import com.drumbeat.service.login.utils.LocalSpUtil;
 
@@ -61,38 +62,20 @@ public class LoginService {
     }
 
     /**
-     * 设置租户ID
-     *
-     * @param tenantId 租户ID
-     */
-    public static void setTenantId(String tenantId) {
-        LocalSpUtil.getInstance(Utils.getApp()).put(SP_TENANT_ID, tenantId);
-    }
-
-    /**
-     * 获取已设置的租户ID
-     *
-     * @return
-     */
-    public static String getTenantId() {
-        return LocalSpUtil.getInstance(Utils.getApp()).getString(SP_TENANT_ID);
-    }
-
-    /**
      * 登录中台
      *
      * @param account
      * @param password
      * @param callback
      */
-    public static void login(@NonNull String account, @NonNull String password, @NonNull Callback<LoginBean> callback) {
+    public static void login(@NonNull String account, @NonNull String password, String tenantId, @NonNull Callback<LoginBean> callback) {
         String centralizerToken = getCentralizerToken(null);
         // 已有token，直接返回，不再登录，为了兼容宿主APP与独立APP同时存在的情况
         if (!TextUtils.isEmpty(centralizerToken)) {
             callback.onSuccess(new LoginBean().setToken(centralizerToken));
             return;
         }
-        ProcessControl.login(LoginService.getConfig(), account, password, callback);
+        ProcessControl.login(LoginService.getConfig(), account, password, tenantId, callback);
     }
 
     /**
@@ -207,8 +190,19 @@ public class LoginService {
      * @param privateKey 私钥
      * @param callback
      */
-    public static void loginWithFace(@NonNull String accountId, @NonNull String privateKey, @NonNull Callback<LoginBean> callback) {
-        ProcessControl.loginWithFace(accountId, privateKey, callback);
+    public static void loginWithFace(@NonNull String accountId, @NonNull String privateKey, String tenantId, @NonNull Callback<LoginBean> callback) {
+        ProcessControl.loginWithFace(accountId, privateKey, tenantId, callback);
+    }
+
+    /**
+     * 绑定微信
+     *
+     * @param centralizerToken
+     * @param weChatBean
+     * @param callback
+     */
+    public static void bindWeChat(@NonNull String centralizerToken, @NonNull WeChatBean weChatBean, @NonNull Callback<String> callback) {
+        ProcessControl.bindWeChat(centralizerToken, weChatBean, callback);
     }
 
     public abstract static class Callback<T> {

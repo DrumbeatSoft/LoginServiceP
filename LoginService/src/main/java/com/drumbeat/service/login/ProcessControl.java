@@ -26,6 +26,7 @@ import com.drumbeat.service.login.bean.FailureBean;
 import com.drumbeat.service.login.bean.LoginBean;
 import com.drumbeat.service.login.bean.TenantBean;
 import com.drumbeat.service.login.bean.UserInfoBean;
+import com.drumbeat.service.login.bean.WeChatBean;
 import com.drumbeat.service.login.code.CodeEnum;
 import com.drumbeat.service.login.config.ServiceConfig;
 import com.drumbeat.service.login.http.HttpHelper;
@@ -129,13 +130,13 @@ public class ProcessControl {
     /**
      * 账号密码登录
      */
-    static void login(ServiceConfig serviceConfig, String account, String password, @NonNull LoginService.Callback<LoginBean> callback) {
+    static void login(ServiceConfig serviceConfig, String account, String password, String tenantId, @NonNull LoginService.Callback<LoginBean> callback) {
         serviceConfig = serviceConfig == null ? LoginService.getConfig() : serviceConfig;
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("tenantCode", "");
         jsonObject.put("deviceId", "");
-        jsonObject.put("tenantId", LoginService.getTenantId());
+        jsonObject.put("tenantId", tenantId);
         jsonObject.put("appId", serviceConfig.getAppId());
         //20 android
         jsonObject.put("device", 20);
@@ -177,17 +178,20 @@ public class ProcessControl {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", centralizerToken);
 
+        String accountId = null;
         String[] split = centralizerToken.split("\\.");
-        String base64 = split[1];
-        String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
-        JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
-        String id = userJSONObject.getString("accountId");
-        if (TextUtils.isEmpty(id)) {
-            id = userJSONObject.getString("AccountId");
+        if (split.length > 0) {
+            String base64 = split[1];
+            String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
+            JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
+            accountId = userJSONObject.getString("accountId");
+            if (TextUtils.isEmpty(accountId)) {
+                accountId = userJSONObject.getString("AccountId");
+            }
         }
 
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("accountId", id);
+        jsonObject.put("accountId", accountId);
 
         ServiceConfig serviceConfig = LoginService.getConfig();
 
@@ -217,19 +221,22 @@ public class ProcessControl {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", centralizerToken);
 
+        String accountId = null;
         String[] split = centralizerToken.split("\\.");
-        String base64 = split[1];
-        String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
-        JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
-        String id = userJSONObject.getString("accountId");
-        if (TextUtils.isEmpty(id)) {
-            id = userJSONObject.getString("AccountId");
+        if (split.length > 0) {
+            String base64 = split[1];
+            String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
+            JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
+            accountId = userJSONObject.getString("accountId");
+            if (TextUtils.isEmpty(accountId)) {
+                accountId = userJSONObject.getString("AccountId");
+            }
         }
 
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("oldPassword", oldPwd);
         jsonObject.put("password", newPwd);
-        jsonObject.put("id", id);
+        jsonObject.put("id", accountId);
 
         JSONObject object = new JSONObject();
         object.put("input", jsonObject);
@@ -261,13 +268,16 @@ public class ProcessControl {
         Map<String, String> headers = new HashMap<>(1);
         headers.put("Authorization", centralizerToken);
 
+        String accountId = null;
         String[] split = centralizerToken.split("\\.");
-        String base64 = split[1];
-        String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
-        JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
-        String accountId = userJSONObject.getString("accountId");
-        if (TextUtils.isEmpty(accountId)) {
-            accountId = userJSONObject.getString("AccountId");
+        if (split.length > 0) {
+            String base64 = split[1];
+            String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
+            JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
+            accountId = userJSONObject.getString("accountId");
+            if (TextUtils.isEmpty(accountId)) {
+                accountId = userJSONObject.getString("AccountId");
+            }
         }
 
         JSONObject jsonObject = new JSONObject();
@@ -608,13 +618,16 @@ public class ProcessControl {
         Map<String, String> headers = new HashMap<>(1);
         headers.put("Authorization", centralizerToken);
 
+        String accountId = null;
         String[] split = centralizerToken.split("\\.");
-        String base64 = split[1];
-        String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
-        JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
-        String accountId = userJSONObject.getString("accountId");
-        if (TextUtils.isEmpty(accountId)) {
-            accountId = userJSONObject.getString("AccountId");
+        if (split.length > 0) {
+            String base64 = split[1];
+            String userBeanStr = new String(Base64.decode(base64.getBytes(), Base64.DEFAULT));
+            JSONObject userJSONObject = JSONObject.parseObject(userBeanStr);
+            accountId = userJSONObject.getString("accountId");
+            if (TextUtils.isEmpty(accountId)) {
+                accountId = userJSONObject.getString("AccountId");
+            }
         }
 
         JSONObject jsonObject = new JSONObject();
@@ -630,7 +643,9 @@ public class ProcessControl {
                     return;
                 }
                 if (TextUtils.isEmpty(baseBean.getData())) {
-                    dispatchFailureData(callback, baseBean.getCode(), Utils.getApp().getString(R.string.dblogin_fail_1020));
+                    // 人脸特征为空，不可以报错，业务上接下来要录入人脸
+//                    dispatchFailureData(callback, baseBean.getCode(), Utils.getApp().getString(R.string.dblogin_fail_1020));
+                    callback.onSuccess(null);
                     return;
                 }
                 String[] split = baseBean.getData().replace("[", "").replace("]", "").split(",");
@@ -659,7 +674,7 @@ public class ProcessControl {
      * @param privateKey
      * @param callback
      */
-    static void loginWithFace(@NonNull String accountId, @NonNull String privateKey, @NonNull LoginService.Callback<LoginBean> callback) {
+    static void loginWithFace(@NonNull String accountId, @NonNull String privateKey, String tenantId, @NonNull LoginService.Callback<LoginBean> callback) {
         try {
 
             ServiceConfig serviceConfig = LoginService.getConfig();
@@ -667,7 +682,7 @@ public class ProcessControl {
 
             String timeStamp = String.valueOf(System.currentTimeMillis() / 1000L - 1);
 
-            String requestStr = timeStamp + "accountId=" + accountId + "&appId=" + serviceConfig.getAppId() + "&tenantId=" + LoginService.getTenantId();
+            String requestStr = timeStamp + "accountId=" + accountId + "&appId=" + serviceConfig.getAppId() + "&tenantId=" + tenantId;
             String sign = SignUtil.signRsa2(requestStr, privateKey);
 
             Map<String, String> headers = new HashMap<>(3);
@@ -678,7 +693,7 @@ public class ProcessControl {
             LinkedHashMap<String, String> params = new LinkedHashMap<>(3);
             params.put("accountId", accountId);
             params.put("appId", serviceConfig.getAppId());
-            params.put("tenantId", LoginService.getTenantId());
+            params.put("tenantId", tenantId);
 
             HttpHelper.get(serviceConfig.getBaseUrl() + LOGIN_WITH_FACE, headers, params, new NetCallback() {
                 @Override
@@ -700,6 +715,16 @@ public class ProcessControl {
             e.printStackTrace();
             dispatchFailureData(callback, FailureBean.CODE_DEFAULT, Utils.getApp().getString(R.string.dblogin_fail_unknow));
         }
+    }
+
+    /**
+     * 绑定微信
+     *
+     * @param centralizerToken
+     * @param weChatBean
+     * @param callback
+     */
+    static void bindWeChat(@NonNull String centralizerToken, @NonNull WeChatBean weChatBean, @NonNull LoginService.Callback<String> callback) {
     }
 
     /**
@@ -807,6 +832,10 @@ public class ProcessControl {
                 dispatchFailureData(callback, baseBean.getCode(),
                         Utils.getApp().getString(R.string.dblogin_fail_412) + baseBean.getCode());
                 return null;
+            }
+            // 统一处理601 业务数据为空
+            if (baseBean.getCode() == 601) {
+                return baseBean;
             }
             // 普通错误码的统一处理
             if (baseBean.getCode() != 200) {

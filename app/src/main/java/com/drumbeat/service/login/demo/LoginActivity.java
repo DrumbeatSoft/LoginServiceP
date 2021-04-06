@@ -56,6 +56,8 @@ public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.tvName)
     TextView tvName;
 
+    private String tenantId;
+
     private boolean initFaceSuccess = false;
     private boolean isUploadFace = false;
     private boolean isCompareFace = false;
@@ -192,7 +194,7 @@ public class LoginActivity extends AppCompatActivity {
                             public void onSuccess(float faceSimilar) {
                                 ZFace.with(LoginActivity.this).recognizer().close();
                                 showToast("比对成功，开始登录");
-                                LoginService.loginWithFace(accountId, KeyConstant.privateKey, new LoginService.Callback<LoginBean>() {
+                                LoginService.loginWithFace(accountId, KeyConstant.privateKey, tenantId, new LoginService.Callback<LoginBean>() {
                                     @Override
                                     public void onSuccess(LoginBean success) {
                                         showToast("登录成功");
@@ -226,7 +228,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onSuccess(List<TenantBean> succeed) {
                 if (succeed != null && succeed.size() > 0) {
                     ToastUtils.showLong(String.valueOf(succeed.get(0).getTenantId()));
-                    LoginService.setTenantId(succeed.get(0).getTenantId());
+                    tenantId = succeed.get(0).getTenantId();
                     tvTenantNull.setText("tenantId：" + succeed.get(0).getTenantId());
                 } else {
                     tvTenantNull.setText("未查询到租户信息");
@@ -257,7 +259,7 @@ public class LoginActivity extends AppCompatActivity {
         SPUtils.getInstance().put("account", etAccount.getEditableText().toString().trim());
         SPUtils.getInstance().put("pwd", etPwd.getEditableText().toString().trim());
 
-        LoginService.login(account1, pwd1, new LoginService.Callback<LoginBean>() {
+        LoginService.login(account1, pwd1, tenantId, new LoginService.Callback<LoginBean>() {
             @Override
             public void onSuccess(LoginBean succeed) {
                 ToastUtils.showShort("登录成功");
